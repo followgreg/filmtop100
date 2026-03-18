@@ -195,7 +195,7 @@
 
   .film-row {
     display: grid;
-    grid-template-columns: 52px 44px 1fr 60px 80px 80px 80px;
+    grid-template-columns: 52px 44px 1fr 50px 60px 80px 80px 80px;
     align-items: center;
     gap: 12px;
     padding: 8px 12px;
@@ -302,7 +302,7 @@
   /* Column headers */
   .col-headers {
     display: grid;
-    grid-template-columns: 52px 44px 1fr 60px 80px 80px 80px;
+    grid-template-columns: 52px 44px 1fr 50px 60px 80px 80px 80px;
     gap: 12px;
     padding: 12px 52px 8px;
     font-size: 9px;
@@ -362,9 +362,12 @@
     }
 
     .poster-cell { width: 36px; height: 52px; }
+    .bd-badge, .no-disc { display: none; }
 
     .hide-mobile { display: none; }
   }
+  .bd-badge { font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 4px; background: rgba(56,139,255,0.12); color: #5B9BFF; letter-spacing: 0.04em; white-space: nowrap; }
+  .no-disc { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border); display: inline-block; opacity: 0.3; }
   /* About section */
   .about { border-bottom: 1px solid var(--border); padding: 40px; }
   .about-inner { max-width: 680px; }
@@ -431,6 +434,7 @@
   <button class="filter-btn" onclick="toggleFilter('new')" id="btn-new">✦ New</button>
   <button class="filter-btn" onclick="toggleFilter('rewatched')" id="btn-rewatched">↻ Rewatched</button>
   <button class="filter-btn" onclick="toggleFilter('top40')" id="btn-top40">Top 40</button>
+  <button class="filter-btn" onclick="toggleFilter('bd')" id="btn-bd">💿 Blu-ray</button>
   <span class="results-count" id="results-count">100 films</span>
 </div>
 
@@ -454,6 +458,7 @@
   <div class="col-headers">
     <div></div>
     <div class="col-h" style="text-align:left">Film</div>
+    <div class="col-h hide-mobile">Blu-ray</div>
     <div class="col-h">Rating</div>
     <div class="col-h">Watches</div>
     <div class="col-h hide-mobile">Rewatches</div>
@@ -479,14 +484,37 @@
 </div>
 
 <script>
+const owned = new Set([
+  "The Godfather", "Back to the Future", "Pulp Fiction", "La La Land", "Inception",
+  "Fight Club", "Saving Private Ryan", "Casino", "Gladiator", "Parasite",
+  "Moneyball", "The Shawshank Redemption", "The Dark Knight", "Interstellar",
+  "Heat", "Unbreakable", "The Matrix", "Raiders of the Lost Ark", "Whiplash",
+  "Jerry Maguire", "Jaws", "For Love of the Game", "American Psycho", "Reservoir Dogs",
+  "Swingers", "Blade Runner", "The Departed", "The Social Network", "Major League",
+  "Dazed and Confused", "Jurassic Park", "Arrival", "Memento", "The Game",
+  "Killers of the Flower Moon", "The Right Stuff", "Leon: The Professional",
+  "Mr. Mom", "Planes, Trains and Automobiles", "Godzilla Minus One", "300",
+  "Everything Everywhere All At Once", "The Killer (John Woo)", "The Sound of Music",
+  "Star Wars: Empire Strikes Back", "Out of Sight", "Get Shorty", "Apollo 13",
+  "Armageddon", "That Thing You Do!", "Forrest Gump", "Lord of the Rings: Fellowship",
+  "True Romance", "Se7en", "Goodfellas", "Wolf of Wall Street", "Rocky IV",
+  "Die Hard", "Remember the Titans", "Aliens", "Field of Dreams", "Mulholland Drive",
+  "Mad Max Fury Road", "Draft Day", "Star Trek: Wrath of Khan", "The Incredibles",
+  "Face/Off", "Rounders", "Contact", "The Sixth Sense", "Toy Story 2",
+  "The Natural", "Groundhog Day", "The Shining", "Big Trouble in Little China",
+  "Indiana Jones: Temple of Doom", "No Country for Old Men", "Godfather Part II",
+  "Casino Royale", "Crouching Tiger, Hidden Dragon", "Close Encounters of the Third Kind",
+  "Beauty and the Beast", "Scott Pilgrim vs. the World", "The Town", "Margin Call", "Gravity",
+]);
+
 const films = [
-  { rank: 1, title: "The Godfather", year: 1972, oldRank: 1, movement: 0, rating: "—", watches: 2, rewatches: 0 },
+  { rank: 1, title: "The Godfather", year: 1972, oldRank: 1, movement: 0, rating: "5", watches: 2, rewatches: 0 },
   { rank: 2, title: "Back to the Future", year: 1985, oldRank: 2, movement: 0, rating: "5", watches: 3, rewatches: 2 },
   { rank: 3, title: "Pulp Fiction", year: 1994, oldRank: 3, movement: 0, rating: "5", watches: 3, rewatches: 2 },
   { rank: 4, title: "La La Land", year: 2016, oldRank: 4, movement: 0, rating: "5", watches: 2, rewatches: 0 },
   { rank: 5, title: "Inception", year: 2010, oldRank: 5, movement: 0, rating: "5", watches: 1, rewatches: 0 },
   { rank: 6, title: "Fight Club", year: 1999, oldRank: 6, movement: 0, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 7, title: "Saving Private Ryan", year: 1998, oldRank: 7, movement: 0, rating: "—", watches: 0, rewatches: 0 },
+  { rank: 7, title: "Saving Private Ryan", year: 1998, oldRank: 7, movement: 0, rating: "5", watches: 0, rewatches: 0 },
   { rank: 8, title: "Casino", year: 1995, oldRank: 8, movement: 0, rating: "5", watches: 3, rewatches: 2 },
   { rank: 9, title: "Gladiator", year: 2000, oldRank: 9, movement: 0, rating: "5", watches: 0, rewatches: 0 },
   { rank: 10, title: "Parasite", year: 2019, oldRank: 10, movement: 0, rating: "5", watches: 2, rewatches: 1 },
@@ -505,8 +533,8 @@ const films = [
   { rank: 23, title: "For Love of the Game", year: 1999, oldRank: null, movement: "NEW", rating: "5", watches: 3, rewatches: 2 },
   { rank: 24, title: "American Psycho", year: 2000, oldRank: 18, movement: -6, rating: "4", watches: 1, rewatches: 0 },
   { rank: 25, title: "Reservoir Dogs", year: 1992, oldRank: 19, movement: -6, rating: "4.5", watches: 2, rewatches: 1 },
-  { rank: 26, title: "Swingers", year: 1996, oldRank: 20, movement: -6, rating: "—", watches: 1, rewatches: 0 },
-  { rank: 27, title: "Blade Runner", year: 1982, oldRank: 21, movement: -6, rating: "—", watches: 0, rewatches: 0 },
+  { rank: 26, title: "Swingers", year: 1996, oldRank: 20, movement: -6, rating: "4.5", watches: 1, rewatches: 0 },
+  { rank: 27, title: "Blade Runner", year: 1982, oldRank: 21, movement: -6, rating: "4.5", watches: 0, rewatches: 0 },
   { rank: 28, title: "The Departed", year: 2006, oldRank: 24, movement: -4, rating: "4.5", watches: 2, rewatches: 0 },
   { rank: 29, title: "Titanic", year: 1997, oldRank: 30, movement: 1, rating: "5", watches: 1, rewatches: 0 },
   { rank: 30, title: "The Social Network", year: 2010, oldRank: 31, movement: 1, rating: "5", watches: 3, rewatches: 2 },
@@ -518,8 +546,8 @@ const films = [
   { rank: 36, title: "Memento", year: 2000, oldRank: 28, movement: -8, rating: "4.5", watches: 1, rewatches: 0 },
   { rank: 37, title: "The Game", year: 1997, oldRank: 32, movement: -5, rating: "4", watches: 1, rewatches: 1 },
   { rank: 38, title: "Killers of the Flower Moon", year: 2023, oldRank: 33, movement: -5, rating: "4.5", watches: 2, rewatches: 1 },
-  { rank: 39, title: "The Right Stuff", year: 1983, oldRank: 37, movement: -2, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 40, title: "Leon: The Professional", year: 1994, oldRank: 38, movement: -2, rating: "—", watches: 0, rewatches: 0 },
+  { rank: 39, title: "The Right Stuff", year: 1983, oldRank: 37, movement: -2, rating: "4.5", watches: 0, rewatches: 0 },
+  { rank: 40, title: "Leon: The Professional", year: 1994, oldRank: 38, movement: -2, rating: "4.5", watches: 0, rewatches: 0 },
   { rank: 41, title: "Mr. Mom", year: 1983, oldRank: 67, movement: 26, rating: "5", watches: 4, rewatches: 2 },
   { rank: 42, title: "Sleepless in Seattle", year: 1993, oldRank: 82, movement: 40, rating: "5", watches: 3, rewatches: 1 },
   { rank: 43, title: "Planes, Trains and Automobiles", year: 1987, oldRank: 96, movement: 53, rating: "5", watches: 4, rewatches: 3 },
@@ -567,19 +595,19 @@ const films = [
   { rank: 85, title: "No Country for Old Men", year: 2007, oldRank: 87, movement: 2, rating: "4", watches: 1, rewatches: 0 },
   { rank: 86, title: "Godfather Part II", year: 1974, oldRank: 88, movement: 2, rating: "—", watches: 1, rewatches: 0 },
   { rank: 87, title: "Romeo + Juliet", year: 1996, oldRank: 52, movement: -35, rating: "—", watches: 1, rewatches: 0 },
-  { rank: 88, title: "Casino Royale", year: 2006, oldRank: 90, movement: 2, rating: "—", watches: 2, rewatches: 0 },
-  { rank: 89, title: "Toy Story 2", year: 1999, oldRank: 76, movement: -13, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 90, title: "American History X", year: 1998, oldRank: 65, movement: -25, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 91, title: "State of Grace", year: 1990, oldRank: 91, movement: 0, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 92, title: "Crouching Tiger, Hidden Dragon", year: 2000, oldRank: 92, movement: 0, rating: "—", watches: 1, rewatches: 0 },
+  { rank: 88, title: "Casino Royale", year: 2006, oldRank: 90, movement: 2, rating: "4", watches: 2, rewatches: 0 },
+  { rank: 89, title: "Toy Story 2", year: 1999, oldRank: 76, movement: -13, rating: "4.5", watches: 0, rewatches: 0 },
+  { rank: 90, title: "American History X", year: 1998, oldRank: 65, movement: -25, rating: "4", watches: 0, rewatches: 0 },
+  { rank: 91, title: "State of Grace", year: 1990, oldRank: 91, movement: 0, rating: "4", watches: 0, rewatches: 0 },
+  { rank: 92, title: "Crouching Tiger, Hidden Dragon", year: 2000, oldRank: 92, movement: 0, rating: "4", watches: 1, rewatches: 0 },
   { rank: 93, title: "Close Encounters of the Third Kind", year: 1977, oldRank: 93, movement: 0, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 94, title: "Beauty and the Beast", year: 1991, oldRank: 94, movement: 0, rating: "—", watches: 0, rewatches: 0 },
+  { rank: 94, title: "Beauty and the Beast", year: 1991, oldRank: 94, movement: 0, rating: "4", watches: 0, rewatches: 0 },
   { rank: 95, title: "Scott Pilgrim vs. the World", year: 2010, oldRank: 95, movement: 0, rating: "4.5", watches: 1, rewatches: 0 },
   { rank: 96, title: "Past Lives", year: 2023, oldRank: 97, movement: 1, rating: "4.5", watches: 1, rewatches: 0 },
   { rank: 97, title: "The Town", year: 2010, oldRank: 98, movement: 1, rating: "4", watches: 1, rewatches: 0 },
   { rank: 98, title: "Margin Call", year: 2011, oldRank: 99, movement: 1, rating: "4", watches: 1, rewatches: 0 },
   { rank: 99, title: "Gravity", year: 2013, oldRank: 56, movement: -43, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 100, title: "The Commitments", year: 1991, oldRank: 100, movement: 0, rating: "—", watches: 1, rewatches: 0 },
+  { rank: 100, title: "The Commitments", year: 1991, oldRank: 100, movement: 0, rating: "3.5", watches: 1, rewatches: 0 },
 ];
 
 const bubble = [
@@ -597,7 +625,7 @@ const bubble = [
   { rank: 112, title: "Ocean's Eleven", year: 2001, rating: "4.5", watches: 1, rewatches: 0, note: "4.5 stars. Pure fun, endlessly rewatchable. Surprising it isn't already inside the main list." },
   { rank: 113, title: "Almost Famous", year: 2000, rating: "4.5", watches: 1, rewatches: 0, note: "4.5 stars. A film people tend to love more with every rewatch — worth prioritizing a revisit to see where it lands." },
   { rank: 114, title: "Uncut Gems", year: 2019, rating: "5", watches: 2, rewatches: 1, note: "5 stars and a logged rewatch — but this is a quality list entry more than a joy list entry. Brilliant and exhausting. Placed here tentatively." },
-  { rank: 115, title: "State of Grace", year: 1990, rating: "—", watches: 0, rewatches: 0, note: "No post-2020 rating or diary entry. Was #91 on your original list so the memory of love is strong — but needs a rewatch to confirm its place." },
+  { rank: 115, title: "State of Grace", year: 1990, rating: "4", watches: 0, rewatches: 0, note: "Now rated 4 stars — that settles the unrated question from last time. No diary entry yet so still needs a rewatch to confirm it belongs inside the 100." },
   { rank: 116, title: "The School of Rock", year: 2003, rating: "—", watches: 0, rewatches: 0, note: "No rating logged, no diary entry since joining Letterboxd. Jack Black at peak joy — but unconfirmed by current data. Needs a rewatch." },
   { rank: 117, title: "Big", year: 1988, rating: "—", watches: 0, rewatches: 0, note: "No rating, no diary entry. Strong nostalgia case but the data offers nothing to work with. A rewatch would settle it quickly." },
   { rank: 118, title: "One Flew Over the Cuckoo's Nest", year: 1975, rating: "4.5", watches: 1, rewatches: 1, note: "4.5 stars with a logged rewatch. Quality is undeniable — the question is whether its weight makes it a joy film or a quality film." },
@@ -680,6 +708,9 @@ function buildList() {
         <div class="film-title">${f.title}</div>
         <div class="film-year">${f.year}</div>
       </div>
+      <div class="data-cell hide-mobile">
+        ${owned.has(f.title) ? '<span class="bd-badge">BD</span>' : '<span class="no-disc"></span>'}
+      </div>
       <div class="data-cell">
         <span class="col-label">Rating</span>
         <span class="rating-val">${renderStars(f.rating)}</span>
@@ -746,6 +777,7 @@ function filterFilms() {
     if (activeFilters.has('new') && f.movement !== "NEW") show = false;
     if (activeFilters.has('rewatched') && f.rewatches === 0) show = false;
     if (activeFilters.has('top40') && f.rank > 40) show = false;
+    if (activeFilters.has('bd') && !owned.has(f.title)) show = false;
 
     row.classList.toggle('hidden', !show);
     if (show) visible++;
