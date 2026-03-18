@@ -195,7 +195,7 @@
 
   .film-row {
     display: grid;
-    grid-template-columns: 52px 44px 1fr 50px 60px 80px 80px 80px;
+    grid-template-columns: 52px 44px 1fr 60px 80px 80px 80px;
     align-items: center;
     gap: 12px;
     padding: 8px 12px;
@@ -302,7 +302,7 @@
   /* Column headers */
   .col-headers {
     display: grid;
-    grid-template-columns: 52px 44px 1fr 50px 60px 80px 80px 80px;
+    grid-template-columns: 52px 44px 1fr 60px 80px 80px 80px;
     gap: 12px;
     padding: 12px 12px 8px 12px;
     font-size: 9px;
@@ -343,29 +343,47 @@
     display: none;
   }
 
+  .mobile-rating { display: none; }
+  .desktop-stars { display: inline-flex; }
+  .mobile-stats { display: none; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 5px; }
+  .mobile-stat { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); display: flex; align-items: center; gap: 2px; }
+  .mobile-stat .val { color: var(--text); }
+  .mobile-stat .val-gold { color: var(--accent); }
+  .mobile-stat .val-up { color: var(--up); }
+  .mobile-stat-sep { color: var(--muted); opacity: 0.3; font-size: 10px; }
+
   /* Responsive */
   @media (max-width: 600px) {
     .header { padding: 32px 20px 24px; }
     .controls { padding: 14px 20px; }
-    .film-list { padding: 0 20px; }
-    .col-headers { padding: 12px 32px 8px; margin: 0 20px 4px; }
+    .film-list { padding: 0 12px; }
+    .col-headers { display: none; }
     .section-header { padding: 16px 20px 8px; }
     .legend { padding: 16px 20px; }
 
     .film-row {
-      grid-template-columns: 40px 36px 1fr 50px 64px;
-      padding: 10px 8px;
+      grid-template-columns: 30px 44px 1fr;
+      padding: 8px 4px;
+      gap: 10px;
+      align-items: flex-start;
     }
 
-    .col-headers {
-      grid-template-columns: 40px 36px 1fr 50px 64px;
-    }
-
-    .poster-cell { width: 36px; height: 52px; }
-    .bd-badge, .no-disc { display: none; }
-
+    .rank-cell { flex-direction: column; align-items: flex-end; padding-top: 6px; }
+    .rank-num { font-size: 11px; min-width: 18px; }
+    .move-badge { display: none; }
+    .poster-cell { width: 44px; height: 62px; display: block; }
+    .title-cell { padding-top: 2px; }
+    .film-title { font-size: 13px; }
+    .film-year { font-size: 10px; }
     .hide-mobile { display: none; }
+    .data-cell { display: none; }
+    .mobile-stats { display: flex; }
+    .move-inline { display: block; }
   }
+  .move-inline { display: none; font-size: 11px; margin-top: 3px; }
+  .move-inline-up { color: var(--up); }
+  .move-inline-down { color: var(--down); }
+  .move-inline-new { color: var(--new); }
   .bd-badge { font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 4px; background: rgba(56,139,255,0.12); color: #5B9BFF; letter-spacing: 0.04em; white-space: nowrap; }
   .no-disc { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border); display: inline-block; opacity: 0.3; }
   /* About section */
@@ -434,7 +452,6 @@
   <button class="filter-btn" onclick="toggleFilter('new')" id="btn-new">✦ New</button>
   <button class="filter-btn" onclick="toggleFilter('rewatched')" id="btn-rewatched">↻ Rewatched</button>
   <button class="filter-btn" onclick="toggleFilter('top40')" id="btn-top40">Top 40</button>
-  <button class="filter-btn" onclick="toggleFilter('bd')" id="btn-bd">💿 Blu-ray</button>
   <span class="results-count" id="results-count">100 films</span>
 </div>
 
@@ -459,9 +476,8 @@
     <div class="col-h"></div>
     <div class="col-h"></div>
     <div class="col-h" style="text-align:left">Film</div>
-    <div class="col-h hide-mobile">Blu-ray</div>
     <div class="col-h">Rating</div>
-    <div class="col-h">Watches</div>
+    <div class="col-h hide-mobile">Watches</div>
     <div class="col-h hide-mobile">Rewatches</div>
     <div class="col-h hide-mobile">From</div>
   </div>
@@ -509,46 +525,46 @@ const owned = new Set([
 ]);
 
 const films = [
-  { rank: 1, title: "The Godfather", year: 1972, oldRank: 1, movement: 0, rating: "5", watches: 2, rewatches: 0 },
-  { rank: 2, title: "Back to the Future", year: 1985, oldRank: 2, movement: 0, rating: "5", watches: 3, rewatches: 2 },
-  { rank: 3, title: "Pulp Fiction", year: 1994, oldRank: 3, movement: 0, rating: "5", watches: 3, rewatches: 2 },
-  { rank: 4, title: "La La Land", year: 2016, oldRank: 4, movement: 0, rating: "5", watches: 2, rewatches: 0 },
-  { rank: 5, title: "Inception", year: 2010, oldRank: 5, movement: 0, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 6, title: "Fight Club", year: 1999, oldRank: 6, movement: 0, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 7, title: "Saving Private Ryan", year: 1998, oldRank: 7, movement: 0, rating: "5", watches: 0, rewatches: 0 },
-  { rank: 8, title: "Casino", year: 1995, oldRank: 8, movement: 0, rating: "5", watches: 3, rewatches: 2 },
-  { rank: 9, title: "Gladiator", year: 2000, oldRank: 9, movement: 0, rating: "5", watches: 0, rewatches: 0 },
-  { rank: 10, title: "Parasite", year: 2019, oldRank: 10, movement: 0, rating: "5", watches: 2, rewatches: 1 },
-  { rank: 11, title: "Moneyball", year: 2011, oldRank: 11, movement: 0, rating: "5", watches: 5, rewatches: 3 },
-  { rank: 12, title: "The Usual Suspects", year: 1995, oldRank: 12, movement: 0, rating: "5", watches: 2, rewatches: 1 },
-  { rank: 13, title: "The Shawshank Redemption", year: 1994, oldRank: 13, movement: 0, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 14, title: "The Dark Knight", year: 2008, oldRank: 14, movement: 0, rating: "5", watches: 2, rewatches: 1 },
-  { rank: 15, title: "Interstellar", year: 2014, oldRank: 15, movement: 0, rating: "5", watches: 0, rewatches: 0 },
-  { rank: 16, title: "Heat", year: 1995, oldRank: 16, movement: 0, rating: "5", watches: 2, rewatches: 1 },
-  { rank: 17, title: "Unbreakable", year: 2000, oldRank: 17, movement: 0, rating: "4", watches: 1, rewatches: 1 },
-  { rank: 18, title: "The Matrix", year: 1999, oldRank: 22, movement: 4, rating: "5", watches: 3, rewatches: 2 },
-  { rank: 19, title: "Raiders of the Lost Ark", year: 1981, oldRank: 23, movement: 4, rating: "5", watches: 2, rewatches: 0 },
-  { rank: 20, title: "Whiplash", year: 2014, oldRank: 25, movement: 5, rating: "5", watches: 3, rewatches: 2 },
-  { rank: 21, title: "Jerry Maguire", year: 1996, oldRank: 26, movement: 5, rating: "5", watches: 3, rewatches: 1 },
-  { rank: 22, title: "Jaws", year: 1975, oldRank: 29, movement: 7, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 23, title: "For Love of the Game", year: 1999, oldRank: null, movement: "NEW", rating: "5", watches: 3, rewatches: 2 },
-  { rank: 24, title: "American Psycho", year: 2000, oldRank: 18, movement: -6, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 25, title: "Reservoir Dogs", year: 1992, oldRank: 19, movement: -6, rating: "4.5", watches: 2, rewatches: 1 },
-  { rank: 26, title: "Swingers", year: 1996, oldRank: 20, movement: -6, rating: "4.5", watches: 1, rewatches: 0 },
-  { rank: 27, title: "Blade Runner", year: 1982, oldRank: 21, movement: -6, rating: "4.5", watches: 0, rewatches: 0 },
-  { rank: 28, title: "The Departed", year: 2006, oldRank: 24, movement: -4, rating: "4.5", watches: 2, rewatches: 0 },
-  { rank: 29, title: "Titanic", year: 1997, oldRank: 30, movement: 1, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 30, title: "The Social Network", year: 2010, oldRank: 31, movement: 1, rating: "5", watches: 3, rewatches: 2 },
-  { rank: 31, title: "Major League", year: 1989, oldRank: 34, movement: 3, rating: "5", watches: 4, rewatches: 3 },
-  { rank: 32, title: "Good Will Hunting", year: 1997, oldRank: 42, movement: 10, rating: "5", watches: 3, rewatches: 1 },
-  { rank: 33, title: "Dazed and Confused", year: 1993, oldRank: 35, movement: 2, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 34, title: "Jurassic Park", year: 1993, oldRank: 36, movement: 2, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 35, title: "Arrival", year: 2016, oldRank: 27, movement: -8, rating: "4", watches: 0, rewatches: 0 },
-  { rank: 36, title: "Memento", year: 2000, oldRank: 28, movement: -8, rating: "4.5", watches: 1, rewatches: 0 },
-  { rank: 37, title: "The Game", year: 1997, oldRank: 32, movement: -5, rating: "4", watches: 1, rewatches: 1 },
-  { rank: 38, title: "Killers of the Flower Moon", year: 2023, oldRank: 33, movement: -5, rating: "4.5", watches: 2, rewatches: 1 },
-  { rank: 39, title: "The Right Stuff", year: 1983, oldRank: 37, movement: -2, rating: "4.5", watches: 0, rewatches: 0 },
-  { rank: 40, title: "Leon: The Professional", year: 1994, oldRank: 38, movement: -2, rating: "4.5", watches: 0, rewatches: 0 },
+  { rank: 1, title: "The Godfather", year: 1972, oldRank: 1, movement: 0, rating: "5", watches: 7, rewatches: 0 },
+  { rank: 2, title: "Back to the Future", year: 1985, oldRank: 2, movement: 0, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 3, title: "Pulp Fiction", year: 1994, oldRank: 3, movement: 0, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 4, title: "La La Land", year: 2016, oldRank: 4, movement: 0, rating: "5", watches: 7, rewatches: 0 },
+  { rank: 5, title: "Inception", year: 2010, oldRank: 5, movement: 0, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 6, title: "Fight Club", year: 1999, oldRank: 6, movement: 0, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 7, title: "Saving Private Ryan", year: 1998, oldRank: 7, movement: 0, rating: "5", watches: 5, rewatches: 0 },
+  { rank: 8, title: "Casino", year: 1995, oldRank: 8, movement: 0, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 9, title: "Gladiator", year: 2000, oldRank: 9, movement: 0, rating: "5", watches: 5, rewatches: 0 },
+  { rank: 10, title: "Parasite", year: 2019, oldRank: 10, movement: 0, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 11, title: "Moneyball", year: 2011, oldRank: 11, movement: 0, rating: "5", watches: 10, rewatches: 3 },
+  { rank: 12, title: "The Usual Suspects", year: 1995, oldRank: 12, movement: 0, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 13, title: "The Shawshank Redemption", year: 1994, oldRank: 13, movement: 0, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 14, title: "The Dark Knight", year: 2008, oldRank: 14, movement: 0, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 15, title: "Interstellar", year: 2014, oldRank: 15, movement: 0, rating: "5", watches: 5, rewatches: 0 },
+  { rank: 16, title: "Heat", year: 1995, oldRank: 16, movement: 0, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 17, title: "Unbreakable", year: 2000, oldRank: 17, movement: 0, rating: "4", watches: 6, rewatches: 1 },
+  { rank: 18, title: "The Matrix", year: 1999, oldRank: 22, movement: 4, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 19, title: "Raiders of the Lost Ark", year: 1981, oldRank: 23, movement: 4, rating: "5", watches: 7, rewatches: 0 },
+  { rank: 20, title: "Whiplash", year: 2014, oldRank: 25, movement: 5, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 21, title: "Jerry Maguire", year: 1996, oldRank: 26, movement: 5, rating: "5", watches: 8, rewatches: 1 },
+  { rank: 22, title: "Jaws", year: 1975, oldRank: 29, movement: 7, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 23, title: "For Love of the Game", year: 1999, oldRank: null, movement: "NEW", rating: "5", watches: 8, rewatches: 2 },
+  { rank: 24, title: "American Psycho", year: 2000, oldRank: 18, movement: -6, rating: "4", watches: 6, rewatches: 0 },
+  { rank: 25, title: "Reservoir Dogs", year: 1992, oldRank: 19, movement: -6, rating: "4.5", watches: 7, rewatches: 1 },
+  { rank: 26, title: "Swingers", year: 1996, oldRank: 20, movement: -6, rating: "4.5", watches: 6, rewatches: 0 },
+  { rank: 27, title: "Blade Runner", year: 1982, oldRank: 21, movement: -6, rating: "4.5", watches: 5, rewatches: 0 },
+  { rank: 28, title: "The Departed", year: 2006, oldRank: 24, movement: -4, rating: "4.5", watches: 7, rewatches: 0 },
+  { rank: 29, title: "Titanic", year: 1997, oldRank: 30, movement: 1, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 30, title: "The Social Network", year: 2010, oldRank: 31, movement: 1, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 31, title: "Major League", year: 1989, oldRank: 34, movement: 3, rating: "5", watches: 9, rewatches: 3 },
+  { rank: 32, title: "Good Will Hunting", year: 1997, oldRank: 42, movement: 10, rating: "5", watches: 8, rewatches: 1 },
+  { rank: 33, title: "Dazed and Confused", year: 1993, oldRank: 35, movement: 2, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 34, title: "Jurassic Park", year: 1993, oldRank: 36, movement: 2, rating: "—", watches: 5, rewatches: 0 },
+  { rank: 35, title: "Arrival", year: 2016, oldRank: 27, movement: -8, rating: "4", watches: 5, rewatches: 0 },
+  { rank: 36, title: "Memento", year: 2000, oldRank: 28, movement: -8, rating: "4.5", watches: 6, rewatches: 0 },
+  { rank: 37, title: "The Game", year: 1997, oldRank: 32, movement: -5, rating: "4", watches: 6, rewatches: 1 },
+  { rank: 38, title: "Killers of the Flower Moon", year: 2023, oldRank: 33, movement: -5, rating: "4.5", watches: 7, rewatches: 1 },
+  { rank: 39, title: "The Right Stuff", year: 1983, oldRank: 37, movement: -2, rating: "4.5", watches: 5, rewatches: 0 },
+  { rank: 40, title: "Leon: The Professional", year: 1994, oldRank: 38, movement: -2, rating: "4.5", watches: 5, rewatches: 0 },
   { rank: 41, title: "Mr. Mom", year: 1983, oldRank: 67, movement: 26, rating: "5", watches: 4, rewatches: 2 },
   { rank: 42, title: "Sleepless in Seattle", year: 1993, oldRank: 82, movement: 40, rating: "5", watches: 3, rewatches: 1 },
   { rank: 43, title: "Planes, Trains and Automobiles", year: 1987, oldRank: 96, movement: 53, rating: "5", watches: 4, rewatches: 3 },
@@ -697,6 +713,30 @@ function buildList() {
 
     const fromText = f.oldRank === null ? '—' : `#${f.oldRank}`;
 
+    const moveInlineHtml = () => { return ''; };
+
+    const mobileStarsHtml = () => {
+      if (f.rating === '—') return '<span class="mobile-stat"><span class="val">—</span></span>';
+      const val = parseFloat(f.rating);
+      const full = Math.floor(val);
+      const half = val % 1 >= 0.5;
+      let s = '<span class="mobile-stat">';
+      for (let i = 0; i < 5; i++) {
+        if (i < full) s += '<span class="val-gold" style="font-size:10px">★</span>';
+        else if (i === full && half) s += '<span class="val-gold" style="font-size:10px;opacity:0.6">★</span>';
+        else s += '<span style="font-size:10px;opacity:0.2;color:var(--muted)">★</span>';
+      }
+      s += '</span>';
+      return s;
+    };
+
+    const mobileMoveHtml = () => {
+      if (f.movement === "NEW") return `<span class="mobile-stat"><span class="val-up">✦ New</span></span>`;
+      if (f.movement > 0) return `<span class="mobile-stat"><span class="val-up">↑${f.movement}</span></span>`;
+      if (f.movement < 0) return `<span class="mobile-stat"><span style="color:var(--down)">↓${Math.abs(f.movement)}</span></span>`;
+      return '';
+    };
+
     row.innerHTML = `
       <div class="rank-cell">
         <span class="rank-num">${f.rank}</span>
@@ -708,15 +748,20 @@ function buildList() {
       <div class="title-cell">
         <div class="film-title">${f.title}</div>
         <div class="film-year">${f.year}</div>
-      </div>
-      <div class="data-cell hide-mobile">
-        ${owned.has(f.title) ? '<span class="bd-badge">BD</span>' : '<span class="no-disc"></span>'}
+        <div class="mobile-stats">
+          ${mobileStarsHtml()}
+          <span class="mobile-stat-sep">·</span>
+          <span class="mobile-stat">${f.watches}<span class="val"> views</span></span>
+          ${f.rewatches > 0 ? `<span class="mobile-stat-sep">·</span><span class="mobile-stat"><span class="val-up">${f.rewatches} rewatched</span></span>` : ''}
+          ${mobileMoveHtml() ? `<span class="mobile-stat-sep">·</span>${mobileMoveHtml()}` : ''}
+        </div>
+        ${moveInlineHtml()}
       </div>
       <div class="data-cell">
         <span class="col-label">Rating</span>
-        <span class="rating-val">${renderStars(f.rating)}</span>
+        <span class="rating-val desktop-stars">${renderStars(f.rating)}</span>
       </div>
-      <div class="data-cell">
+      <div class="data-cell hide-mobile">
         <span class="col-label">Watches</span>
         <span class="watches-val">${f.watches > 0 ? f.watches : 1}</span>
       </div>
