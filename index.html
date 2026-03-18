@@ -356,6 +356,36 @@
 
     .hide-mobile { display: none; }
   }
+  /* About section */
+  .about { border-bottom: 1px solid var(--border); padding: 40px; }
+  .about-inner { max-width: 680px; }
+  .about h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+  .about p { font-size: 14px; line-height: 1.8; color: var(--muted); margin-bottom: 12px; }
+  .about p:last-of-type { margin-bottom: 24px; }
+  .criteria { display: flex; gap: 24px; flex-wrap: wrap; }
+  .criterion { display: flex; flex-direction: column; gap: 3px; }
+  .crit-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .crit-val { font-size: 13px; font-family: 'DM Mono', monospace; color: var(--text); }
+  /* Bubble section */
+  .bubble-section { padding: 20px 40px 80px; border-top: 1px solid var(--border); margin-top: 24px; }
+  .bubble-header { max-width: 680px; margin-bottom: 32px; }
+  .bubble-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .bubble-header p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+  .bubble-card { display: grid; grid-template-columns: 52px 1fr; gap: 12px; padding: 18px 12px; border-bottom: 1px solid var(--border); transition: background 0.15s; border-radius: 8px; }
+  .bubble-card:hover { background: var(--surface); }
+  .bubble-card:last-child { border-bottom: none; }
+  .bubble-rank { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); text-align: right; padding-top: 2px; }
+  .bubble-title-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+  .bubble-title { font-size: 15px; font-weight: 400; color: var(--text); }
+  .bubble-year { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .bubble-meta { display: flex; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+  .bubble-data { font-size: 11px; color: var(--muted); display: flex; gap: 4px; align-items: center; }
+  .bubble-data span { color: var(--text); font-family: 'DM Mono', monospace; }
+  .bubble-data .up-val { color: var(--up); }
+  .bubble-note { font-size: 13px; line-height: 1.7; color: var(--muted); }
+  .tag-nodata { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--surface2); color: var(--muted); font-weight: 500; }
+  .tag-strong { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--up-dim); color: var(--up); font-weight: 500; }
+  .tag-quality { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--down-dim); color: var(--down); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -395,6 +425,22 @@
   <span class="results-count" id="results-count">100 films</span>
 </div>
 
+<div class="about">
+  <div class="about-inner">
+    <h2>The List</h2>
+    <p>This is a joy list, not a quality list. Every film here is one I want to return to — not just one I respect or admire. A film can be a masterpiece and still not belong here. Schindler's List is a five-star film. It will never be on this list.</p>
+    <p>The top 40 require at least five viewings. That's the filter. You can't accidentally see something five times. The rewatch count is the most honest signal I have for how much I actually love a film versus how much I think I should love it.</p>
+    <p>Letterboxd data (watches and ratings) begins in 2020. Pre-2020 history is missing — some of these films I saw fifteen times in theaters before Letterboxd existed. The data is a floor, not a ceiling.</p>
+    <p>This list is reassessed every six months with fresh Letterboxd data. Rankings shift. Films enter. Films exit. The list is alive.</p>
+    <div class="criteria">
+      <div class="criterion"><span class="crit-label">Framework</span><span class="crit-val">Joy over quality</span></div>
+      <div class="criterion"><span class="crit-label">Top 40 rule</span><span class="crit-val">5+ viewings required</span></div>
+      <div class="criterion"><span class="crit-label">Data from</span><span class="crit-val">Letterboxd, 2020–present</span></div>
+      <div class="criterion"><span class="crit-label">Last updated</span><span class="crit-val">March 2026</span></div>
+    </div>
+  </div>
+</div>
+
 <div id="film-container">
   <div class="col-headers">
     <div></div>
@@ -413,6 +459,14 @@
   <div class="legend-item"><span class="move-badge move-down">↓ 5</span> Moved down</div>
   <div class="legend-item"><span class="move-badge move-new">NEW</span> New entry</div>
   <div class="legend-item" style="margin-left:8px; font-size:10px;">★ = Letterboxd rating &nbsp;·&nbsp; Watches/Rewatches from 2020 onward only</div>
+</div>
+
+<div class="bubble-section">
+  <div class="bubble-header">
+    <h2>The Bubble — #101 to #120</h2>
+    <p>Films knocking on the door. Some are strong candidates to move inside the top 100 at the next reassessment. Others need a rewatch to confirm their place. A few are here on the strength of memory alone, with no Letterboxd data to back them up yet.</p>
+  </div>
+  <div id="bubble-list"></div>
 </div>
 
 <script>
@@ -517,6 +571,29 @@ const films = [
   { rank: 98, title: "Margin Call", year: 2011, oldRank: 99, movement: 1, rating: "4", watches: 1, rewatches: 0 },
   { rank: 99, title: "Gravity", year: 2013, oldRank: 56, movement: -43, rating: "4", watches: 1, rewatches: 0 },
   { rank: 100, title: "The Commitments", year: 1991, oldRank: 100, movement: 0, rating: "—", watches: 1, rewatches: 0 },
+];
+
+const bubble = [
+  { rank: 101, title: "Office Space", year: 1999, rating: "5", watches: 2, rewatches: 1, note: "Pure joy film — quotable, endlessly rewatchable, 5 stars. Two logged watches with a rewatch already. Arguably undersold at 101." },
+  { rank: 102, title: "Collateral", year: 2004, rating: "5", watches: 1, rewatches: 1, note: "5 stars with a logged rewatch. Underrated Michael Mann — feels like a natural companion to Heat already in your top 20." },
+  { rank: 103, title: "Knives Out", year: 2019, rating: "5", watches: 2, rewatches: 1, note: "2 watches, 1 rewatch, 5 stars. You know who did it and still enjoy every frame — that's the definition of a joy film." },
+  { rank: 104, title: "Moulin Rouge!", year: 2001, rating: "5", watches: 2, rewatches: 1, note: "2 watches, 1 rewatch, 5 stars. La La Land sits at #4 — its spiritual predecessor belongs on the list alongside it." },
+  { rank: 105, title: "Argo", year: 2012, rating: "5", watches: 1, rewatches: 0, note: "5 stars. Only 1 logged watch but given your pre-2020 viewing history this is almost certainly undersold by the data." },
+  { rank: 106, title: "Amadeus", year: 1984, rating: "5", watches: 1, rewatches: 0, note: "Recent 5-star first watch (January 2026). Too new for rewatch data but the rating is unambiguous. Also a strong Criterion physical target." },
+  { rank: 107, title: "Creed", year: 2015, rating: "4.5", watches: 3, rewatches: 1, note: "Most rewatched non-top-100 film in your entire diary. 3 logged watches, 4.5 stars. Joy film through and through — honestly may belong inside the 100." },
+  { rank: 108, title: "Donnie Brasco", year: 1997, rating: "4.5", watches: 3, rewatches: 1, note: "3 watches, 4.5 stars. Criminally absent from the main list. Pacino and Depp at their best — fits your crime film DNA perfectly." },
+  { rank: 109, title: "The Karate Kid", year: 1984, rating: "4.5", watches: 2, rewatches: 1, note: "2 watches, 4.5 stars. Comfort rewatch energy. Rocky IV is #62 — Karate Kid belongs in the same conversation." },
+  { rank: 110, title: "Up in the Air", year: 2009, rating: "5", watches: 2, rewatches: 1, note: "2 watches, 1 rewatch, 5 stars. Consistently underrated relative to its quality. Strong candidate to move into the main 100." },
+  { rank: 111, title: "The Family Man", year: 2000, rating: "4.5", watches: 2, rewatches: 1, note: "2 watches, 4.5 stars. Comfort holiday rewatch — underappreciated Nicolas Cage. Clear joy film." },
+  { rank: 112, title: "Ocean's Eleven", year: 2001, rating: "4.5", watches: 1, rewatches: 0, note: "4.5 stars. Pure fun, endlessly rewatchable. Surprising it isn't already inside the main list." },
+  { rank: 113, title: "Almost Famous", year: 2000, rating: "4.5", watches: 1, rewatches: 0, note: "4.5 stars. A film people tend to love more with every rewatch — worth prioritizing a revisit to see where it lands." },
+  { rank: 114, title: "Uncut Gems", year: 2019, rating: "5", watches: 2, rewatches: 1, note: "5 stars and a logged rewatch — but this is a quality list entry more than a joy list entry. Brilliant and exhausting. Placed here tentatively." },
+  { rank: 115, title: "State of Grace", year: 1990, rating: "—", watches: 0, rewatches: 0, note: "No post-2020 rating or diary entry. Was #91 on your original list so the memory of love is strong — but needs a rewatch to confirm its place." },
+  { rank: 116, title: "The School of Rock", year: 2003, rating: "—", watches: 0, rewatches: 0, note: "No rating logged, no diary entry since joining Letterboxd. Jack Black at peak joy — but unconfirmed by current data. Needs a rewatch." },
+  { rank: 117, title: "Big", year: 1988, rating: "—", watches: 0, rewatches: 0, note: "No rating, no diary entry. Strong nostalgia case but the data offers nothing to work with. A rewatch would settle it quickly." },
+  { rank: 118, title: "One Flew Over the Cuckoo's Nest", year: 1975, rating: "4.5", watches: 1, rewatches: 1, note: "4.5 stars with a logged rewatch. Quality is undeniable — the question is whether its weight makes it a joy film or a quality film." },
+  { rank: 119, title: "Friday", year: 1995, rating: "3.5", watches: 1, rewatches: 0, note: "Originally ranked #44 but only rated 3.5 stars — the biggest gap between ranking and rating on the entire list. Feels like nostalgia overpowering honest assessment." },
+  { rank: 120, title: "Raising Arizona", year: 1987, rating: "5", watches: 1, rewatches: 0, note: "5 stars but only 1 logged watch. Coen Bros at their most purely fun — a strong dark horse candidate to move into the actual top 100." },
 ];
 
 let activeFilters = new Set();
@@ -666,7 +743,42 @@ function filterFilms() {
   document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
 }
 
+function buildBubble() {
+  const container = document.getElementById('bubble-list');
+  bubble.forEach(f => {
+    const noData = f.rating === '—' && f.watches === 0;
+    const isQuality = f.title === 'Uncut Gems' || f.title === "One Flew Over the Cuckoo's Nest";
+    const isStrong = f.watches >= 3 || (f.rewatches >= 1 && f.rating === '5');
+
+    let tag = '';
+    if (noData) tag = '<span class="tag-nodata">Needs rewatch</span>';
+    else if (isQuality) tag = '<span class="tag-quality">Quality vs joy</span>';
+    else if (isStrong) tag = '<span class="tag-strong">Strong candidate</span>';
+
+    const card = document.createElement('div');
+    card.className = 'bubble-card';
+    card.innerHTML = `
+      <div class="bubble-rank">${f.rank}</div>
+      <div class="bubble-body">
+        <div class="bubble-title-row">
+          <span class="bubble-title">${f.title}</span>
+          <span class="bubble-year">${f.year}</span>
+          ${tag}
+        </div>
+        <div class="bubble-meta">
+          <div class="bubble-data">Rating <span>${f.rating !== '—' ? f.rating + '★' : '—'}</span></div>
+          <div class="bubble-data">Watches <span>${f.watches > 0 ? f.watches : '—'}</span></div>
+          <div class="bubble-data">Rewatches <span class="${f.rewatches > 0 ? 'up-val' : ''}">${f.rewatches > 0 ? f.rewatches : '—'}</span></div>
+        </div>
+        <div class="bubble-note">${f.note}</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
 buildList();
+buildBubble();
 </script>
 </body>
 </html>
