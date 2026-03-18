@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Greg's Top 100 Films</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
@@ -194,10 +195,10 @@
 
   .film-row {
     display: grid;
-    grid-template-columns: 52px 1fr 60px 80px 80px 80px;
+    grid-template-columns: 52px 44px 1fr 60px 80px 80px 80px;
     align-items: center;
     gap: 12px;
-    padding: 11px 12px;
+    padding: 8px 12px;
     border-radius: 8px;
     transition: background 0.15s;
     cursor: default;
@@ -256,7 +257,13 @@
     font-family: 'DM Mono', monospace;
   }
 
-  /* Data cells */
+  /* Poster */
+  .poster-cell { width: 44px; height: 62px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .poster-cell img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.3s; }
+  .poster-cell img.loaded { opacity: 1; }
+  .poster-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--muted); opacity: 0.3; }
+
+  /* Poster */
   .data-cell {
     text-align: center;
     font-family: 'DM Mono', monospace;
@@ -295,7 +302,7 @@
   /* Column headers */
   .col-headers {
     display: grid;
-    grid-template-columns: 52px 1fr 60px 80px 80px 80px;
+    grid-template-columns: 52px 44px 1fr 60px 80px 80px 80px;
     gap: 12px;
     padding: 12px 52px 8px;
     font-size: 9px;
@@ -346,13 +353,15 @@
     .legend { padding: 16px 20px; }
 
     .film-row {
-      grid-template-columns: 40px 1fr 50px 64px;
+      grid-template-columns: 40px 36px 1fr 50px 64px;
       padding: 10px 8px;
     }
 
     .col-headers {
-      grid-template-columns: 40px 1fr 50px 64px;
+      grid-template-columns: 40px 36px 1fr 50px 64px;
     }
+
+    .poster-cell { width: 36px; height: 52px; }
 
     .hide-mobile { display: none; }
   }
@@ -394,7 +403,7 @@
   <div class="header-top">
     <div class="title-block">
       <h1>Greg's Top 100 Films</h1>
-      <p>Joy-first ranking · Updated March 2026</p>
+      <p>Joy-first ranking · Updated March 2026 · <a href="https://letterboxd.com/Followgreg/" target="_blank" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(200,169,110,0.4);">Letterboxd ↗</a></p>
     </div>
     <div class="stats-row">
       <div class="stat">
@@ -664,6 +673,9 @@ function buildList() {
         <span class="rank-num">${f.rank}</span>
         ${moveBadge(f.movement)}
       </div>
+      <div class="poster-cell" id="poster-${f.rank}">
+        <div class="poster-placeholder">🎬</div>
+      </div>
       <div class="title-cell">
         <div class="film-title">${f.title}</div>
         <div class="film-year">${f.year}</div>
@@ -674,7 +686,7 @@ function buildList() {
       </div>
       <div class="data-cell">
         <span class="col-label">Watches</span>
-        <span class="${f.watches > 0 ? 'watches-val' : 'no-data'}">${f.watches > 0 ? f.watches : '—'}</span>
+        <span class="watches-val">${f.watches > 0 ? f.watches : 1}</span>
       </div>
       <div class="data-cell hide-mobile">
         <span class="col-label">Rewatches</span>
@@ -682,7 +694,7 @@ function buildList() {
       </div>
       <div class="data-cell hide-mobile">
         <span class="col-label">Was</span>
-        <span class="${f.oldRank ? 'no-data' : 'no-data'}" style="color:var(--muted)">${fromText}</span>
+        <span style="color:var(--muted)">${fromText}</span>
       </div>
     `;
 
@@ -777,8 +789,30 @@ function buildBubble() {
   });
 }
 
+const TMDB_KEY = '5cd8e79a10121eadba6946dcb69e9e98';
+
+async function fetchPosters() {
+  for (const f of films) {
+    try {
+      const query = encodeURIComponent(f.title.replace('The ', '').replace(' (John Woo)', ''));
+      const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US&page=1`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const match = data.results && data.results[0];
+      if (match && match.poster_path) {
+        const cell = document.getElementById(`poster-${f.rank}`);
+        if (cell) {
+          cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${f.title}" onload="this.classList.add('loaded')">`;
+        }
+      }
+    } catch(e) {}
+    await new Promise(r => setTimeout(r, 60));
+  }
+}
+
 buildList();
 buildBubble();
+fetchPosters();
 </script>
 </body>
 </html>
