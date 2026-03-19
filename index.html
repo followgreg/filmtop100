@@ -1532,10 +1532,84 @@ function getSimilarFilms(film) {
 
 let currentTmdbId = null;
 
+async function openYearFilmPanel(f) {
+  const overlay = document.getElementById('detail-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Build a pseudo film object
+  const slug = f.slug || f.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/-$/, '');
+
+  document.getElementById('dp-rank').textContent = `Greg's pick for ${f.year}`;
+  document.getElementById('dp-title').textContent = f.title;
+  document.getElementById('dp-year').textContent = f.year;
+  document.getElementById('dp-rating').textContent = '—';
+  document.getElementById('dp-watches').textContent = '—';
+  document.getElementById('dp-pitch').textContent = 'Loading...';
+  document.getElementById('dp-why').textContent = '';
+  document.getElementById('dp-why').className = 'detail-why';
+  document.getElementById('dp-streaming').innerHTML = '<span style="color:var(--muted);font-size:13px">Loading...</span>';
+  document.getElementById('dp-actions').innerHTML = '';
+  document.getElementById('dp-poster').innerHTML = '';
+  document.getElementById('dp-similars-section').style.display = 'none';
+
+  // Hide the "why it made the list" section for year-only films
+  const whySection = document.getElementById('dp-why').parentElement;
+  whySection.style.display = 'none';
+
+  try {
+    const query = encodeURIComponent(f.title);
+    const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US`;
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+    const match = searchData.results && searchData.results[0];
+
+    if (match) {
+      if (match.poster_path) {
+        document.getElementById('dp-poster').innerHTML =
+          `<img src="https://image.tmdb.org/t/p/w185${match.poster_path}" style="width:100%;height:100%;object-fit:cover">`;
+      }
+
+      const overview = match.overview || '';
+      document.getElementById('dp-pitch').textContent = overview.length > 140 ? overview.substring(0, 137) + '...' : overview || 'No description available.';
+
+      const [videoRes, providerRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/videos?api_key=${TMDB_KEY}`),
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/watch/providers?api_key=${TMDB_KEY}`)
+      ]);
+      const videoData = await videoRes.json();
+      const providerData = await providerRes.json();
+
+      const trailer = videoData.results && videoData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+      const actions = [];
+      if (trailer) actions.push(`<a href="https://www.youtube.com/watch?v=${trailer.key}" target="_blank" class="detail-btn primary">▶ Watch Trailer</a>`);
+      actions.push(`<a href="https://letterboxd.com/film/${slug}/" target="_blank" class="detail-btn">Letterboxd ↗</a>`);
+      document.getElementById('dp-actions').innerHTML = actions.join('');
+
+      const us = providerData.results && providerData.results.US;
+      const streamingEl = document.getElementById('dp-streaming');
+      if (us && (us.flatrate || us.rent || us.buy)) {
+        const all = [...(us.flatrate || []), ...(us.rent || []), ...(us.buy || [])];
+        const unique = [...new Map(all.map(p => [p.provider_id, p])).values()].slice(0, 6);
+        streamingEl.innerHTML = unique.map(p => `<span class="stream-badge">${p.provider_name}</span>`).join('');
+        document.getElementById('dp-streaming-section').style.display = 'block';
+      } else {
+        streamingEl.innerHTML = '<span style="color:var(--muted);font-size:13px">Not available to stream</span>';
+      }
+    }
+  } catch(e) {
+    document.getElementById('dp-pitch').textContent = 'Could not load film details.';
+  }
+}
+
 async function openFilmPanel(film) {
   const overlay = document.getElementById('detail-overlay');
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Restore why section visibility
+  const whySection = document.getElementById('dp-why').parentElement;
+  whySection.style.display = 'block';
 
   // Populate static fields immediately
   document.getElementById('dp-rank').textContent = `#${film.rank} on the list`;
@@ -1803,7 +1877,7 @@ const byYear = [
   { year: 2018, title: "BlacKkKlansman", top100rank: null },
   { year: 2019, title: "Parasite", top100rank: 10 },
   { year: 2020, title: "Sound of Metal", top100rank: null },
-  { year: 2021, title: "Dune", top100rank: null },
+  { year: 2021, title: "Dune", top100rank: null, slug: "dune-2021" },
   { year: 2022, title: "Everything Everywhere All At Once", top100rank: 47 },
   { year: 2023, title: "Past Lives", top100rank: 96 },
   { year: 2024, title: "Conclave", top100rank: null },
@@ -1839,7 +1913,6 @@ function buildYearList() {
     grid.style.cssText = 'padding: 0 40px;';
 
     decades[decade].forEach(f => {
-      const slug = f.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/-$/, '');
       const row = document.createElement('div');
       row.className = 'year-row';
       row.innerHTML = `
@@ -1855,7 +1928,7 @@ function buildYearList() {
         const listFilm = films.find(lf => lf.rank === f.top100rank);
         if (listFilm) row.addEventListener('click', () => openFilmPanel(listFilm));
       } else {
-        row.addEventListener('click', () => window.open(`https://letterboxd.com/film/${slug}/`, '_blank'));
+        row.addEventListener('click', () => openYearFilmPanel(f));
       }
 
       grid.appendChild(row);
