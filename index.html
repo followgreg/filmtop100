@@ -452,6 +452,62 @@
 
   /* Film row clickable */
   .film-row { cursor: pointer; }
+  /* Tabs */
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 40px; background: var(--bg); }
+  .tab-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; padding: 14px 20px; cursor: pointer; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* By Year tab */
+  .year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0; padding: 0 40px; }
+  .year-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid var(--border); }
+  .year-row:hover { background: var(--surface); }
+  .year-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); min-width: 36px; }
+  .year-poster { width: 36px; height: 50px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .year-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .year-poster img.loaded { opacity: 1; }
+  .year-poster-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); opacity: 0.3; }
+  .year-title { font-size: 14px; color: var(--text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .year-on-list { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--accent-dim); color: var(--accent); font-weight: 500; white-space: nowrap; }
+  .year-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 20px 52px 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+  .year-section-label:first-child { border-top: none; margin-top: 0; }
+
+  @media (max-width: 600px) {
+    .tabs { padding: 0 20px; }
+    .year-grid { padding: 0 12px; grid-template-columns: 1fr; }
+    .year-section-label { padding: 16px 24px 8px; }
+  }
+
+  /* Tabs */
+  .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 40px; background: var(--bg); position: sticky; top: 0; z-index: 9; }
+  .tab-btn { padding: 14px 20px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; margin-bottom: -1px; letter-spacing: 0.02em; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px; padding: 20px 40px 80px; }
+  .year-card { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; transition: background 0.15s; text-decoration: none; }
+  .year-card:hover { background: var(--surface); }
+  .year-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); min-width: 34px; }
+  .year-poster { width: 34px; height: 50px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .year-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .year-poster img.loaded { opacity: 1; }
+  .year-info { flex: 1; min-width: 0; }
+  .year-title { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .year-badge { font-size: 10px; color: var(--accent); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .year-intro { padding: 28px 40px 4px; max-width: 680px; }
+  .year-intro p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+  @media (max-width: 600px) {
+    .tab-nav { padding: 0 16px; }
+    .tab-btn { padding: 12px 12px; font-size: 12px; }
+    .year-grid { padding: 12px 12px 80px; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .year-intro { padding: 20px 20px 4px; }
+    .year-card { padding: 8px 6px; gap: 8px; }
+    .year-num { font-size: 11px; min-width: 28px; }
+    .year-title { font-size: 12px; }
+  }
 </style>
 </head>
 <body>
@@ -479,6 +535,13 @@
   </div>
 </div>
 
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('top100')">Top 100</button>
+  <button class="tab-btn" onclick="switchTab('byyear')">Fave Every Year</button>
+</div>
+
+<div id="tab-top100" class="tab-content active">
+
 <div class="controls">
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
@@ -490,6 +553,10 @@
   <button class="filter-btn" onclick="toggleFilter('top40')" id="btn-top40">Top 40</button>
   <span class="results-count" id="results-count">100 films</span>
 </div>
+
+<div class="tab-nav"><button class="tab-btn active" onclick="switchTab('top100')">Top 100</button><button class="tab-btn" onclick="switchTab('byyear')">Best by Year</button></div>
+
+<div id="tab-top100" class="tab-panel active">
 
 <div class="about">
   <div class="about-inner">
@@ -532,6 +599,22 @@
   </div>
   <div id="bubble-list"></div>
 </div>
+
+</div><!-- end tab-top100 -->
+
+<div id="tab-byyear" class="tab-content">
+  <div style="padding: 24px 40px 8px; max-width: 680px;">
+    <p style="font-size:14px;line-height:1.8;color:var(--muted)">My favorite film from every year since 1970. One pick per year, no debates — just the film that meant the most.</p>
+  </div>
+  <div id="year-list"></div>
+</div>
+
+</div><!-- end tab-top100 -->
+
+<div id="tab-byyear" class="tab-panel">
+  <div class="year-intro"><p>One film per year, every year since 1970. No runners-up, no ties. Just the pick.</p></div>
+  <div class="year-grid" id="year-grid"></div>
+</div><!-- end tab-byyear -->
 
 <div class="detail-overlay" id="detail-overlay" onclick="closePanel(event)">
   <div class="detail-panel" id="detail-panel">
@@ -1680,9 +1763,143 @@ function closeDetailPanel() {
   document.body.style.overflow = '';
 }
 
+// Best by Year data
+// top100rank: rank on Greg's top 100, or null
+const byYear = [
+  { year: 1970, title: "M*A*S*H", top100rank: null },
+  { year: 1971, title: "Straw Dogs", top100rank: null },
+  { year: 1972, title: "The Godfather", top100rank: 1 },
+  { year: 1973, title: "Enter the Dragon", top100rank: null },
+  { year: 1974, title: "The Godfather Part II", top100rank: 86 },
+  { year: 1975, title: "Jaws", top100rank: 22 },
+  { year: 1976, title: "Taxi Driver", top100rank: null },
+  { year: 1977, title: "Star Wars", top100rank: null },
+  { year: 1978, title: "Superman", top100rank: null },
+  { year: 1979, title: "Alien", top100rank: null },
+  { year: 1980, title: "Star Wars: Empire Strikes Back", top100rank: 50 },
+  { year: 1981, title: "Raiders of the Lost Ark", top100rank: 19 },
+  { year: 1982, title: "Blade Runner", top100rank: 27 },
+  { year: 1983, title: "The Right Stuff", top100rank: 39 },
+  { year: 1984, title: "Indiana Jones: Temple of Doom", top100rank: 83 },
+  { year: 1985, title: "Back to the Future", top100rank: 2 },
+  { year: 1986, title: "Stand By Me", top100rank: 84 },
+  { year: 1987, title: "Planes, Trains and Automobiles", top100rank: 43 },
+  { year: 1988, title: "Dirty Rotten Scoundrels", top100rank: null },
+  { year: 1989, title: "Field of Dreams", top100rank: 67 },
+  { year: 1990, title: "Goodfellas", top100rank: 60 },
+  { year: 1991, title: "The Silence of the Lambs", top100rank: null },
+  { year: 1992, title: "Reservoir Dogs", top100rank: 25 },
+  { year: 1993, title: "Dazed and Confused", top100rank: 33 },
+  { year: 1994, title: "Pulp Fiction", top100rank: 3 },
+  { year: 1995, title: "Casino", top100rank: 8 },
+  { year: 1996, title: "Jerry Maguire", top100rank: 21 },
+  { year: 1997, title: "Good Will Hunting", top100rank: 32 },
+  { year: 1998, title: "Saving Private Ryan", top100rank: 7 },
+  { year: 1999, title: "Fight Club", top100rank: 6 },
+  { year: 2000, title: "Gladiator", top100rank: 9 },
+  { year: 2001, title: "Lord of the Rings: Fellowship of the Ring", top100rank: 57 },
+  { year: 2002, title: "Catch Me If You Can", top100rank: null },
+  { year: 2003, title: "The School of Rock", top100rank: null },
+  { year: 2004, title: "The Incredibles", top100rank: 73 },
+  { year: 2005, title: "Sin City", top100rank: null },
+  { year: 2006, title: "The Departed", top100rank: 28 },
+  { year: 2007, title: "Zodiac", top100rank: null },
+  { year: 2008, title: "The Dark Knight", top100rank: 14 },
+  { year: 2009, title: "Inglourious Basterds", top100rank: null },
+  { year: 2010, title: "The Social Network", top100rank: 30 },
+  { year: 2011, title: "Moneyball", top100rank: 11 },
+  { year: 2012, title: "Argo", top100rank: null },
+  { year: 2013, title: "The Wolf of Wall Street", top100rank: 61 },
+  { year: 2014, title: "Interstellar", top100rank: 15 },
+  { year: 2015, title: "The Big Short", top100rank: null },
+  { year: 2016, title: "La La Land", top100rank: 4 },
+  { year: 2017, title: "Get Out", top100rank: null },
+  { year: 2018, title: "BlacKkKlansman", top100rank: null },
+  { year: 2019, title: "Parasite", top100rank: 10 },
+  { year: 2020, title: "Sound of Metal", top100rank: null },
+  { year: 2021, title: "Dune", top100rank: null },
+  { year: 2022, title: "Everything Everywhere All At Once", top100rank: 47 },
+  { year: 2023, title: "Past Lives", top100rank: 96 },
+  { year: 2024, title: "Conclave", top100rank: null },
+  { year: 2025, title: "One Battle After Another", top100rank: null },
+];
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.getAttribute('onclick').includes(tab)) btn.classList.add('active');
+  });
+}
+
+function buildYearList() {
+  const container = document.getElementById('year-list');
+  const decades = {};
+  byYear.forEach(f => {
+    const decade = Math.floor(f.year / 10) * 10;
+    if (!decades[decade]) decades[decade] = [];
+    decades[decade].push(f);
+  });
+
+  Object.keys(decades).sort().forEach(decade => {
+    const label = document.createElement('div');
+    label.className = 'year-section-label';
+    label.textContent = `${decade}s`;
+    container.appendChild(label);
+
+    const grid = document.createElement('div');
+    grid.className = 'year-grid';
+
+    decades[decade].forEach(f => {
+      const slug = f.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/-$/, '');
+      const row = document.createElement('div');
+      row.className = 'year-row';
+      row.innerHTML = `
+        <span class="year-num">${f.year}</span>
+        <div class="year-poster" id="yposter-${f.year}">
+          <div class="year-poster-placeholder">🎬</div>
+        </div>
+        <span class="year-title">${f.title}</span>
+        ${f.top100rank ? `<span class="year-on-list">#${f.top100rank} on list</span>` : ''}
+      `;
+
+      // Click to open detail panel if on top 100, else open Letterboxd
+      if (f.top100rank) {
+        const listFilm = films.find(lf => lf.rank === f.top100rank);
+        if (listFilm) row.addEventListener('click', () => openFilmPanel(listFilm));
+      } else {
+        row.addEventListener('click', () => window.open(`https://letterboxd.com/film/${slug}/`, '_blank'));
+      }
+
+      grid.appendChild(row);
+    });
+    container.appendChild(grid);
+  });
+}
+
+async function fetchYearPosters() {
+  for (const f of byYear) {
+    try {
+      const query = encodeURIComponent(f.title.replace(' (John Woo)', ''));
+      const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US&page=1`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const match = data.results && data.results[0];
+      if (match && match.poster_path) {
+        const cell = document.getElementById(`yposter-${f.year}`);
+        if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${f.title}" onload="this.classList.add('loaded')">`;
+      }
+    } catch(e) {}
+    await new Promise(r => setTimeout(r, 60));
+  }
+}
+
 buildList();
 buildBubble();
+buildYearList();
 fetchPosters();
+fetchYearPosters();
 </script>
 </body>
 </html>
