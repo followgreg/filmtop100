@@ -555,7 +555,7 @@
       </div>
       <div>
         <div class="detail-section-label">Why it made the list</div>
-        <div class="detail-why loading" id="dp-why">Generating...</div>
+        <div class="detail-why" id="dp-why"></div>
       </div>
       <div id="dp-similars-section">
         <div class="detail-section-label">Similar films on the list</div>
@@ -1088,8 +1088,8 @@ async function openFilmPanel(film) {
   document.getElementById('dp-rating').textContent = film.rating !== '—' ? film.rating + '★' : '—';
   document.getElementById('dp-watches').textContent = film.watches;
   document.getElementById('dp-pitch').textContent = 'Loading...';
-  document.getElementById('dp-why').textContent = 'Generating...';
-  document.getElementById('dp-why').className = 'detail-why loading';
+  document.getElementById('dp-why').textContent = '';
+  document.getElementById('dp-why').className = 'detail-why';
   document.getElementById('dp-streaming').innerHTML = '<span style="color:var(--muted);font-size:13px">Loading...</span>';
   document.getElementById('dp-actions').innerHTML = '';
   document.getElementById('dp-poster').innerHTML = '';
@@ -1163,47 +1163,121 @@ async function openFilmPanel(film) {
     document.getElementById('dp-pitch').textContent = 'Could not load film details.';
   }
 
-  // Claude API - Why it made the list
+  // Populate why blurb immediately
   generateWhyBlurb(film);
 }
 
-async function generateWhyBlurb(film) {
+const blurbs = {
+  "The Godfather": `The standard everything else gets measured against. Not my most rewatched but the one that defined what cinema could be. Every crime film, every slow burn, every family drama owes this one something. Fun fact: they filmed some of this movie in my Mom's neighborhood in New York.`,
+  "Back to the Future": `Pure joy from the first frame to the last. I've seen it eight times and it still lands every single joke. This is the film I put on when I need to remember why I love movies. It's also one of my most quotable.`,
+  "Pulp Fiction": `Changed how I thought about storytelling. You can break every rule if you do it with enough confidence. One of the movies I go back to all the time for its swagger and its quotability.`,
+  "La La Land": `I have watched this more times than I'll admit. A film about chasing what you love even when it costs you everything that one just lands differently. Here's to the ones who dream.`,
+  "Inception": `Nolan at his most ambitious and it somehow sticks the landing. Six times in and I'm still working out the rules of the dream logic, which is exactly how it's supposed to feel.`,
+  "Fight Club": `One of those films where you watch it the first time and think you understand it, then you watch it again and realize you had no idea. It aged better than it had any right to. If you own the physical copy watch the trailer that they cut to make this movie feel like a romcom.`,
+  "Saving Private Ryan": `The first 25 minutes are as intense as anything ever put on film. It earns every quiet moment after that because of what it puts you through at the beginning. Every time I get a new TV or speaker system, this is the first movie I watch.`,
+  "Casino": `Pesci and De Niro doing what they do best, for three hours, and it never feels long. One of the great films about how excess destroys everything it touches. It's my favorite Scorsese film.`,
+  "Gladiator": `Are you not entertained? Yes. Always. Every single time. Russell Crowe at his absolute peak and a Hans Zimmer score that still makes the hair on your arms stand up.`,
+  "Parasite": `The most formally perfect film I've seen in years. Bong Joon-ho thinks like a photographer -- every frame is a decision, every composition is doing work.`,
+  "Moneyball": `My most rewatched film on this entire list. It's about baseball the way Jaws is about a shark -- and as a lifelong Red Sox fan, the idea of beating the system with math and heart hits different.`,
+  "The Usual Suspects": `One of the great third-act reveals in cinema. Even knowing the twist it still works on rewatch because you spend the whole film admiring how perfectly it was constructed.`,
+  "The Shawshank Redemption": `Gets dismissed as crowd-pleasing but that's doing it a disservice. It's about hope as an act of defiance and it earns every emotional beat it asks for. Brooks was here. So was Red.`,
+  "The Dark Knight": `Heath Ledger turned in one of the greatest screen performances ever and the film is somehow good enough to hold it. Nolan made a superhero film that plays like a crime epic.`,
+  "Interstellar": `The most ambitious thing Nolan has ever attempted and I love it. The science is real and the relative time component is the type of mind-bender that I love from Nolan's films.`,
+  "Heat": `The coffee shop scene. The final chase. The shootout. Michael Mann made the definitive crime film and it doesn't have a wasted frame. De Niro and Pacino at their peaks. Also the echoing of machine gun fire outside the bank is next level.`,
+  "Unbreakable": `I called this Shyamalan's best film and it took years for people to admit it. Quiet, slow, and completely committed to its own logic -- the superhero film for people who don't like superhero films.`,
+  "The Matrix": `Watched this eight times and it still delivers. The Wachowskis built an entire visual language for action cinema in one film and everyone has been borrowing from it since.`,
+  "Raiders of the Lost Ark": `Spielberg at his most purely fun. Every set piece is perfectly calibrated and Harrison Ford makes it look effortless. The blueprint for the modern adventure film.`,
+  "Whiplash": `As someone who went to RISD, the obsession with craft at any cost is uncomfortably familiar. Fletcher would have fit right into critiques. Terrifying and thrilling in equal measure.`,
+  "Jerry Maguire": `Show me the money. You had me at hello. Help me help you. Eight watches and the catchphrases still work because the film actually earns them.`,
+  "Jaws": `The greatest summer film ever made. Spielberg was 27. It changed how movies were made and marketed and it still plays like a thriller, not a historical artifact.`,
+  "For Love of the Game": `A Red Sox fan watching a Yankees pitcher throw a perfect game should hate this movie. I've seen it eight times. Kevin Costner at his most quietly devastating.`,
+  "American Psycho": `Gets funnier and darker with every rewatch. Christian Bale understood exactly what the film needed to be -- a satire so deadpan it's genuinely disturbing. The business card scene tickles my designer brain.`,
+  "Reservoir Dogs": `Tarantino's debut and it still feels dangerous. The ear scene, the dialogue, the circular structure -- all of it landed fully formed on his first try. Mr. Brown is like Mr. Shit.`,
+  "Swingers": `Money. This movie is so money. A love letter to Los Angeles and to the particular misery of being almost-successful in your twenties.`,
+  "Blade Runner": `The most visually influential science fiction film ever made. Every dystopian cityscape in cinema since 1982 owes Ridley Scott a debt. The Final Cut is the definitive version.`,
+  "The Departed": `Scorsese's best film of the 2000s and it's not close. The tension is unbearable in the best way and the ending is ruthless in a way Hollywood almost never allows. Horrible Boston accents but total heat check dialogue by Mark Wahlberg.`,
+  "Titanic": `Still works. The scale is staggering and DiCaprio and Winslet actually have chemistry. Dismiss it as a blockbuster if you want but the filmmaking is extraordinary. I've seen it in theatres, at home, again in theatres in 3D, and at home again.`,
+  "The Social Network": `Fincher and Sorkin on the same film is almost unfair. The opening scene is still the best five minutes of dialogue in any film this century.`,
+  "Major League": `A perfect comedy that understands exactly what it is -- and as a Red Sox fan, rooting for a cursed team hits close to home.`,
+  "Good Will Hunting": `Any love story that references the 1975 Sox is great in my book. Boston has never looked as lived-in and specific as it does in this film.`,
+  "Dazed and Confused": `Linklater captured something real about being young and not knowing what to do with it. The characters feel like people you actually knew, which is the hardest thing to pull off.`,
+  "Jurassic Park": `Spielberg at his most technically dazzling. The kitchen scene is still tense 30 years later. Pure cinema in the most generous sense of the phrase.`,
+  "Arrival": `The most emotionally devastating science fiction film since Eternal Sunshine. Denis Villeneuve understood that the alien contact story was never really about aliens.`,
+  "Memento": `Nolan's most formally interesting film -- the structure isn't a gimmick, it's the point. It still rewards attention.`,
+  "The Game": `Fincher's most underrated film. I'm still not entirely sure what's real and what isn't -- which is exactly how it should feel.`,
+  "Killers of the Flower Moon": `Scorsese's most morally serious film in decades. It gets heavier each time. De Niro and DiCaprio have never been used more against type.`,
+  "The Right Stuff": `The best film about the space program ever made. Phillip Kaufman understood that the astronauts were selling a myth and he made that mythmaking into great cinema.`,
+  "Leon: The Professional": `Lean, precise, and completely committed. Jean Reno and Gary Oldman in their defining roles. The film that introduced the world to Natalie Portman.`,
+  "Mr. Mom": `This was a fave when I was a kid and in every phase of my parenthood it hits differently. Somehow it's one of my most rewatched films and I genuinely cannot explain why -- just put it on and you'll understand.`,
+  "Sleepless in Seattle": `Heather and I watch this every time we need something warm. Nora Ephron understood romantic comedy better than anyone and this is her most effortlessly constructed film. Also, Brooks Robinson probably is the best 3rd baseman ever.`,
+  "Planes, Trains and Automobiles": `The greatest Thanksgiving film ever made. Steve Martin and John Candy found something genuinely moving inside what could have been a simple road comedy. Those aren't pillows.`,
+  "A League of Their Own": `There's no crying in baseball. Four watches and the Penny Marshall rhythm still feels exactly right -- funny and warm and smarter than it looks.`,
+  "Godzilla Minus One": `The best monster film in decades and it works because it earns the monster by making you care about the people first.`,
+  "300": `Technically a four-star film, not five -- but that opening battle sequence is one of the most visually committed things Zack Snyder has ever done. Pure kinetic filmmaking.`,
+  "Everything Everywhere All At Once": `Overwhelming in the best possible way. This is deeply personal to my Asian-American heritage.`,
+  "The Killer (John Woo)": `John Woo at his absolute peak. The action choreography is ballet with guns and the sentimentality is earned because the craft around it is so precise.`,
+  "The Sound of Music": `Julie Andrews at her absolute peak and the Alpine cinematography is genuinely stunning. Touring the actual locations in Salzburg in 2022 was a bucket list moment.`,
+  "Star Wars: Empire Strikes Back": `The one that proved Star Wars could be more than spectacle. Darker, stranger, and more emotionally complex than A New Hope -- and that ending still lands.`,
+  "Out of Sight": `Soderbergh's most purely enjoyable film. George Clooney and Jennifer Lopez have chemistry that jumps off the screen and the trunk scene is one of the best in 90s cinema. Don't sleep on the soundtrack.`,
+  "Get Shorty": `John Travolta at his Pulp Fiction-era peak. A Hollywood satire that actually understands Hollywood and plays the whole thing completely straight.`,
+  "Apollo 13": `Ron Howard's best film and it works because everyone knows how it ends but you're still holding your breath. Kevin Bacon, Tom Hanks, and Bill Paxton at their best.`,
+  "Armageddon": `Completely unhinged in the best way. I still cry at the end. Michael Bay made one genuinely great film and this is it.`,
+  "That Thing You Do!": `Tom Hanks wrote and directed a perfect little film and nobody talks about it enough. The song is genuinely good. The cast is perfect. You'll definitely catch yourself singing the songs.`,
+  "Forrest Gump": `Earned its reputation for a reason. Hanks makes you believe every single word out of Forrest's mouth. The film understands that sincerity is its own kind of courage.`,
+  "Lord of the Rings: Fellowship": `Peter Jackson made something that shouldn't have worked at this scale and he pulled it off completely. The Shire sequence alone is worth the three hours.`,
+  "True Romance": `Tarantino wrote it and Tony Scott directed it and the collision of those two sensibilities is unlike anything else. The Sicilian scene is one of the greatest in any film.`,
+  "Se7en": `Fincher's most relentlessly bleak film. The ending is still one of the most audacious choices in mainstream Hollywood cinema. What's in the box stays with you.`,
+  "Goodfellas": `Scorsese at his most energetic. The Copacabana tracking shot still gets applause. Ray Liotta never topped this.`,
+  "Wolf of Wall Street": `Three hours of excess that somehow earns its runtime. DiCaprio's most committed performance and Scorsese's most furious film. The Quaalude scene is comedy at a high level.`,
+  "Rocky IV": `Objectively a four-star film that I've watched seven times. The training montage is the Platonic ideal of an 80s training montage. Drago must break you. The new cut by Stallone is the one to watch.`,
+  "Friday": `Ice Cube and Chris Tucker in their element, doing what they do best. A film that understands its neighborhood and its characters with real warmth.`,
+  "Die Hard": `The perfect action film. Every set piece is calibrated, every character has exactly the right number of lines, and McClane earns his happy ending.`,
+  "Remember the Titans": `Denzel Washington making every line land harder than it has any right to. The locker room speech is one of the great sports movie speeches.`,
+  "Aliens": `James Cameron took Ridley Scott's quiet horror and turned it into a war film without losing any of what made the original terrifying.`,
+  "Field of Dreams": `If you build it, he will come. Four watches and it still gets me. As a lifelong Red Sox fan, a movie about baseball and fathers and redemption is basically designed for me.`,
+  "Perfect Days": `Wim Wenders made a film about a Tokyo janitor who tends public toilets and it's one of the most beautiful films I've seen in years.`,
+  "Mulholland Drive": `Lynch at his most hallucinatory. I've given up trying to fully decode it -- the experience of watching it is the point.`,
+  "Mad Max Fury Road": `George Miller made an action film at age 70 that embarrassed everyone half his age. The theatrical version is amazing and the Chrome Edition is equally amazing.`,
+  "Draft Day": `I know it's a guilty pleasure film. I don't care. Kevin Costner as a GM making trades on draft day is catnip for a sports fan and I will rewatch it forever.`,
+  "Star Trek: Wrath of Khan": `The best Star Trek film because it understood that the franchise was always about friendship and mortality. Khan is a great villain because he's a man who never let go.`,
+  "The Incredibles": `Pixar at its absolute peak. The mid-life crisis subplot hit harder when I got older. The 'where is my super suit' scene still works.`,
+  "Face/Off": `John Woo and Nicolas Cage and John Travolta at a particular intersection of 90s excess that will never happen again. Completely unhinged and completely committed.`,
+  "Rounders": `The film that made everyone think they could play poker. Malkovich's accent is a choice and the film is better for it.`,
+  "Contact": `Jodie Foster gave one of her best performances in a film that asks genuinely big questions and doesn't flinch from the answers. It still makes me think. Research how Zemeckis pulled off the mirror scene.`,
+  "The Sixth Sense": `The twist works because Shyamalan earned it. Knowing the ending and the film completely holds up -- the craft is in every frame.`,
+  "The Natural": `Roy Hobbs. The lights. The score. Still makes me feel like it's the bottom of the ninth in a pennant race. Baseball movies are my weakness.`,
+  "Groundhog Day": `Gets deeper with every watch, which is appropriate. I think it's actually a film about what it means to be a good person.`,
+  "2001: A Space Odyssey": `Kubrick made something that doesn't obey the rules of cinema and 50 years later nobody has figured out how to describe it. I have like 5 versions of what I think the ending means.`,
+  "The Shining": `Kubrick's most technically controlled film. The steadicam work in the hotel corridors is still the most unsettling cinematography I know. Also the use of symmetry in this film is great.`,
+  "Big Trouble in Little China": `A Jack Burton film from start to finish. It's still the most 1986 thing that has ever existed. Kurt Russell understood the assignment completely.`,
+  "Indiana Jones: Temple of Doom": `Darker than Raiders and not afraid of it. The mine cart sequence is Spielberg at his most purely kinetic. Four watches and it still delivers.`,
+  "Stand By Me": `The most honest film about being twelve years old ever made. It came out when I was around the same age as these boys. They dealt with similar struggles as I did at the time. Deeply impactful movie for me.`,
+  "No Country for Old Men": `The Coens at their most uncompromising. Anton Chigurh is the most frightening character in modern cinema and the ending refuses to give you what you want.`,
+  "Godfather Part II": `The best sequel ever made? De Niro as young Vito is a masterclass and the parallel structure with Pacino's present-day Michael is one of the great structural choices in cinema.`,
+  "Romeo + Juliet": `Baz Luhrmann understood that the language needed a visual counterweight and he built one. The photography is extraordinary and DiCaprio and Danes are perfect.`,
+  "Casino Royale": `The best Bond film because it treated the franchise seriously for the first time. Daniel Craig reset everything and the poker sequence is genuinely tense.`,
+  "Toy Story 2": `My favorite sequel. The Jessie flashback is one of the most emotionally efficient sequences in animation.`,
+  "American History X": `Edward Norton's best performance and a film that doesn't let anyone off the hook. It's still uncomfortable in all the right ways. It is as relevant now as it was when it came out.`,
+  "State of Grace": `Sean Penn and Gary Oldman in Hell's Kitchen, doing the kind of slow-burn crime drama that doesn't get made anymore. Criminally underseen.`,
+  "Crouching Tiger, Hidden Dragon": `Ang Lee made martial arts into something genuinely lyrical. The bamboo forest sequence is still one of the most beautiful things I've seen filmed.`,
+  "Close Encounters of the Third Kind": `Spielberg at his most personal and most patient. The tuba sequence is one of the great pieces of film scoring. The ending still gives me chills even though there's no way I believe a Dad would willingly leave his kids and this planet.`,
+  "Beauty and the Beast": `The best Disney animated film. The ballroom sequence is technically stunning and the score holds up completely. My daughter and I would sing this in the car together on the way to soccer practice. Top 10 memory.`,
+  "Scott Pilgrim vs. the World": `Edgar Wright made a film that shouldn't work -- a video game aesthetic applied to a romantic comedy -- and it works completely. Super inventive.`,
+  "Past Lives": `Celine Song's debut and it's one of the saddest and most honest films about roads not taken I've ever seen. The final scene still guts me.`,
+  "The Town": `Boston looked this real in Good Will Hunting and almost nowhere else. Ben Affleck directing a heist film in his own city and doing it with real authority.`,
+  "Margin Call": `A film about one night at a bank during the financial crisis and it's one of the most quietly devastating things I've seen. The board meeting scene is extraordinary.`,
+  "Gravity": `Technically staggering. The debris sequence is still one of the most intense single sequences in modern cinema. Cuaron earned every award.`,
+  "The Commitments": `Dublin. Soul music. A band that can't stay together. It's still the most purely joyful music film I know. The brass section alone is worth the price of admission.`,
+};
+
+function generateWhyBlurb(film) {
   const whyEl = document.getElementById('dp-why');
-  try {
-    const movementNote = film.movement === "NEW" ? "a new addition to the list" :
-      film.movement > 0 ? `moved up ${film.movement} spots` :
-      film.movement < 0 ? `dropped ${Math.abs(film.movement)} spots` : "held its position";
-
-    const prompt = `You are writing a casual, personal one-paragraph blurb (2-3 sentences max) for Greg's top 100 films list. Greg is a lifelong Red Sox fan from Boston, went to RISD, watches nearly a film a day, shoots photography with a Nikon, and watches films with his partner Heather. He ranks films by joy and rewatchability, not prestige.
-
-Film: ${film.title} (${film.year})
-List rank: #${film.rank} out of 100
-Rating: ${film.rating} out of 5 stars
-Watch count: ${film.watches} times
-Movement: ${movementNote}
-
-Write 2-3 casual sentences explaining why this film earned its spot on Greg's personal joy list. Sound like a real person talking, not a critic. Where it genuinely fits, weave in a reference to the Red Sox, Boston, RISD, photography, or Heather -- but only if it feels natural, don't force it. Be specific to this film. No em dashes. Keep it punchy.`;
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await response.json();
-    const text = data.content && data.content[0] && data.content[0].text;
-    if (text) {
-      whyEl.textContent = text.trim();
-      whyEl.className = 'detail-why';
-    } else {
-      whyEl.textContent = 'Could not generate blurb.';
-      whyEl.className = 'detail-why';
-    }
-  } catch(e) {
-    whyEl.textContent = 'Could not generate blurb.';
+  const blurb = blurbs[film.title];
+  if (blurb) {
+    whyEl.textContent = blurb;
+    whyEl.className = 'detail-why';
+  } else {
+    whyEl.textContent = 'No notes on this one yet.';
     whyEl.className = 'detail-why';
   }
 }
