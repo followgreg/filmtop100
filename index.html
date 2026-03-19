@@ -195,7 +195,7 @@
 
   .film-row {
     display: grid;
-    grid-template-columns: 52px 44px 1fr 60px 80px 80px 80px;
+    grid-template-columns: 52px 44px 1fr 60px 80px 80px;
     align-items: center;
     gap: 12px;
     padding: 8px 12px;
@@ -302,7 +302,7 @@
   /* Column headers */
   .col-headers {
     display: grid;
-    grid-template-columns: 52px 44px 1fr 60px 80px 80px 80px;
+    grid-template-columns: 52px 44px 1fr 60px 80px 80px;
     gap: 12px;
     padding: 12px 12px 8px 12px;
     font-size: 9px;
@@ -458,10 +458,7 @@
 <div class="about">
   <div class="about-inner">
     <h2>The List</h2>
-    <p>This is a joy list, not a quality list. Every film here is one I want to return to — not just one I respect or admire. A film can be a masterpiece and still not belong here. Schindler's List is a five-star film. It will never be on this list.</p>
-    <p>The top 40 require at least five viewings. That's the filter. You can't accidentally see something five times. The rewatch count is the most honest signal I have for how much I actually love a film versus how much I think I should love it.</p>
-    <p>Letterboxd data (watches and ratings) begins in 2020. Pre-2020 history is missing — some of these films I saw fifteen times in theaters before Letterboxd existed. The data is a floor, not a ceiling.</p>
-    <p>This list is reassessed every six months with fresh Letterboxd data. Rankings shift. Films enter. Films exit. The list is alive.</p>
+    <p>One hundred films. Ranked by joy, not quality. The top 40 require five or more viewings to qualify — you can't accidentally love something that many times.</p>
     <div class="criteria">
       <div class="criterion"><span class="crit-label">Framework</span><span class="crit-val">Joy over quality</span></div>
       <div class="criterion"><span class="crit-label">Top 40 rule</span><span class="crit-val">5+ viewings required</span></div>
@@ -478,7 +475,6 @@
     <div class="col-h" style="text-align:left">Film</div>
     <div class="col-h">Rating</div>
     <div class="col-h hide-mobile">Watches</div>
-    <div class="col-h hide-mobile">Rewatches</div>
     <div class="col-h hide-mobile">From</div>
   </div>
 </div>
@@ -565,89 +561,89 @@ const films = [
   { rank: 38, title: "Killers of the Flower Moon", year: 2023, oldRank: 33, movement: -5, rating: "4.5", watches: 7, rewatches: 1 },
   { rank: 39, title: "The Right Stuff", year: 1983, oldRank: 37, movement: -2, rating: "4.5", watches: 5, rewatches: 0 },
   { rank: 40, title: "Leon: The Professional", year: 1994, oldRank: 38, movement: -2, rating: "4.5", watches: 5, rewatches: 0 },
-  { rank: 41, title: "Mr. Mom", year: 1983, oldRank: 67, movement: 26, rating: "5", watches: 4, rewatches: 2 },
-  { rank: 42, title: "Sleepless in Seattle", year: 1993, oldRank: 82, movement: 40, rating: "5", watches: 3, rewatches: 1 },
-  { rank: 43, title: "Planes, Trains and Automobiles", year: 1987, oldRank: 96, movement: 53, rating: "5", watches: 4, rewatches: 3 },
-  { rank: 44, title: "A League of Their Own", year: 1992, oldRank: null, movement: "NEW", rating: "5", watches: 4, rewatches: 2 },
-  { rank: 45, title: "Godzilla Minus One", year: 2023, oldRank: 70, movement: 25, rating: "5", watches: 3, rewatches: 2 },
-  { rank: 46, title: "300", year: 2006, oldRank: 39, movement: -7, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 47, title: "Everything Everywhere All At Once", year: 2022, oldRank: 40, movement: -7, rating: "5", watches: 1, rewatches: 1 },
-  { rank: 48, title: "The Killer (John Woo)", year: 1989, oldRank: 41, movement: -7, rating: "5", watches: 4, rewatches: 1 },
-  { rank: 49, title: "The Sound of Music", year: 1965, oldRank: 43, movement: -6, rating: "5", watches: 2, rewatches: 1 },
-  { rank: 50, title: "Star Wars: Empire Strikes Back", year: 1980, oldRank: 45, movement: -5, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 51, title: "Out of Sight", year: 1998, oldRank: 46, movement: -5, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 52, title: "Get Shorty", year: 1995, oldRank: 47, movement: -5, rating: "—", watches: 2, rewatches: 0 },
-  { rank: 53, title: "Apollo 13", year: 1995, oldRank: 89, movement: 36, rating: "4", watches: 4, rewatches: 3 },
-  { rank: 54, title: "Armageddon", year: 1998, oldRank: 63, movement: 9, rating: "5", watches: 2, rewatches: 1 },
-  { rank: 55, title: "That Thing You Do!", year: 1996, oldRank: 83, movement: 28, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 56, title: "Forrest Gump", year: 1994, oldRank: 49, movement: -7, rating: "4", watches: 3, rewatches: 2 },
-  { rank: 57, title: "Lord of the Rings: Fellowship", year: 2001, oldRank: 50, movement: -7, rating: "5", watches: 3, rewatches: 2 },
-  { rank: 58, title: "True Romance", year: 1993, oldRank: 51, movement: -7, rating: "4.5", watches: 0, rewatches: 0 },
-  { rank: 59, title: "Se7en", year: 1995, oldRank: 54, movement: -5, rating: "—", watches: 1, rewatches: 0 },
-  { rank: 60, title: "Goodfellas", year: 1990, oldRank: 61, movement: 1, rating: "4", watches: 3, rewatches: 2 },
-  { rank: 61, title: "Wolf of Wall Street", year: 2013, oldRank: 53, movement: -8, rating: "4", watches: 3, rewatches: 2 },
-  { rank: 62, title: "Rocky IV", year: 1985, oldRank: 48, movement: -14, rating: "4", watches: 4, rewatches: 1 },
-  { rank: 63, title: "Friday", year: 1995, oldRank: 44, movement: -19, rating: "3.5", watches: 1, rewatches: 0 },
-  { rank: 64, title: "Die Hard", year: 1988, oldRank: 57, movement: -7, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 65, title: "Remember the Titans", year: 2000, oldRank: 58, movement: -7, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 66, title: "Aliens", year: 1986, oldRank: 59, movement: -7, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 67, title: "Field of Dreams", year: 1989, oldRank: 60, movement: -7, rating: "5", watches: 1, rewatches: 0 },
-  { rank: 68, title: "Perfect Days", year: 2023, oldRank: 62, movement: -6, rating: "4.5", watches: 1, rewatches: 0 },
-  { rank: 69, title: "Mulholland Drive", year: 2001, oldRank: 64, movement: -5, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 70, title: "Mad Max Fury Road", year: 2015, oldRank: 66, movement: -4, rating: "4", watches: 0, rewatches: 0 },
-  { rank: 71, title: "Draft Day", year: 2014, oldRank: 68, movement: -3, rating: "4", watches: 5, rewatches: 4 },
-  { rank: 72, title: "Star Trek: Wrath of Khan", year: 1982, oldRank: 69, movement: -3, rating: "4", watches: 2, rewatches: 1 },
-  { rank: 73, title: "The Incredibles", year: 2004, oldRank: 71, movement: -2, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 74, title: "Face/Off", year: 1997, oldRank: 72, movement: -2, rating: "—", watches: 1, rewatches: 0 },
-  { rank: 75, title: "Rounders", year: 1998, oldRank: 73, movement: -2, rating: "4", watches: 2, rewatches: 1 },
-  { rank: 76, title: "Contact", year: 1997, oldRank: 74, movement: -2, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 77, title: "The Sixth Sense", year: 1999, oldRank: 75, movement: -2, rating: "—", watches: 1, rewatches: 0 },
-  { rank: 78, title: "The Natural", year: 1984, oldRank: 78, movement: 0, rating: "4.5", watches: 2, rewatches: 1 },
-  { rank: 79, title: "Groundhog Day", year: 1993, oldRank: 79, movement: 0, rating: "4", watches: 3, rewatches: 2 },
-  { rank: 80, title: "2001: A Space Odyssey", year: 1968, oldRank: 84, movement: 4, rating: "4.5", watches: 2, rewatches: 1 },
-  { rank: 81, title: "The Shining", year: 1980, oldRank: 55, movement: -26, rating: "4", watches: 2, rewatches: 1 },
-  { rank: 82, title: "Big Trouble in Little China", year: 1986, oldRank: 80, movement: -2, rating: "—", watches: 0, rewatches: 0 },
-  { rank: 83, title: "Indiana Jones: Temple of Doom", year: 1984, oldRank: 81, movement: -2, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 84, title: "Stand By Me", year: 1986, oldRank: 77, movement: -7, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 85, title: "No Country for Old Men", year: 2007, oldRank: 87, movement: 2, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 86, title: "Godfather Part II", year: 1974, oldRank: 88, movement: 2, rating: "—", watches: 1, rewatches: 0 },
-  { rank: 87, title: "Romeo + Juliet", year: 1996, oldRank: 52, movement: -35, rating: "—", watches: 1, rewatches: 0 },
-  { rank: 88, title: "Casino Royale", year: 2006, oldRank: 90, movement: 2, rating: "4", watches: 2, rewatches: 0 },
-  { rank: 89, title: "Toy Story 2", year: 1999, oldRank: 76, movement: -13, rating: "4.5", watches: 0, rewatches: 0 },
-  { rank: 90, title: "American History X", year: 1998, oldRank: 65, movement: -25, rating: "4", watches: 0, rewatches: 0 },
-  { rank: 91, title: "State of Grace", year: 1990, oldRank: 91, movement: 0, rating: "4", watches: 0, rewatches: 0 },
-  { rank: 92, title: "Crouching Tiger, Hidden Dragon", year: 2000, oldRank: 92, movement: 0, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 93, title: "Close Encounters of the Third Kind", year: 1977, oldRank: 93, movement: 0, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 94, title: "Beauty and the Beast", year: 1991, oldRank: 94, movement: 0, rating: "4", watches: 0, rewatches: 0 },
-  { rank: 95, title: "Scott Pilgrim vs. the World", year: 2010, oldRank: 95, movement: 0, rating: "4.5", watches: 1, rewatches: 0 },
-  { rank: 96, title: "Past Lives", year: 2023, oldRank: 97, movement: 1, rating: "4.5", watches: 1, rewatches: 0 },
-  { rank: 97, title: "The Town", year: 2010, oldRank: 98, movement: 1, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 98, title: "Margin Call", year: 2011, oldRank: 99, movement: 1, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 99, title: "Gravity", year: 2013, oldRank: 56, movement: -43, rating: "4", watches: 1, rewatches: 0 },
-  { rank: 100, title: "The Commitments", year: 1991, oldRank: 100, movement: 0, rating: "3.5", watches: 1, rewatches: 0 },
+  { rank: 41, title: "Mr. Mom", year: 1983, oldRank: 67, movement: 26, rating: "5", watches: 7, rewatches: 2 },
+  { rank: 42, title: "Sleepless in Seattle", year: 1993, oldRank: 82, movement: 40, rating: "5", watches: 6, rewatches: 1 },
+  { rank: 43, title: "Planes, Trains and Automobiles", year: 1987, oldRank: 96, movement: 53, rating: "5", watches: 7, rewatches: 3 },
+  { rank: 44, title: "A League of Their Own", year: 1992, oldRank: null, movement: "NEW", rating: "5", watches: 7, rewatches: 2 },
+  { rank: 45, title: "Godzilla Minus One", year: 2023, oldRank: 70, movement: 25, rating: "5", watches: 6, rewatches: 2 },
+  { rank: 46, title: "300", year: 2006, oldRank: 39, movement: -7, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 47, title: "Everything Everywhere All At Once", year: 2022, oldRank: 40, movement: -7, rating: "5", watches: 4, rewatches: 1 },
+  { rank: 48, title: "The Killer (John Woo)", year: 1989, oldRank: 41, movement: -7, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 49, title: "The Sound of Music", year: 1965, oldRank: 43, movement: -6, rating: "5", watches: 5, rewatches: 1 },
+  { rank: 50, title: "Star Wars: Empire Strikes Back", year: 1980, oldRank: 45, movement: -5, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 51, title: "Out of Sight", year: 1998, oldRank: 46, movement: -5, rating: "5", watches: 4, rewatches: 0 },
+  { rank: 52, title: "Get Shorty", year: 1995, oldRank: 47, movement: -5, rating: "—", watches: 5, rewatches: 0 },
+  { rank: 53, title: "Apollo 13", year: 1995, oldRank: 89, movement: 36, rating: "4", watches: 7, rewatches: 3 },
+  { rank: 54, title: "Armageddon", year: 1998, oldRank: 63, movement: 9, rating: "5", watches: 5, rewatches: 1 },
+  { rank: 55, title: "That Thing You Do!", year: 1996, oldRank: 83, movement: 28, rating: "5", watches: 4, rewatches: 0 },
+  { rank: 56, title: "Forrest Gump", year: 1994, oldRank: 49, movement: -7, rating: "4", watches: 6, rewatches: 2 },
+  { rank: 57, title: "Lord of the Rings: Fellowship", year: 2001, oldRank: 50, movement: -7, rating: "5", watches: 6, rewatches: 2 },
+  { rank: 58, title: "True Romance", year: 1993, oldRank: 51, movement: -7, rating: "4.5", watches: 3, rewatches: 0 },
+  { rank: 59, title: "Se7en", year: 1995, oldRank: 54, movement: -5, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 60, title: "Goodfellas", year: 1990, oldRank: 61, movement: 1, rating: "4", watches: 6, rewatches: 2 },
+  { rank: 61, title: "Wolf of Wall Street", year: 2013, oldRank: 53, movement: -8, rating: "4", watches: 6, rewatches: 2 },
+  { rank: 62, title: "Rocky IV", year: 1985, oldRank: 48, movement: -14, rating: "4", watches: 7, rewatches: 1 },
+  { rank: 63, title: "Friday", year: 1995, oldRank: 44, movement: -19, rating: "3.5", watches: 4, rewatches: 0 },
+  { rank: 64, title: "Die Hard", year: 1988, oldRank: 57, movement: -7, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 65, title: "Remember the Titans", year: 2000, oldRank: 58, movement: -7, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 66, title: "Aliens", year: 1986, oldRank: 59, movement: -7, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 67, title: "Field of Dreams", year: 1989, oldRank: 60, movement: -7, rating: "5", watches: 4, rewatches: 0 },
+  { rank: 68, title: "Perfect Days", year: 2023, oldRank: 62, movement: -6, rating: "4.5", watches: 4, rewatches: 0 },
+  { rank: 69, title: "Mulholland Drive", year: 2001, oldRank: 64, movement: -5, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 70, title: "Mad Max Fury Road", year: 2015, oldRank: 66, movement: -4, rating: "4", watches: 3, rewatches: 0 },
+  { rank: 71, title: "Draft Day", year: 2014, oldRank: 68, movement: -3, rating: "4", watches: 8, rewatches: 4 },
+  { rank: 72, title: "Star Trek: Wrath of Khan", year: 1982, oldRank: 69, movement: -3, rating: "4", watches: 5, rewatches: 1 },
+  { rank: 73, title: "The Incredibles", year: 2004, oldRank: 71, movement: -2, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 74, title: "Face/Off", year: 1997, oldRank: 72, movement: -2, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 75, title: "Rounders", year: 1998, oldRank: 73, movement: -2, rating: "4", watches: 5, rewatches: 1 },
+  { rank: 76, title: "Contact", year: 1997, oldRank: 74, movement: -2, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 77, title: "The Sixth Sense", year: 1999, oldRank: 75, movement: -2, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 78, title: "The Natural", year: 1984, oldRank: 78, movement: 0, rating: "4.5", watches: 5, rewatches: 1 },
+  { rank: 79, title: "Groundhog Day", year: 1993, oldRank: 79, movement: 0, rating: "4", watches: 6, rewatches: 2 },
+  { rank: 80, title: "2001: A Space Odyssey", year: 1968, oldRank: 84, movement: 4, rating: "4.5", watches: 5, rewatches: 1 },
+  { rank: 81, title: "The Shining", year: 1980, oldRank: 55, movement: -26, rating: "4", watches: 5, rewatches: 1 },
+  { rank: 82, title: "Big Trouble in Little China", year: 1986, oldRank: 80, movement: -2, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 83, title: "Indiana Jones: Temple of Doom", year: 1984, oldRank: 81, movement: -2, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 84, title: "Stand By Me", year: 1986, oldRank: 77, movement: -7, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 85, title: "No Country for Old Men", year: 2007, oldRank: 87, movement: 2, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 86, title: "Godfather Part II", year: 1974, oldRank: 88, movement: 2, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 87, title: "Romeo + Juliet", year: 1996, oldRank: 52, movement: -35, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 88, title: "Casino Royale", year: 2006, oldRank: 90, movement: 2, rating: "4", watches: 5, rewatches: 0 },
+  { rank: 89, title: "Toy Story 2", year: 1999, oldRank: 76, movement: -13, rating: "4.5", watches: 3, rewatches: 0 },
+  { rank: 90, title: "American History X", year: 1998, oldRank: 65, movement: -25, rating: "4", watches: 3, rewatches: 0 },
+  { rank: 91, title: "State of Grace", year: 1990, oldRank: 91, movement: 0, rating: "4", watches: 3, rewatches: 0 },
+  { rank: 92, title: "Crouching Tiger, Hidden Dragon", year: 2000, oldRank: 92, movement: 0, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 93, title: "Close Encounters of the Third Kind", year: 1977, oldRank: 93, movement: 0, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 94, title: "Beauty and the Beast", year: 1991, oldRank: 94, movement: 0, rating: "4", watches: 3, rewatches: 0 },
+  { rank: 95, title: "Scott Pilgrim vs. the World", year: 2010, oldRank: 95, movement: 0, rating: "4.5", watches: 4, rewatches: 0 },
+  { rank: 96, title: "Past Lives", year: 2023, oldRank: 97, movement: 1, rating: "4.5", watches: 4, rewatches: 0 },
+  { rank: 97, title: "The Town", year: 2010, oldRank: 98, movement: 1, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 98, title: "Margin Call", year: 2011, oldRank: 99, movement: 1, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 99, title: "Gravity", year: 2013, oldRank: 56, movement: -43, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 100, title: "The Commitments", year: 1991, oldRank: 100, movement: 0, rating: "3.5", watches: 4, rewatches: 0 },
 ];
 
 const bubble = [
-  { rank: 101, title: "Office Space", year: 1999, rating: "5", watches: 2, rewatches: 1, note: "Pure joy film — quotable, endlessly rewatchable, 5 stars. Two logged watches with a rewatch already. Arguably undersold at 101." },
-  { rank: 102, title: "Collateral", year: 2004, rating: "5", watches: 1, rewatches: 1, note: "5 stars with a logged rewatch. Underrated Michael Mann — feels like a natural companion to Heat already in your top 20." },
-  { rank: 103, title: "Knives Out", year: 2019, rating: "5", watches: 2, rewatches: 1, note: "2 watches, 1 rewatch, 5 stars. You know who did it and still enjoy every frame — that's the definition of a joy film." },
-  { rank: 104, title: "Moulin Rouge!", year: 2001, rating: "5", watches: 2, rewatches: 1, note: "2 watches, 1 rewatch, 5 stars. La La Land sits at #4 — its spiritual predecessor belongs on the list alongside it." },
-  { rank: 105, title: "Argo", year: 2012, rating: "5", watches: 1, rewatches: 0, note: "5 stars. Only 1 logged watch but given your pre-2020 viewing history this is almost certainly undersold by the data." },
-  { rank: 106, title: "Amadeus", year: 1984, rating: "5", watches: 1, rewatches: 0, note: "Recent 5-star first watch (January 2026). Too new for rewatch data but the rating is unambiguous. Also a strong Criterion physical target." },
-  { rank: 107, title: "Creed", year: 2015, rating: "4.5", watches: 3, rewatches: 1, note: "Most rewatched non-top-100 film in your entire diary. 3 logged watches, 4.5 stars. Joy film through and through — honestly may belong inside the 100." },
-  { rank: 108, title: "Donnie Brasco", year: 1997, rating: "4.5", watches: 3, rewatches: 1, note: "3 watches, 4.5 stars. Criminally absent from the main list. Pacino and Depp at their best — fits your crime film DNA perfectly." },
-  { rank: 109, title: "The Karate Kid", year: 1984, rating: "4.5", watches: 2, rewatches: 1, note: "2 watches, 4.5 stars. Comfort rewatch energy. Rocky IV is #62 — Karate Kid belongs in the same conversation." },
-  { rank: 110, title: "Up in the Air", year: 2009, rating: "5", watches: 2, rewatches: 1, note: "2 watches, 1 rewatch, 5 stars. Consistently underrated relative to its quality. Strong candidate to move into the main 100." },
-  { rank: 111, title: "The Family Man", year: 2000, rating: "4.5", watches: 2, rewatches: 1, note: "2 watches, 4.5 stars. Comfort holiday rewatch — underappreciated Nicolas Cage. Clear joy film." },
-  { rank: 112, title: "Ocean's Eleven", year: 2001, rating: "4.5", watches: 1, rewatches: 0, note: "4.5 stars. Pure fun, endlessly rewatchable. Surprising it isn't already inside the main list." },
-  { rank: 113, title: "Almost Famous", year: 2000, rating: "4.5", watches: 1, rewatches: 0, note: "4.5 stars. A film people tend to love more with every rewatch — worth prioritizing a revisit to see where it lands." },
-  { rank: 114, title: "Uncut Gems", year: 2019, rating: "5", watches: 2, rewatches: 1, note: "5 stars and a logged rewatch — but this is a quality list entry more than a joy list entry. Brilliant and exhausting. Placed here tentatively." },
-  { rank: 115, title: "State of Grace", year: 1990, rating: "4", watches: 0, rewatches: 0, note: "Now rated 4 stars — that settles the unrated question from last time. No diary entry yet so still needs a rewatch to confirm it belongs inside the 100." },
-  { rank: 116, title: "The School of Rock", year: 2003, rating: "—", watches: 0, rewatches: 0, note: "No rating logged, no diary entry since joining Letterboxd. Jack Black at peak joy — but unconfirmed by current data. Needs a rewatch." },
-  { rank: 117, title: "Big", year: 1988, rating: "—", watches: 0, rewatches: 0, note: "No rating, no diary entry. Strong nostalgia case but the data offers nothing to work with. A rewatch would settle it quickly." },
-  { rank: 118, title: "One Flew Over the Cuckoo's Nest", year: 1975, rating: "4.5", watches: 1, rewatches: 1, note: "4.5 stars with a logged rewatch. Quality is undeniable — the question is whether its weight makes it a joy film or a quality film." },
-  { rank: 119, title: "Friday", year: 1995, rating: "3.5", watches: 1, rewatches: 0, note: "Originally ranked #44 but only rated 3.5 stars — the biggest gap between ranking and rating on the entire list. Feels like nostalgia overpowering honest assessment." },
-  { rank: 120, title: "Raising Arizona", year: 1987, rating: "5", watches: 1, rewatches: 0, note: "5 stars but only 1 logged watch. Coen Bros at their most purely fun — a strong dark horse candidate to move into the actual top 100." },
+  { rank: 101, title: "Office Space", year: 1999, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 102, title: "Collateral", year: 2004, rating: "5", watches: 1, rewatches: 1 },
+  { rank: 103, title: "Knives Out", year: 2019, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 104, title: "Moulin Rouge!", year: 2001, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 105, title: "Argo", year: 2012, rating: "5", watches: 1, rewatches: 0 },
+  { rank: 106, title: "Amadeus", year: 1984, rating: "5", watches: 1, rewatches: 0 },
+  { rank: 107, title: "Creed", year: 2015, rating: "4.5", watches: 3, rewatches: 1 },
+  { rank: 108, title: "Donnie Brasco", year: 1997, rating: "4.5", watches: 3, rewatches: 1 },
+  { rank: 109, title: "The Karate Kid", year: 1984, rating: "4.5", watches: 2, rewatches: 1 },
+  { rank: 110, title: "Up in the Air", year: 2009, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 111, title: "The Family Man", year: 2000, rating: "4.5", watches: 2, rewatches: 1 },
+  { rank: 112, title: "Ocean's Eleven", year: 2001, rating: "4.5", watches: 1, rewatches: 0 },
+  { rank: 113, title: "Almost Famous", year: 2000, rating: "4.5", watches: 1, rewatches: 0 },
+  { rank: 114, title: "Uncut Gems", year: 2019, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 115, title: "State of Grace", year: 1990, rating: "4", watches: 0, rewatches: 0 },
+  { rank: 116, title: "The School of Rock", year: 2003, rating: "—", watches: 0, rewatches: 0 },
+  { rank: 117, title: "Big", year: 1988, rating: "—", watches: 0, rewatches: 0 },
+  { rank: 118, title: "One Flew Over the Cuckoo's Nest", year: 1975, rating: "4.5", watches: 1, rewatches: 1 },
+  { rank: 119, title: "Friday", year: 1995, rating: "3.5", watches: 1, rewatches: 0 },
+  { rank: 120, title: "Raising Arizona", year: 1987, rating: "5", watches: 1, rewatches: 0 },
 ];
 
 let activeFilters = new Set();
@@ -752,7 +748,6 @@ function buildList() {
           ${mobileStarsHtml()}
           <span class="mobile-stat-sep">·</span>
           <span class="mobile-stat">${f.watches}<span class="val"> views</span></span>
-          ${f.rewatches > 0 ? `<span class="mobile-stat-sep">·</span><span class="mobile-stat"><span class="val-up">${f.rewatches} rewatched</span></span>` : ''}
           ${mobileMoveHtml() ? `<span class="mobile-stat-sep">·</span>${mobileMoveHtml()}` : ''}
         </div>
         ${moveInlineHtml()}
@@ -766,11 +761,7 @@ function buildList() {
         <span class="watches-val">${f.watches > 0 ? f.watches : 1}</span>
       </div>
       <div class="data-cell hide-mobile">
-        <span class="col-label">Rewatches</span>
-        <span class="${f.rewatches > 0 ? 'rewatches-val' : 'no-data'}">${f.rewatches > 0 ? f.rewatches : '—'}</span>
-      </div>
-      <div class="data-cell hide-mobile">
-        <span class="col-label">Was</span>
+        <span class="col-label">From</span>
         <span style="color:var(--muted)">${fromText}</span>
       </div>
     `;
@@ -860,7 +851,6 @@ function buildBubble() {
           <div class="bubble-data">Watches <span>${f.watches > 0 ? f.watches : '—'}</span></div>
           <div class="bubble-data">Rewatches <span class="${f.rewatches > 0 ? 'up-val' : ''}">${f.rewatches > 0 ? f.rewatches : '—'}</span></div>
         </div>
-        <div class="bubble-note">${f.note}</div>
       </div>
     `;
     container.appendChild(card);
