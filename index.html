@@ -416,6 +416,42 @@
   .tag-nodata { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--surface2); color: var(--muted); font-weight: 500; }
   .tag-strong { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--up-dim); color: var(--up); font-weight: 500; }
   .tag-quality { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--down-dim); color: var(--down); font-weight: 500; }
+  /* Detail panel */
+  .detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: flex-end; justify-content: center; }
+  .detail-overlay.open { display: flex; }
+  .detail-panel { background: var(--surface); border-top: 1px solid var(--border); border-radius: 20px 20px 0 0; width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto; padding: 0 0 40px; }
+  .detail-drag { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 20px; }
+  .detail-header { display: flex; gap: 16px; padding: 0 24px 20px; border-bottom: 1px solid var(--border); }
+  .detail-poster { width: 72px; height: 100px; border-radius: 6px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .detail-poster img { width: 100%; height: 100%; object-fit: cover; }
+  .detail-meta { flex: 1; min-width: 0; padding-top: 4px; }
+  .detail-rank { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+  .detail-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+  .detail-year { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .detail-stats { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .detail-stat { display: flex; flex-direction: column; gap: 2px; }
+  .detail-stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .detail-stat-val { font-size: 13px; font-family: 'DM Mono', monospace; color: var(--text); }
+  .detail-stat-val.gold { color: var(--accent); }
+  .detail-body { padding: 20px 24px 0; display: flex; flex-direction: column; gap: 20px; }
+  .detail-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+  .detail-pitch { font-size: 14px; line-height: 1.7; color: var(--muted); font-style: italic; }
+  .detail-why { font-size: 14px; line-height: 1.7; color: var(--text); min-height: 48px; }
+  .detail-why.loading { color: var(--muted); animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+  .detail-similars { display: flex; flex-wrap: wrap; gap: 8px; }
+  .detail-similar { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; }
+  .detail-similar:hover { border-color: var(--accent); color: var(--accent); }
+  .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .detail-btn { display: flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; text-decoration: none; transition: all 0.15s; border: 1px solid var(--border); background: var(--surface2); color: var(--text); }
+  .detail-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .detail-btn.primary { background: var(--accent-dim); border-color: rgba(200,169,110,0.4); color: var(--accent); }
+  .detail-streaming { display: flex; flex-wrap: wrap; gap: 8px; }
+  .stream-badge { font-size: 11px; padding: 4px 10px; border-radius: 6px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .detail-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 4px 8px; }
+
+  /* Film row clickable */
+  .film-row { cursor: pointer; }
 </style>
 </head>
 <body>
@@ -494,6 +530,44 @@
     <p>Films knocking on the door. Some are strong candidates to move inside the top 100 at the next reassessment. Others need a rewatch to confirm their place. A few are here on the strength of memory alone, with no Letterboxd data to back them up yet.</p>
   </div>
   <div id="bubble-list"></div>
+</div>
+
+<div class="detail-overlay" id="detail-overlay" onclick="closePanel(event)">
+  <div class="detail-panel" id="detail-panel">
+    <button class="detail-close" onclick="closeDetailPanel()">✕</button>
+    <div class="detail-drag"></div>
+    <div class="detail-header">
+      <div class="detail-poster" id="dp-poster"></div>
+      <div class="detail-meta">
+        <div class="detail-rank" id="dp-rank"></div>
+        <div class="detail-title" id="dp-title"></div>
+        <div class="detail-year" id="dp-year"></div>
+        <div class="detail-stats">
+          <div class="detail-stat"><span class="detail-stat-label">Rating</span><span class="detail-stat-val gold" id="dp-rating"></span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Watches</span><span class="detail-stat-val" id="dp-watches"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div>
+        <div class="detail-section-label">The pitch</div>
+        <div class="detail-pitch" id="dp-pitch">Loading...</div>
+      </div>
+      <div>
+        <div class="detail-section-label">Why it made the list</div>
+        <div class="detail-why loading" id="dp-why">Generating...</div>
+      </div>
+      <div id="dp-similars-section">
+        <div class="detail-section-label">Similar films on the list</div>
+        <div class="detail-similars" id="dp-similars"></div>
+      </div>
+      <div id="dp-streaming-section">
+        <div class="detail-section-label">Where to watch</div>
+        <div class="detail-streaming" id="dp-streaming"></div>
+      </div>
+      <div class="detail-actions" id="dp-actions"></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -706,6 +780,7 @@ function buildList() {
     row.setAttribute('data-movement', f.movement);
     row.setAttribute('data-rewatched', f.rewatches > 0 ? '1' : '0');
     row.setAttribute('data-title', f.title.toLowerCase());
+    row.addEventListener('click', () => openFilmPanel(f));
 
     const fromText = f.oldRank === null ? '—' : `#${f.oldRank}`;
 
@@ -876,6 +951,270 @@ async function fetchPosters() {
     } catch(e) {}
     await new Promise(r => setTimeout(r, 60));
   }
+}
+
+// Genre/vibe tags for similarity matching
+const filmTags = {
+  "The Godfather": ["crime","drama","epic"],
+  "Back to the Future": ["comedy","sci-fi","adventure"],
+  "Pulp Fiction": ["crime","nonlinear","tarantino"],
+  "La La Land": ["musical","romance","los angeles"],
+  "Inception": ["sci-fi","nolan","mind-bending"],
+  "Fight Club": ["thriller","dark","fincher"],
+  "Saving Private Ryan": ["war","spielberg","epic"],
+  "Casino": ["crime","scorsese","epic"],
+  "Gladiator": ["epic","action","rome"],
+  "Parasite": ["thriller","dark","bong"],
+  "Moneyball": ["sports","baseball","drama"],
+  "The Usual Suspects": ["crime","thriller","twist"],
+  "The Shawshank Redemption": ["drama","prison","hope"],
+  "The Dark Knight": ["superhero","nolan","crime"],
+  "Interstellar": ["sci-fi","nolan","space"],
+  "Heat": ["crime","action","mann"],
+  "Unbreakable": ["superhero","shyamalan","quiet"],
+  "The Matrix": ["sci-fi","action","mind-bending"],
+  "Raiders of the Lost Ark": ["adventure","spielberg","action"],
+  "Whiplash": ["music","obsession","drama"],
+  "Jerry Maguire": ["sports","romance","comedy"],
+  "Jaws": ["thriller","spielberg","horror"],
+  "For Love of the Game": ["sports","baseball","romance"],
+  "American Psycho": ["dark","thriller","satire"],
+  "Reservoir Dogs": ["crime","tarantino","nonlinear"],
+  "Swingers": ["comedy","los angeles","friendship"],
+  "Blade Runner": ["sci-fi","noir","visuals"],
+  "The Departed": ["crime","scorsese","thriller"],
+  "Titanic": ["romance","epic","disaster"],
+  "The Social Network": ["drama","fincher","technology"],
+  "Major League": ["sports","baseball","comedy"],
+  "Good Will Hunting": ["drama","boston","friendship"],
+  "Dazed and Confused": ["comedy","nostalgia","coming-of-age"],
+  "Jurassic Park": ["sci-fi","spielberg","adventure"],
+  "Arrival": ["sci-fi","mind-bending","drama"],
+  "Memento": ["thriller","nolan","nonlinear"],
+  "The Game": ["thriller","fincher","mind-bending"],
+  "Killers of the Flower Moon": ["crime","scorsese","epic"],
+  "The Right Stuff": ["space","epic","americana"],
+  "Leon: The Professional": ["action","crime","besson"],
+  "Mr. Mom": ["comedy","family","80s"],
+  "Sleepless in Seattle": ["romance","comedy","seattle"],
+  "Planes, Trains and Automobiles": ["comedy","friendship","holiday"],
+  "A League of Their Own": ["sports","baseball","comedy"],
+  "Godzilla Minus One": ["monster","epic","japanese"],
+  "300": ["action","epic","visuals"],
+  "Everything Everywhere All At Once": ["sci-fi","mind-bending","family"],
+  "The Killer (John Woo)": ["action","hong kong","woo"],
+  "The Sound of Music": ["musical","classic","family"],
+  "Star Wars: Empire Strikes Back": ["sci-fi","adventure","epic"],
+  "Out of Sight": ["crime","romance","soderbergh"],
+  "Get Shorty": ["crime","comedy","hollywood"],
+  "Apollo 13": ["space","true story","drama"],
+  "Armageddon": ["action","disaster","space"],
+  "That Thing You Do!": ["music","comedy","60s"],
+  "Forrest Gump": ["drama","epic","americana"],
+  "Lord of the Rings: Fellowship": ["fantasy","epic","adventure"],
+  "True Romance": ["crime","romance","tarantino"],
+  "Se7en": ["crime","thriller","fincher"],
+  "Goodfellas": ["crime","scorsese","epic"],
+  "Wolf of Wall Street": ["crime","scorsese","comedy"],
+  "Rocky IV": ["sports","action","80s"],
+  "Friday": ["comedy","los angeles","friendship"],
+  "Die Hard": ["action","thriller","christmas"],
+  "Remember the Titans": ["sports","drama","true story"],
+  "Aliens": ["sci-fi","action","horror"],
+  "Field of Dreams": ["sports","baseball","fantasy"],
+  "Perfect Days": ["drama","quiet","japanese"],
+  "Mulholland Drive": ["noir","lynch","mystery"],
+  "American History X": ["drama","dark","crime"],
+  "Mad Max Fury Road": ["action","post-apocalyptic","visuals"],
+  "Draft Day": ["sports","football","drama"],
+  "Star Trek: Wrath of Khan": ["sci-fi","adventure","space"],
+  "The Incredibles": ["animation","superhero","family"],
+  "Face/Off": ["action","thriller","woo"],
+  "Rounders": ["drama","poker","friendship"],
+  "Contact": ["sci-fi","drama","space"],
+  "The Sixth Sense": ["thriller","shyamalan","twist"],
+  "Toy Story 2": ["animation","adventure","family"],
+  "Stand By Me": ["coming-of-age","friendship","nostalgia"],
+  "The Natural": ["sports","baseball","drama"],
+  "Groundhog Day": ["comedy","fantasy","romance"],
+  "2001: A Space Odyssey": ["sci-fi","kubrick","visuals"],
+  "The Shining": ["horror","kubrick","thriller"],
+  "Big Trouble in Little China": ["action","comedy","80s"],
+  "Indiana Jones: Temple of Doom": ["adventure","spielberg","action"],
+  "No Country for Old Men": ["crime","thriller","coen"],
+  "Godfather Part II": ["crime","drama","epic"],
+  "Romeo + Juliet": ["romance","visuals","shakespeare"],
+  "Casino Royale": ["action","spy","thriller"],
+  "State of Grace": ["crime","drama","new york"],
+  "Crouching Tiger, Hidden Dragon": ["action","martial arts","visuals"],
+  "Close Encounters of the Third Kind": ["sci-fi","spielberg","wonder"],
+  "Beauty and the Beast": ["animation","musical","romance"],
+  "Scott Pilgrim vs. the World": ["action","comedy","visuals"],
+  "Past Lives": ["romance","drama","quiet"],
+  "The Town": ["crime","boston","thriller"],
+  "Margin Call": ["drama","finance","thriller"],
+  "Gravity": ["sci-fi","space","visuals"],
+  "The Commitments": ["music","comedy","irish"],
+};
+
+function getSimilarFilms(film) {
+  const tags = filmTags[film.title] || [];
+  if (!tags.length) return [];
+  const scored = films
+    .filter(f => f.title !== film.title)
+    .map(f => {
+      const otherTags = filmTags[f.title] || [];
+      const shared = tags.filter(t => otherTags.includes(t)).length;
+      return { film: f, score: shared };
+    })
+    .filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map(x => x.film);
+  return scored;
+}
+
+let currentTmdbId = null;
+
+async function openFilmPanel(film) {
+  const overlay = document.getElementById('detail-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Populate static fields immediately
+  document.getElementById('dp-rank').textContent = `#${film.rank} on the list`;
+  document.getElementById('dp-title').textContent = film.title;
+  document.getElementById('dp-year').textContent = film.year;
+  document.getElementById('dp-rating').textContent = film.rating !== '—' ? film.rating + '★' : '—';
+  document.getElementById('dp-watches').textContent = film.watches;
+  document.getElementById('dp-pitch').textContent = 'Loading...';
+  document.getElementById('dp-why').textContent = 'Generating...';
+  document.getElementById('dp-why').className = 'detail-why loading';
+  document.getElementById('dp-streaming').innerHTML = '<span style="color:var(--muted);font-size:13px">Loading...</span>';
+  document.getElementById('dp-actions').innerHTML = '';
+  document.getElementById('dp-poster').innerHTML = '';
+
+  // Similar films
+  const similars = getSimilarFilms(film);
+  const similarsEl = document.getElementById('dp-similars');
+  if (similars.length) {
+    similarsEl.innerHTML = similars.map(s =>
+      `<span class="detail-similar" onclick="closeDetailPanel();setTimeout(()=>openFilmPanel(films.find(f=>f.title==='${s.title.replace(/'/g,"\\'")}'")),200)">#${s.rank} ${s.title}</span>`
+    ).join('');
+    document.getElementById('dp-similars-section').style.display = 'block';
+  } else {
+    document.getElementById('dp-similars-section').style.display = 'none';
+  }
+
+  // Fetch TMDB data
+  try {
+    const query = encodeURIComponent(film.title.replace(' (John Woo)', ''));
+    const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${film.year}&language=en-US`;
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+    const match = searchData.results && searchData.results[0];
+
+    if (match) {
+      currentTmdbId = match.id;
+
+      // Poster
+      if (match.poster_path) {
+        document.getElementById('dp-poster').innerHTML =
+          `<img src="https://image.tmdb.org/t/p/w185${match.poster_path}" style="width:100%;height:100%;object-fit:cover">`;
+      }
+
+      // Pitch from overview
+      const overview = match.overview || '';
+      const pitch = overview.length > 140 ? overview.substring(0, 137) + '...' : overview;
+      document.getElementById('dp-pitch').textContent = pitch || 'No description available.';
+
+      // Fetch videos + providers in parallel
+      const [videoRes, providerRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/videos?api_key=${TMDB_KEY}`),
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/watch/providers?api_key=${TMDB_KEY}`)
+      ]);
+      const videoData = await videoRes.json();
+      const providerData = await providerRes.json();
+
+      // Trailer
+      const trailer = videoData.results && videoData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+      const actions = [];
+      if (trailer) {
+        actions.push(`<a href="https://www.youtube.com/watch?v=${trailer.key}" target="_blank" class="detail-btn primary">▶ Watch Trailer</a>`);
+      }
+      actions.push(`<a href="https://letterboxd.com/film/${film.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'')}/" target="_blank" class="detail-btn">Letterboxd ↗</a>`);
+      document.getElementById('dp-actions').innerHTML = actions.join('');
+
+      // Streaming providers (US)
+      const us = providerData.results && providerData.results.US;
+      const streamingEl = document.getElementById('dp-streaming');
+      if (us && (us.flatrate || us.rent || us.buy)) {
+        const all = [...(us.flatrate || []), ...(us.rent || []), ...(us.buy || [])];
+        const unique = [...new Map(all.map(p => [p.provider_id, p])).values()].slice(0, 6);
+        streamingEl.innerHTML = unique.map(p =>
+          `<span class="stream-badge">${p.provider_name}</span>`
+        ).join('');
+        document.getElementById('dp-streaming-section').style.display = 'block';
+      } else {
+        streamingEl.innerHTML = '<span style="color:var(--muted);font-size:13px">Not available to stream</span>';
+      }
+    }
+  } catch(e) {
+    document.getElementById('dp-pitch').textContent = 'Could not load film details.';
+  }
+
+  // Claude API - Why it made the list
+  generateWhyBlurb(film);
+}
+
+async function generateWhyBlurb(film) {
+  const whyEl = document.getElementById('dp-why');
+  try {
+    const movementNote = film.movement === "NEW" ? "a new addition to the list" :
+      film.movement > 0 ? `moved up ${film.movement} spots` :
+      film.movement < 0 ? `dropped ${Math.abs(film.movement)} spots` : "held its position";
+
+    const prompt = `You are writing a casual, personal one-paragraph blurb (2-3 sentences max) for Greg's top 100 films list. Greg is a lifelong Red Sox fan from Boston, went to RISD, watches nearly a film a day, shoots photography with a Nikon, and watches films with his partner Heather. He ranks films by joy and rewatchability, not prestige.
+
+Film: ${film.title} (${film.year})
+List rank: #${film.rank} out of 100
+Rating: ${film.rating} out of 5 stars
+Watch count: ${film.watches} times
+Movement: ${movementNote}
+
+Write 2-3 casual sentences explaining why this film earned its spot on Greg's personal joy list. Sound like a real person talking, not a critic. Where it genuinely fits, weave in a reference to the Red Sox, Boston, RISD, photography, or Heather -- but only if it feels natural, don't force it. Be specific to this film. No em dashes. Keep it punchy.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await response.json();
+    const text = data.content && data.content[0] && data.content[0].text;
+    if (text) {
+      whyEl.textContent = text.trim();
+      whyEl.className = 'detail-why';
+    } else {
+      whyEl.textContent = 'Could not generate blurb.';
+      whyEl.className = 'detail-why';
+    }
+  } catch(e) {
+    whyEl.textContent = 'Could not generate blurb.';
+    whyEl.className = 'detail-why';
+  }
+}
+
+function closePanel(e) {
+  if (e.target === document.getElementById('detail-overlay')) closeDetailPanel();
+}
+
+function closeDetailPanel() {
+  document.getElementById('detail-overlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 buildList();
