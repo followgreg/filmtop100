@@ -440,7 +440,7 @@
   .detail-why.loading { color: var(--muted); animation: pulse 1.5s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
   .detail-similars { display: flex; flex-wrap: wrap; gap: 8px; }
-  .detail-similar { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; }
+  .detail-similar { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
   .detail-similar:hover { border-color: var(--accent); color: var(--accent); }
   .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .detail-btn { display: flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; text-decoration: none; transition: all 0.15s; border: 1px solid var(--border); background: var(--surface2); color: var(--text); }
@@ -495,6 +495,7 @@
   <div class="about-inner">
     <h2>The List</h2>
     <p>One hundred films. Ranked by joy, not quality. The top 40 require five or more viewings to qualify — you can't accidentally love something that many times.</p>
+    <p>This list is re-evaluated every 6 months and while informed by quantified data points, finalized by gut and passion.</p>
     <div class="criteria">
       <div class="criterion"><span class="crit-label">Framework</span><span class="crit-val">Joy over quality</span></div>
       <div class="criterion"><span class="crit-label">Top 40 rule</span><span class="crit-val">5+ viewings required</span></div>
@@ -558,7 +559,7 @@
         <div class="detail-why" id="dp-why"></div>
       </div>
       <div id="dp-similars-section">
-        <div class="detail-section-label">Similar films on the list</div>
+        <div class="detail-section-label">If you like this, you may also like</div>
         <div class="detail-similars" id="dp-similars"></div>
       </div>
       <div id="dp-streaming-section">
@@ -953,125 +954,511 @@ async function fetchPosters() {
   }
 }
 
-// Genre/vibe tags for similarity matching
-const filmTags = {
-  "The Godfather": ["crime","drama","epic"],
-  "Back to the Future": ["comedy","sci-fi","adventure"],
-  "Pulp Fiction": ["crime","nonlinear","tarantino"],
-  "La La Land": ["musical","romance","los angeles"],
-  "Inception": ["sci-fi","nolan","mind-bending"],
-  "Fight Club": ["thriller","dark","fincher"],
-  "Saving Private Ryan": ["war","spielberg","epic"],
-  "Casino": ["crime","scorsese","epic"],
-  "Gladiator": ["epic","action","rome"],
-  "Parasite": ["thriller","dark","bong"],
-  "Moneyball": ["sports","baseball","drama"],
-  "The Usual Suspects": ["crime","thriller","twist"],
-  "The Shawshank Redemption": ["drama","prison","hope"],
-  "The Dark Knight": ["superhero","nolan","crime"],
-  "Interstellar": ["sci-fi","nolan","space"],
-  "Heat": ["crime","action","mann"],
-  "Unbreakable": ["superhero","shyamalan","quiet"],
-  "The Matrix": ["sci-fi","action","mind-bending"],
-  "Raiders of the Lost Ark": ["adventure","spielberg","action"],
-  "Whiplash": ["music","obsession","drama"],
-  "Jerry Maguire": ["sports","romance","comedy"],
-  "Jaws": ["thriller","spielberg","horror"],
-  "For Love of the Game": ["sports","baseball","romance"],
-  "American Psycho": ["dark","thriller","satire"],
-  "Reservoir Dogs": ["crime","tarantino","nonlinear"],
-  "Swingers": ["comedy","los angeles","friendship"],
-  "Blade Runner": ["sci-fi","noir","visuals"],
-  "The Departed": ["crime","scorsese","thriller"],
-  "Titanic": ["romance","epic","disaster"],
-  "The Social Network": ["drama","fincher","technology"],
-  "Major League": ["sports","baseball","comedy"],
-  "Good Will Hunting": ["drama","boston","friendship"],
-  "Dazed and Confused": ["comedy","nostalgia","coming-of-age"],
-  "Jurassic Park": ["sci-fi","spielberg","adventure"],
-  "Arrival": ["sci-fi","mind-bending","drama"],
-  "Memento": ["thriller","nolan","nonlinear"],
-  "The Game": ["thriller","fincher","mind-bending"],
-  "Killers of the Flower Moon": ["crime","scorsese","epic"],
-  "The Right Stuff": ["space","epic","americana"],
-  "Leon: The Professional": ["action","crime","besson"],
-  "Mr. Mom": ["comedy","family","80s"],
-  "Sleepless in Seattle": ["romance","comedy","seattle"],
-  "Planes, Trains and Automobiles": ["comedy","friendship","holiday"],
-  "A League of Their Own": ["sports","baseball","comedy"],
-  "Godzilla Minus One": ["monster","epic","japanese"],
-  "300": ["action","epic","visuals"],
-  "Everything Everywhere All At Once": ["sci-fi","mind-bending","family"],
-  "The Killer (John Woo)": ["action","hong kong","woo"],
-  "The Sound of Music": ["musical","classic","family"],
-  "Star Wars: Empire Strikes Back": ["sci-fi","adventure","epic"],
-  "Out of Sight": ["crime","romance","soderbergh"],
-  "Get Shorty": ["crime","comedy","hollywood"],
-  "Apollo 13": ["space","true story","drama"],
-  "Armageddon": ["action","disaster","space"],
-  "That Thing You Do!": ["music","comedy","60s"],
-  "Forrest Gump": ["drama","epic","americana"],
-  "Lord of the Rings: Fellowship": ["fantasy","epic","adventure"],
-  "True Romance": ["crime","romance","tarantino"],
-  "Se7en": ["crime","thriller","fincher"],
-  "Goodfellas": ["crime","scorsese","epic"],
-  "Wolf of Wall Street": ["crime","scorsese","comedy"],
-  "Rocky IV": ["sports","action","80s"],
-  "Friday": ["comedy","los angeles","friendship"],
-  "Die Hard": ["action","thriller","christmas"],
-  "Remember the Titans": ["sports","drama","true story"],
-  "Aliens": ["sci-fi","action","horror"],
-  "Field of Dreams": ["sports","baseball","fantasy"],
-  "Perfect Days": ["drama","quiet","japanese"],
-  "Mulholland Drive": ["noir","lynch","mystery"],
-  "American History X": ["drama","dark","crime"],
-  "Mad Max Fury Road": ["action","post-apocalyptic","visuals"],
-  "Draft Day": ["sports","football","drama"],
-  "Star Trek: Wrath of Khan": ["sci-fi","adventure","space"],
-  "The Incredibles": ["animation","superhero","family"],
-  "Face/Off": ["action","thriller","woo"],
-  "Rounders": ["drama","poker","friendship"],
-  "Contact": ["sci-fi","drama","space"],
-  "The Sixth Sense": ["thriller","shyamalan","twist"],
-  "Toy Story 2": ["animation","adventure","family"],
-  "Stand By Me": ["coming-of-age","friendship","nostalgia"],
-  "The Natural": ["sports","baseball","drama"],
-  "Groundhog Day": ["comedy","fantasy","romance"],
-  "2001: A Space Odyssey": ["sci-fi","kubrick","visuals"],
-  "The Shining": ["horror","kubrick","thriller"],
-  "Big Trouble in Little China": ["action","comedy","80s"],
-  "Indiana Jones: Temple of Doom": ["adventure","spielberg","action"],
-  "No Country for Old Men": ["crime","thriller","coen"],
-  "Godfather Part II": ["crime","drama","epic"],
-  "Romeo + Juliet": ["romance","visuals","shakespeare"],
-  "Casino Royale": ["action","spy","thriller"],
-  "State of Grace": ["crime","drama","new york"],
-  "Crouching Tiger, Hidden Dragon": ["action","martial arts","visuals"],
-  "Close Encounters of the Third Kind": ["sci-fi","spielberg","wonder"],
-  "Beauty and the Beast": ["animation","musical","romance"],
-  "Scott Pilgrim vs. the World": ["action","comedy","visuals"],
-  "Past Lives": ["romance","drama","quiet"],
-  "The Town": ["crime","boston","thriller"],
-  "Margin Call": ["drama","finance","thriller"],
-  "Gravity": ["sci-fi","space","visuals"],
-  "The Commitments": ["music","comedy","irish"],
+const recs = {
+  "The Godfather": [
+    {title: "The Godfather Part II", year: 1974, rank: 86, slug: "the-godfather-part-ii"},
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "Once Upon a Time in America", year: 1984, rank: null, slug: "once-upon-a-time-in-america"}
+  ],
+  "Back to the Future": [
+    {title: "Groundhog Day", year: 1993, rank: 79, slug: "groundhog-day"},
+    {title: "Ferris Bueller's Day Off", year: 1986, rank: null, slug: "ferris-buellers-day-off"},
+    {title: "Bill & Ted's Excellent Adventure", year: 1989, rank: null, slug: "bill-teds-excellent-adventure"}
+  ],
+  "Pulp Fiction": [
+    {title: "Reservoir Dogs", year: 1992, rank: 25, slug: "reservoir-dogs"},
+    {title: "Jackie Brown", year: 1997, rank: null, slug: "jackie-brown"},
+    {title: "True Romance", year: 1993, rank: 58, slug: "true-romance"}
+  ],
+  "La La Land": [
+    {title: "Whiplash", year: 2014, rank: 20, slug: "whiplash"},
+    {title: "Moulin Rouge!", year: 2001, rank: null, slug: "moulin-rouge"},
+    {title: "The Artist", year: 2011, rank: null, slug: "the-artist"}
+  ],
+  "Inception": [
+    {title: "Memento", year: 2000, rank: 36, slug: "memento"},
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"},
+    {title: "The Matrix", year: 1999, rank: 18, slug: "the-matrix"}
+  ],
+  "Fight Club": [
+    {title: "American Psycho", year: 2000, rank: 24, slug: "american-psycho"},
+    {title: "Se7en", year: 1995, rank: 59, slug: "se7en"},
+    {title: "Requiem for a Dream", year: 2000, rank: null, slug: "requiem-for-a-dream"}
+  ],
+  "Saving Private Ryan": [
+    {title: "The Thin Red Line", year: 1998, rank: null, slug: "the-thin-red-line"},
+    {title: "Full Metal Jacket", year: 1987, rank: null, slug: "full-metal-jacket"},
+    {title: "Hacksaw Ridge", year: 2016, rank: null, slug: "hacksaw-ridge"}
+  ],
+  "Casino": [
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "The Godfather", year: 1972, rank: 1, slug: "the-godfather"},
+    {title: "Boogie Nights", year: 1997, rank: null, slug: "boogie-nights"}
+  ],
+  "Gladiator": [
+    {title: "Braveheart", year: 1995, rank: null, slug: "braveheart"},
+    {title: "300", year: 2006, rank: 46, slug: "300"},
+    {title: "The Last Samurai", year: 2003, rank: null, slug: "the-last-samurai"}
+  ],
+  "Parasite": [
+    {title: "Memories of Murder", year: 2003, rank: null, slug: "memories-of-murder"},
+    {title: "Burning", year: 2018, rank: null, slug: "burning"},
+    {title: "The Handmaiden", year: 2016, rank: null, slug: "the-handmaiden"}
+  ],
+  "Moneyball": [
+    {title: "For Love of the Game", year: 1999, rank: 23, slug: "for-love-of-the-game"},
+    {title: "Major League", year: 1989, rank: 31, slug: "major-league"},
+    {title: "Draft Day", year: 2014, rank: 71, slug: "draft-day"}
+  ],
+  "The Usual Suspects": [
+    {title: "Memento", year: 2000, rank: 36, slug: "memento"},
+    {title: "The Game", year: 1997, rank: 37, slug: "the-game"},
+    {title: "Primal Fear", year: 1996, rank: null, slug: "primal-fear"}
+  ],
+  "The Shawshank Redemption": [
+    {title: "The Green Mile", year: 1999, rank: null, slug: "the-green-mile"},
+    {title: "One Flew Over the Cuckoo's Nest", year: 1975, rank: null, slug: "one-flew-over-the-cuckoos-nest"},
+    {title: "Cool Hand Luke", year: 1967, rank: null, slug: "cool-hand-luke"}
+  ],
+  "The Dark Knight": [
+    {title: "Heat", year: 1995, rank: 16, slug: "heat"},
+    {title: "Unbreakable", year: 2000, rank: 17, slug: "unbreakable"},
+    {title: "Prisoners", year: 2013, rank: null, slug: "prisoners"}
+  ],
+  "Interstellar": [
+    {title: "Arrival", year: 2016, rank: 35, slug: "arrival"},
+    {title: "2001: A Space Odyssey", year: 1968, rank: 80, slug: "2001-a-space-odyssey"},
+    {title: "Contact", year: 1997, rank: 76, slug: "contact"}
+  ],
+  "Heat": [
+    {title: "Collateral", year: 2004, rank: null, slug: "collateral"},
+    {title: "The Departed", year: 2006, rank: 28, slug: "the-departed"},
+    {title: "No Country for Old Men", year: 2007, rank: 85, slug: "no-country-for-old-men"}
+  ],
+  "Unbreakable": [
+    {title: "Split", year: 2016, rank: null, slug: "split"},
+    {title: "The Sixth Sense", year: 1999, rank: 77, slug: "the-sixth-sense"},
+    {title: "Signs", year: 2002, rank: null, slug: "signs"}
+  ],
+  "The Matrix": [
+    {title: "Inception", year: 2010, rank: 5, slug: "inception"},
+    {title: "Dark City", year: 1998, rank: null, slug: "dark-city"},
+    {title: "The Thirteenth Floor", year: 1999, rank: null, slug: "the-thirteenth-floor"}
+  ],
+  "Raiders of the Lost Ark": [
+    {title: "Indiana Jones and the Temple of Doom", year: 1984, rank: 83, slug: "indiana-jones-and-the-temple-of-doom"},
+    {title: "The Mummy", year: 1999, rank: null, slug: "the-mummy"},
+    {title: "National Treasure", year: 2004, rank: null, slug: "national-treasure"}
+  ],
+  "Whiplash": [
+    {title: "La La Land", year: 2016, rank: 4, slug: "la-la-land"},
+    {title: "Black Swan", year: 2010, rank: null, slug: "black-swan"},
+    {title: "Shine", year: 1996, rank: null, slug: "shine"}
+  ],
+  "Jerry Maguire": [
+    {title: "Tin Cup", year: 1996, rank: null, slug: "tin-cup"},
+    {title: "As Good as It Gets", year: 1997, rank: null, slug: "as-good-as-it-gets"},
+    {title: "Good Will Hunting", year: 1997, rank: 32, slug: "good-will-hunting"}
+  ],
+  "Jaws": [
+    {title: "Aliens", year: 1986, rank: 66, slug: "aliens"},
+    {title: "The Thing", year: 1982, rank: null, slug: "the-thing"},
+    {title: "Jurassic Park", year: 1993, rank: 34, slug: "jurassic-park"}
+  ],
+  "For Love of the Game": [
+    {title: "Moneyball", year: 2011, rank: 11, slug: "moneyball"},
+    {title: "The Natural", year: 1984, rank: 78, slug: "the-natural"},
+    {title: "Field of Dreams", year: 1989, rank: 67, slug: "field-of-dreams"}
+  ],
+  "American Psycho": [
+    {title: "Fight Club", year: 1999, rank: 6, slug: "fight-club"},
+    {title: "The Talented Mr. Ripley", year: 1999, rank: null, slug: "the-talented-mr-ripley"},
+    {title: "A Psycho", year: 1960, rank: null, slug: "a-psycho"}
+  ],
+  "Reservoir Dogs": [
+    {title: "Pulp Fiction", year: 1994, rank: 3, slug: "pulp-fiction"},
+    {title: "True Romance", year: 1993, rank: 58, slug: "true-romance"},
+    {title: "Lock, Stock and Two Smoking Barrels", year: 1998, rank: null, slug: "lock-stock-and-two-smoking-barrels"}
+  ],
+  "Swingers": [
+    {title: "Dazed and Confused", year: 1993, rank: 33, slug: "dazed-and-confused"},
+    {title: "High Fidelity", year: 2000, rank: null, slug: "high-fidelity"},
+    {title: "Singles", year: 1992, rank: null, slug: "singles"}
+  ],
+  "Blade Runner": [
+    {title: "Blade Runner 2049", year: 2017, rank: null, slug: "blade-runner-2049"},
+    {title: "The Matrix", year: 1999, rank: 18, slug: "the-matrix"},
+    {title: "Dark City", year: 1998, rank: null, slug: "dark-city"}
+  ],
+  "The Departed": [
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "Heat", year: 1995, rank: 16, slug: "heat"},
+    {title: "State of Grace", year: 1990, rank: 91, slug: "state-of-grace"}
+  ],
+  "Titanic": [
+    {title: "Romeo + Juliet", year: 1996, rank: 87, slug: "romeo-juliet"},
+    {title: "The English Patient", year: 1996, rank: null, slug: "the-english-patient"},
+    {title: "Out of Africa", year: 1985, rank: null, slug: "out-of-africa"}
+  ],
+  "The Social Network": [
+    {title: "Moneyball", year: 2011, rank: 11, slug: "moneyball"},
+    {title: "Margin Call", year: 2011, rank: 98, slug: "margin-call"},
+    {title: "Steve Jobs", year: 2015, rank: null, slug: "steve-jobs"}
+  ],
+  "Major League": [
+    {title: "A League of Their Own", year: 1992, rank: 44, slug: "a-league-of-their-own"},
+    {title: "Bull Durham", year: 1988, rank: null, slug: "bull-durham"},
+    {title: "Rookie of the Year", year: 1993, rank: null, slug: "rookie-of-the-year"}
+  ],
+  "Good Will Hunting": [
+    {title: "The Town", year: 2010, rank: 97, slug: "the-town"},
+    {title: "Mystic River", year: 2003, rank: null, slug: "mystic-river"},
+    {title: "Gone Baby Gone", year: 2007, rank: null, slug: "gone-baby-gone"}
+  ],
+  "Dazed and Confused": [
+    {title: "Almost Famous", year: 2000, rank: null, slug: "almost-famous"},
+    {title: "Stand By Me", year: 1986, rank: 84, slug: "stand-by-me"},
+    {title: "Boyhood", year: 2014, rank: null, slug: "boyhood"}
+  ],
+  "Jurassic Park": [
+    {title: "Jaws", year: 1975, rank: 22, slug: "jaws"},
+    {title: "The Lost World", year: 1997, rank: null, slug: "the-lost-world"},
+    {title: "Predator", year: 1987, rank: null, slug: "predator"}
+  ],
+  "Arrival": [
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"},
+    {title: "Contact", year: 1997, rank: 76, slug: "contact"},
+    {title: "Annihilation", year: 2018, rank: null, slug: "annihilation"}
+  ],
+  "Memento": [
+    {title: "Inception", year: 2010, rank: 5, slug: "inception"},
+    {title: "The Usual Suspects", year: 1995, rank: 12, slug: "the-usual-suspects"},
+    {title: "Oldboy", year: 2003, rank: null, slug: "oldboy"}
+  ],
+  "The Game": [
+    {title: "Se7en", year: 1995, rank: 59, slug: "se7en"},
+    {title: "Fight Club", year: 1999, rank: 6, slug: "fight-club"},
+    {title: "Gone Girl", year: 2014, rank: null, slug: "gone-girl"}
+  ],
+  "Killers of the Flower Moon": [
+    {title: "The Godfather", year: 1972, rank: 1, slug: "the-godfather"},
+    {title: "There Will Be Blood", year: 2007, rank: null, slug: "there-will-be-blood"},
+    {title: "Chinatown", year: 1974, rank: null, slug: "chinatown"}
+  ],
+  "The Right Stuff": [
+    {title: "Apollo 13", year: 1995, rank: 53, slug: "apollo-13"},
+    {title: "First Man", year: 2018, rank: null, slug: "first-man"},
+    {title: "Hidden Figures", year: 2016, rank: null, slug: "hidden-figures"}
+  ],
+  "Leon: The Professional": [
+    {title: "Nikita", year: 1990, rank: null, slug: "nikita"},
+    {title: "Heat", year: 1995, rank: 16, slug: "heat"},
+    {title: "John Wick", year: 2014, rank: null, slug: "john-wick"}
+  ],
+  "Mr. Mom": [
+    {title: "Kramer vs. Kramer", year: 1979, rank: null, slug: "kramer-vs-kramer"},
+    {title: "Three Men and a Baby", year: 1987, rank: null, slug: "three-men-and-a-baby"},
+    {title: "Parenthood", year: 1989, rank: null, slug: "parenthood"}
+  ],
+  "Sleepless in Seattle": [
+    {title: "You've Got Mail", year: 1998, rank: null, slug: "youve-got-mail"},
+    {title: "When Harry Met Sally", year: 1989, rank: null, slug: "when-harry-met-sally"},
+    {title: "An Affair to Remember", year: 1957, rank: null, slug: "an-affair-to-remember"}
+  ],
+  "Planes, Trains and Automobiles": [
+    {title: "Groundhog Day", year: 1993, rank: 79, slug: "groundhog-day"},
+    {title: "The Out-of-Towners", year: 1970, rank: null, slug: "the-out-of-towners"},
+    {title: "Due Date", year: 2010, rank: null, slug: "due-date"}
+  ],
+  "A League of Their Own": [
+    {title: "Major League", year: 1989, rank: 31, slug: "major-league"},
+    {title: "Bull Durham", year: 1988, rank: null, slug: "bull-durham"},
+    {title: "Bend It Like Beckham", year: 2002, rank: null, slug: "bend-it-like-beckham"}
+  ],
+  "Godzilla Minus One": [
+    {title: "Shin Godzilla", year: 2016, rank: null, slug: "shin-godzilla"},
+    {title: "The Host", year: 2006, rank: null, slug: "the-host"},
+    {title: "Cloverfield", year: 2008, rank: null, slug: "cloverfield"}
+  ],
+  "300": [
+    {title: "Gladiator", year: 2000, rank: 9, slug: "gladiator"},
+    {title: "Braveheart", year: 1995, rank: null, slug: "braveheart"},
+    {title: "Troy", year: 2004, rank: null, slug: "troy"}
+  ],
+  "Everything Everywhere All At Once": [
+    {title: "Parasite", year: 2019, rank: 10, slug: "parasite"},
+    {title: "The Matrix", year: 1999, rank: 18, slug: "the-matrix"},
+    {title: "Eternal Sunshine of the Spotless Mind", year: 2004, rank: null, slug: "eternal-sunshine-of-the-spotless-mind"}
+  ],
+  "The Killer (John Woo)": [
+    {title: "Hard Boiled", year: 1992, rank: null, slug: "hard-boiled"},
+    {title: "Face/Off", year: 1997, rank: 74, slug: "faceoff"},
+    {title: "Leon: The Professional", year: 1994, rank: 40, slug: "leon-the-professional"}
+  ],
+  "The Sound of Music": [
+    {title: "Beauty and the Beast", year: 1991, rank: 94, slug: "beauty-and-the-beast"},
+    {title: "Singin' in the Rain", year: 1952, rank: null, slug: "singin-in-the-rain"},
+    {title: "La La Land", year: 2016, rank: 4, slug: "la-la-land"}
+  ],
+  "Star Wars: Empire Strikes Back": [
+    {title: "Return of the Jedi", year: 1983, rank: null, slug: "return-of-the-jedi"},
+    {title: "Rogue One", year: 2016, rank: null, slug: "rogue-one"},
+    {title: "The Last Starfighter", year: 1984, rank: null, slug: "the-last-starfighter"}
+  ],
+  "Out of Sight": [
+    {title: "Get Shorty", year: 1995, rank: 52, slug: "get-shorty"},
+    {title: "Jackie Brown", year: 1997, rank: null, slug: "jackie-brown"},
+    {title: "The Big Lebowski", year: 1998, rank: null, slug: "the-big-lebowski"}
+  ],
+  "Get Shorty": [
+    {title: "Out of Sight", year: 1998, rank: 51, slug: "out-of-sight"},
+    {title: "The Player", year: 1992, rank: null, slug: "the-player"},
+    {title: "Adaptation", year: 2002, rank: null, slug: "adaptation"}
+  ],
+  "Apollo 13": [
+    {title: "The Right Stuff", year: 1983, rank: 39, slug: "the-right-stuff"},
+    {title: "First Man", year: 2018, rank: null, slug: "first-man"},
+    {title: "Gravity", year: 2013, rank: 99, slug: "gravity"}
+  ],
+  "Armageddon": [
+    {title: "The Rock", year: 1996, rank: null, slug: "the-rock"},
+    {title: "Independence Day", year: 1996, rank: null, slug: "independence-day"},
+    {title: "Deep Impact", year: 1998, rank: null, slug: "deep-impact"}
+  ],
+  "That Thing You Do!": [
+    {title: "Almost Famous", year: 2000, rank: null, slug: "almost-famous"},
+    {title: "Walk the Line", year: 2005, rank: null, slug: "walk-the-line"},
+    {title: "The Commitments", year: 1991, rank: 100, slug: "the-commitments"}
+  ],
+  "Forrest Gump": [
+    {title: "Cast Away", year: 2000, rank: null, slug: "cast-away"},
+    {title: "Big Fish", year: 2003, rank: null, slug: "big-fish"},
+    {title: "The Curious Case of Benjamin Button", year: 2008, rank: null, slug: "the-curious-case-of-benjamin-button"}
+  ],
+  "Lord of the Rings: Fellowship": [
+    {title: "The Hobbit: An Unexpected Journey", year: 2012, rank: null, slug: "the-hobbit-an-unexpected-journey"},
+    {title: "Braveheart", year: 1995, rank: null, slug: "braveheart"},
+    {title: "Gladiator", year: 2000, rank: 9, slug: "gladiator"}
+  ],
+  "True Romance": [
+    {title: "Pulp Fiction", year: 1994, rank: 3, slug: "pulp-fiction"},
+    {title: "Natural Born Killers", year: 1994, rank: null, slug: "natural-born-killers"},
+    {title: "Killing Zoe", year: 1993, rank: null, slug: "killing-zoe"}
+  ],
+  "Se7en": [
+    {title: "Fight Club", year: 1999, rank: 6, slug: "fight-club"},
+    {title: "Zodiac", year: 2007, rank: null, slug: "zodiac"},
+    {title: "The Silence of the Lambs", year: 1991, rank: null, slug: "the-silence-of-the-lambs"}
+  ],
+  "Goodfellas": [
+    {title: "Casino", year: 1995, rank: 8, slug: "casino"},
+    {title: "The Departed", year: 2006, rank: 28, slug: "the-departed"},
+    {title: "Mean Streets", year: 1973, rank: null, slug: "mean-streets"}
+  ],
+  "Wolf of Wall Street": [
+    {title: "Casino", year: 1995, rank: 8, slug: "casino"},
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "Boiler Room", year: 2000, rank: null, slug: "boiler-room"}
+  ],
+  "Rocky IV": [
+    {title: "Creed", year: 2015, rank: null, slug: "creed"},
+    {title: "Rocky", year: 1976, rank: null, slug: "rocky"},
+    {title: "The Karate Kid", year: 1984, rank: null, slug: "the-karate-kid"}
+  ],
+  "Friday": [
+    {title: "Boyz n the Hood", year: 1991, rank: null, slug: "boyz-n-the-hood"},
+    {title: "House Party", year: 1990, rank: null, slug: "house-party"},
+    {title: "Next Friday", year: 2000, rank: null, slug: "next-friday"}
+  ],
+  "Die Hard": [
+    {title: "Lethal Weapon", year: 1987, rank: null, slug: "lethal-weapon"},
+    {title: "Speed", year: 1994, rank: null, slug: "speed"},
+    {title: "The Rock", year: 1996, rank: null, slug: "the-rock"}
+  ],
+  "Remember the Titans": [
+    {title: "Rudy", year: 1993, rank: null, slug: "rudy"},
+    {title: "We Are Marshall", year: 2006, rank: null, slug: "we-are-marshall"},
+    {title: "Invictus", year: 2009, rank: null, slug: "invictus"}
+  ],
+  "Aliens": [
+    {title: "The Thing", year: 1982, rank: null, slug: "the-thing"},
+    {title: "Predator", year: 1987, rank: null, slug: "predator"},
+    {title: "Edge of Tomorrow", year: 2014, rank: null, slug: "edge-of-tomorrow"}
+  ],
+  "Field of Dreams": [
+    {title: "The Natural", year: 1984, rank: 78, slug: "the-natural"},
+    {title: "For Love of the Game", year: 1999, rank: 23, slug: "for-love-of-the-game"},
+    {title: "Moneyball", year: 2011, rank: 11, slug: "moneyball"}
+  ],
+  "Perfect Days": [
+    {title: "Lost in Translation", year: 2003, rank: null, slug: "lost-in-translation"},
+    {title: "Paterson", year: 2016, rank: null, slug: "paterson"},
+    {title: "About Schmidt", year: 2002, rank: null, slug: "about-schmidt"}
+  ],
+  "Mulholland Drive": [
+    {title: "Lost Highway", year: 1997, rank: null, slug: "lost-highway"},
+    {title: "Blue Velvet", year: 1986, rank: null, slug: "blue-velvet"},
+    {title: "Inland Empire", year: 2006, rank: null, slug: "inland-empire"}
+  ],
+  "Mad Max Fury Road": [
+    {title: "The Road Warrior", year: 1981, rank: null, slug: "the-road-warrior"},
+    {title: "Dredd", year: 2012, rank: null, slug: "dredd"},
+    {title: "Children of Men", year: 2006, rank: null, slug: "children-of-men"}
+  ],
+  "Draft Day": [
+    {title: "Moneyball", year: 2011, rank: 11, slug: "moneyball"},
+    {title: "Jerry Maguire", year: 1996, rank: 21, slug: "jerry-maguire"},
+    {title: "Any Given Sunday", year: 1999, rank: null, slug: "any-given-sunday"}
+  ],
+  "Star Trek: Wrath of Khan": [
+    {title: "Star Trek IV: The Voyage Home", year: 1986, rank: null, slug: "star-trek-iv-the-voyage-home"},
+    {title: "Galaxy Quest", year: 1999, rank: null, slug: "galaxy-quest"},
+    {title: "Contact", year: 1997, rank: 76, slug: "contact"}
+  ],
+  "The Incredibles": [
+    {title: "Unbreakable", year: 2000, rank: 17, slug: "unbreakable"},
+    {title: "Spider-Man 2", year: 2004, rank: null, slug: "spider-man-2"},
+    {title: "Big Hero 6", year: 2014, rank: null, slug: "big-hero-6"}
+  ],
+  "Face/Off": [
+    {title: "The Killer (John Woo)", year: 1989, rank: 48, slug: "the-killer-john-woo"},
+    {title: "Hard Boiled", year: 1992, rank: null, slug: "hard-boiled"},
+    {title: "Con Air", year: 1997, rank: null, slug: "con-air"}
+  ],
+  "Rounders": [
+    {title: "The Sting", year: 1973, rank: null, slug: "the-sting"},
+    {title: "Maverick", year: 1994, rank: null, slug: "maverick"},
+    {title: "Mississippi Grind", year: 2015, rank: null, slug: "mississippi-grind"}
+  ],
+  "Contact": [
+    {title: "Arrival", year: 2016, rank: 35, slug: "arrival"},
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"},
+    {title: "Close Encounters of the Third Kind", year: 1977, rank: 93, slug: "close-encounters-of-the-third-kind"}
+  ],
+  "The Sixth Sense": [
+    {title: "Unbreakable", year: 2000, rank: 17, slug: "unbreakable"},
+    {title: "The Others", year: 2001, rank: null, slug: "the-others"},
+    {title: "A Tale of Two Sisters", year: 2003, rank: null, slug: "a-tale-of-two-sisters"}
+  ],
+  "The Natural": [
+    {title: "Field of Dreams", year: 1989, rank: 67, slug: "field-of-dreams"},
+    {title: "For Love of the Game", year: 1999, rank: 23, slug: "for-love-of-the-game"},
+    {title: "Eight Men Out", year: 1988, rank: null, slug: "eight-men-out"}
+  ],
+  "Groundhog Day": [
+    {title: "Back to the Future", year: 1985, rank: 2, slug: "back-to-the-future"},
+    {title: "About Time", year: 2013, rank: null, slug: "about-time"},
+    {title: "Palm Springs", year: 2020, rank: null, slug: "palm-springs"}
+  ],
+  "2001: A Space Odyssey": [
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"},
+    {title: "Solaris", year: 1972, rank: null, slug: "solaris"},
+    {title: "Moon", year: 2009, rank: null, slug: "moon"}
+  ],
+  "The Shining": [
+    {title: "Mulholland Drive", year: 2001, rank: 69, slug: "mulholland-drive"},
+    {title: "Hereditary", year: 2018, rank: null, slug: "hereditary"},
+    {title: "The Witch", year: 2015, rank: null, slug: "the-witch"}
+  ],
+  "Big Trouble in Little China": [
+    {title: "Raiders of the Lost Ark", year: 1981, rank: 19, slug: "raiders-of-the-lost-ark"},
+    {title: "The Golden Child", year: 1986, rank: null, slug: "the-golden-child"},
+    {title: "Escape from New York", year: 1981, rank: null, slug: "escape-from-new-york"}
+  ],
+  "Indiana Jones: Temple of Doom": [
+    {title: "Raiders of the Lost Ark", year: 1981, rank: 19, slug: "raiders-of-the-lost-ark"},
+    {title: "The Mummy", year: 1999, rank: null, slug: "the-mummy"},
+    {title: "Romancing the Stone", year: 1984, rank: null, slug: "romancing-the-stone"}
+  ],
+  "Stand By Me": [
+    {title: "Dazed and Confused", year: 1993, rank: 33, slug: "dazed-and-confused"},
+    {title: "The Sandlot", year: 1993, rank: null, slug: "the-sandlot"},
+    {title: "Now and Then", year: 1995, rank: null, slug: "now-and-then"}
+  ],
+  "No Country for Old Men": [
+    {title: "There Will Be Blood", year: 2007, rank: null, slug: "there-will-be-blood"},
+    {title: "True Grit", year: 2010, rank: null, slug: "true-grit"},
+    {title: "Prisoners", year: 2013, rank: null, slug: "prisoners"}
+  ],
+  "Godfather Part II": [
+    {title: "The Godfather", year: 1972, rank: 1, slug: "the-godfather"},
+    {title: "Once Upon a Time in America", year: 1984, rank: null, slug: "once-upon-a-time-in-america"},
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"}
+  ],
+  "Romeo + Juliet": [
+    {title: "Moulin Rouge!", year: 2001, rank: null, slug: "moulin-rouge"},
+    {title: "La La Land", year: 2016, rank: 4, slug: "la-la-land"},
+    {title: "West Side Story", year: 1961, rank: null, slug: "west-side-story"}
+  ],
+  "Casino Royale": [
+    {title: "Skyfall", year: 2012, rank: null, slug: "skyfall"},
+    {title: "The Bourne Identity", year: 2002, rank: null, slug: "the-bourne-identity"},
+    {title: "Mission: Impossible", year: 1996, rank: null, slug: "mission-impossible"}
+  ],
+  "Toy Story 2": [
+    {title: "The Incredibles", year: 2004, rank: 73, slug: "the-incredibles"},
+    {title: "Toy Story 3", year: 2010, rank: null, slug: "toy-story-3"},
+    {title: "Up", year: 2009, rank: null, slug: "up"}
+  ],
+  "American History X": [
+    {title: "Crash", year: 2004, rank: null, slug: "crash"},
+    {title: "Do the Right Thing", year: 1989, rank: null, slug: "do-the-right-thing"},
+    {title: "Fruitvale Station", year: 2013, rank: null, slug: "fruitvale-station"}
+  ],
+  "State of Grace": [
+    {title: "The Departed", year: 2006, rank: 28, slug: "the-departed"},
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "Donnie Brasco", year: 1997, rank: null, slug: "donnie-brasco"}
+  ],
+  "Crouching Tiger, Hidden Dragon": [
+    {title: "Hero", year: 2002, rank: null, slug: "hero"},
+    {title: "House of Flying Daggers", year: 2004, rank: null, slug: "house-of-flying-daggers"},
+    {title: "The Killer (John Woo)", year: 1989, rank: 48, slug: "the-killer-john-woo"}
+  ],
+  "Close Encounters of the Third Kind": [
+    {title: "E.T. the Extra-Terrestrial", year: 1982, rank: null, slug: "et-the-extra-terrestrial"},
+    {title: "Contact", year: 1997, rank: 76, slug: "contact"},
+    {title: "Arrival", year: 2016, rank: 35, slug: "arrival"}
+  ],
+  "Beauty and the Beast": [
+    {title: "The Sound of Music", year: 1965, rank: 49, slug: "the-sound-of-music"},
+    {title: "The Little Mermaid", year: 1989, rank: null, slug: "the-little-mermaid"},
+    {title: "Cinderella", year: 1950, rank: null, slug: "cinderella"}
+  ],
+  "Scott Pilgrim vs. the World": [
+    {title: "Kick-Ass", year: 2010, rank: null, slug: "kick-ass"},
+    {title: "Baby Driver", year: 2017, rank: null, slug: "baby-driver"},
+    {title: "Hot Fuzz", year: 2007, rank: null, slug: "hot-fuzz"}
+  ],
+  "Past Lives": [
+    {title: "Lost in Translation", year: 2003, rank: null, slug: "lost-in-translation"},
+    {title: "In the Mood for Love", year: 2000, rank: null, slug: "in-the-mood-for-love"},
+    {title: "Before Sunrise", year: 1995, rank: null, slug: "before-sunrise"}
+  ],
+  "The Town": [
+    {title: "Good Will Hunting", year: 1997, rank: 32, slug: "good-will-hunting"},
+    {title: "Gone Baby Gone", year: 2007, rank: null, slug: "gone-baby-gone"},
+    {title: "Heat", year: 1995, rank: 16, slug: "heat"}
+  ],
+  "Margin Call": [
+    {title: "The Big Short", year: 2015, rank: null, slug: "the-big-short"},
+    {title: "Too Big to Fail", year: 2011, rank: null, slug: "too-big-to-fail"},
+    {title: "Inside Job", year: 2010, rank: null, slug: "inside-job"}
+  ],
+  "Gravity": [
+    {title: "Apollo 13", year: 1995, rank: 53, slug: "apollo-13"},
+    {title: "The Martian", year: 2015, rank: null, slug: "the-martian"},
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"}
+  ],
+  "The Commitments": [
+    {title: "That Thing You Do!", year: 1996, rank: 55, slug: "that-thing-you-do"},
+    {title: "Almost Famous", year: 2000, rank: null, slug: "almost-famous"},
+    {title: "Once", year: 2007, rank: null, slug: "once"}
+  ],
 };
 
 function getSimilarFilms(film) {
-  const tags = filmTags[film.title] || [];
-  if (!tags.length) return [];
-  const scored = films
-    .filter(f => f.title !== film.title)
-    .map(f => {
-      const otherTags = filmTags[f.title] || [];
-      const shared = tags.filter(t => otherTags.includes(t)).length;
-      return { film: f, score: shared };
-    })
-    .filter(x => x.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 5)
-    .map(x => x.film);
-  return scored;
+  return recs[film.title] || [];
 }
 
 let currentTmdbId = null;
@@ -1098,9 +1485,11 @@ async function openFilmPanel(film) {
   const similars = getSimilarFilms(film);
   const similarsEl = document.getElementById('dp-similars');
   if (similars.length) {
-    similarsEl.innerHTML = similars.map(s =>
-      `<span class="detail-similar" onclick="closeDetailPanel();setTimeout(()=>openFilmPanel(films.find(f=>f.title==='${s.title.replace(/'/g,"\\'")}'")),200)">#${s.rank} ${s.title}</span>`
-    ).join('');
+    similarsEl.innerHTML = similars.map(s => {
+      const lb = `https://letterboxd.com/film/${s.slug}/`;
+      const rankLabel = s.rank ? ` <span style="font-size:10px;color:var(--accent)">#${s.rank} on list</span>` : '';
+      return `<a href="${lb}" target="_blank" class="detail-similar">${s.title} (${s.year})${rankLabel}</a>`;
+    }).join('');
     document.getElementById('dp-similars-section').style.display = 'block';
   } else {
     document.getElementById('dp-similars-section').style.display = 'none';
