@@ -384,7 +384,7 @@
   .move-inline-up { color: var(--up); }
   .move-inline-down { color: var(--down); }
   .move-inline-new { color: var(--new); }
-  .bd-badge { font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 4px; background: rgba(56,139,255,0.12); color: #5B9BFF; letter-spacing: 0.04em; white-space: nowrap; }
+  .bd-badge { font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 4px; background: rgba(56,139,255,0.12); color: #89C4FF; letter-spacing: 0.04em; white-space: nowrap; }
   .no-disc { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border); display: inline-block; opacity: 0.3; }
   /* About section */
   .about { border-bottom: 1px solid var(--border); padding: 40px; }
@@ -416,7 +416,58 @@
   .tag-nodata { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--surface2); color: var(--muted); font-weight: 500; }
   .tag-strong { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--up-dim); color: var(--up); font-weight: 500; }
   .tag-quality { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--down-dim); color: var(--down); font-weight: 500; }
-  /* Detail panel */
+  .tab-btn[onclick*="songs"].active { color: #FF8A80; border-bottom-color: #FF8A80; }
+  .tab-btn[onclick*="tv"].active { color: #89C4FF; border-bottom-color: #89C4FF; }
+  body.tab-songs { background: #120808; }
+  body.tab-songs .tab-nav { background: #120808; }
+  body.tab-songs .songs-section-label { color: #FF8A80; opacity: 0.7; }
+  body.tab-songs .song-rank { color: #FF8A80; opacity: 0.5; }
+  body.tab-songs .song-row:hover { background: rgba(255,138,128,0.06); }
+  body.tab-songs .song-title { color: #e8e4dc; }
+  body.tab-songs .song-meta { color: #FF8A80; opacity: 0.6; }
+  body.tab-songs .songs-intro p { color: #FF8A80; opacity: 0.6; }
+  body.tab-songs .preview-btn { color: #FF8A80; border-color: rgba(255,138,128,0.3); }
+  body.tab-songs .preview-btn:hover { background: rgba(255,138,128,0.1); }
+  /* Songs list styles */
+  .songs-intro { padding: 28px 40px 4px; max-width: 680px; }
+  .songs-intro p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+  .songs-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 20px 52px 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+  .songs-section-label:first-child { border-top: none; margin-top: 0; }
+  .song-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 8px; transition: background 0.15s; border-bottom: 1px solid var(--border); }
+  .song-rank { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); min-width: 32px; text-align: right; flex-shrink: 0; }
+  .song-art { width: 44px; height: 44px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .song-art img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .song-art img.loaded { opacity: 1; }
+  .song-art-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); opacity: 0.3; }
+  .song-info { flex: 1; min-width: 0; }
+  .song-title { font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .song-meta { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'DM Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .preview-btn { background: none; border: 1px solid var(--border); border-radius: 20px; color: var(--muted); font-size: 11px; padding: 3px 10px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+  .preview-btn:hover { background: var(--surface2); }
+  .preview-btn.playing { color: var(--up); border-color: var(--up); }
+  @media (max-width: 600px) {
+    .songs-intro { padding: 20px 20px 4px; }
+    .songs-section-label { padding: 16px 20px 8px; }
+    .preview-btn { display: none; }
+  }
+  .tv-intro { padding: 28px 40px 4px; max-width: 680px; }
+  .tv-intro p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+  .tv-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid var(--border); }
+  .tv-row:hover { background: var(--surface); }
+  .tv-rank { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); min-width: 32px; text-align: right; }
+  .tv-poster { width: 44px; height: 62px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .tv-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .tv-poster img.loaded { opacity: 1; }
+  .tv-poster-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); opacity: 0.3; }
+  .tv-info { flex: 1; min-width: 0; }
+  .tv-title { font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tv-year { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .tv-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 20px 52px 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+  .tv-section-label:first-child { border-top: none; margin-top: 0; }
+  @media (max-width: 600px) {
+    .tv-intro { padding: 20px 20px 4px; }
+    .tv-section-label { padding: 16px 20px 8px; }
+  }
   .detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: flex-end; justify-content: center; }
   .detail-overlay.open { display: flex; }
   .detail-panel { background: var(--surface); border-top: 1px solid var(--border); border-radius: 20px 20px 0 0; width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto; padding: 0 0 40px; }
@@ -481,11 +532,25 @@
 
   /* Tabs */
   .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 40px; background: var(--bg); position: sticky; top: 0; z-index: 9; }
-  .tab-btn { padding: 14px 20px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; margin-bottom: -1px; letter-spacing: 0.02em; }
+  .tab-btn { padding: 12px 18px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; margin-bottom: -1px; letter-spacing: 0.02em; }
   .tab-btn:hover { color: var(--text); }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn.film-tab { color: var(--muted); }
+  .tab-btn.film-tab.active { background: var(--accent); color: #0a0906; border-bottom-color: transparent; border-radius: 6px 6px 0 0; font-weight: 500; padding: 10px 18px; margin-top: 4px; }
+  .tab-btn.film-tab:hover:not(.active) { color: var(--accent); }
+  .tab-divider { display: flex; align-items: center; gap: 10px; padding: 0 14px 0 20px; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text); opacity: 0.7; white-space: nowrap; }
+  .tab-divider::before { content: ''; display: block; width: 1px; height: 22px; background: rgba(255,255,255,0.25); }
+  @media (max-width: 600px) { .tab-divider { font-size: 9px; padding: 0 8px 0 12px; letter-spacing: 0.08em; } }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
+  body.tab-tv { --tv-accent: #89C4FF; --tv-accent-dim: rgba(137,196,255,0.1); background: #080c12; }
+  body.tab-tv .tab-nav { background: #080c12; }
+  body.tab-tv .tv-section-label { color: #89C4FF; opacity: 0.6; }
+  body.tab-tv .tv-rank { color: #89C4FF; opacity: 0.5; }
+  body.tab-tv .tv-row:hover { background: rgba(137,196,255,0.06); }
+  body.tab-tv .tv-title { color: #e8e4dc; }
+  body.tab-tv .tv-year { color: #89C4FF; opacity: 0.5; }
+  body.tab-tv .tv-intro p { color: #89C4FF; opacity: 0.6; }
   .year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px; padding: 20px 40px 80px; }
   .year-card { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; transition: background 0.15s; text-decoration: none; }
   .year-card:hover { background: var(--surface); }
@@ -535,8 +600,11 @@
 </div>
 
 <div class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('top100')">Top 100</button>
-  <button class="tab-btn" onclick="switchTab('byyear')">Fave Every Year</button>
+  <button class="tab-btn film-tab active" onclick="switchTab('top100')">Top 100</button>
+  <button class="tab-btn film-tab" onclick="switchTab('byyear')">Fave Every Year</button>
+  <span class="tab-divider">Also by Greg:</span>
+  <button class="tab-btn" onclick="switchTab('tv')">Fave TV</button>
+  <button class="tab-btn" onclick="switchTab('songs')">Top 100 Songs</button>
 </div>
 
 <div id="tab-top100" class="tab-panel active">
@@ -601,6 +669,17 @@
   <div class="year-intro"><p>One film per year, every year since 1970. No runners-up, no ties. Just the pick.</p></div>
   <div id="year-list"></div>
 </div><!-- end tab-byyear -->
+
+<div id="tab-tv" class="tab-panel">
+  <div class="tv-intro"><p>One hundred television series. Ranked by the same principle as the films -- joy, rewatchability, and gut. Drama, comedy, limited series, documentary. All of it.</p></div>
+  <div id="tv-list"></div>
+</div><!-- end tab-tv -->
+
+<div id="tab-songs" class="tab-panel">
+  <div class="songs-intro"><p>One hundred songs. The list that never fully settles. Reassessed every six months. Shine On You Crazy Diamond has held #1 for decades.</p></div>
+  <div id="songs-loading" style="padding:40px;color:var(--muted);font-size:14px;">Loading your playlist from Spotify...</div>
+  <div id="songs-list"></div>
+</div><!-- end tab-songs -->
 
 <div class="detail-overlay" id="detail-overlay" onclick="closePanel(event)">
   <div class="detail-panel" id="detail-panel">
@@ -1891,6 +1970,115 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(btn => {
     if (btn.getAttribute('onclick').includes(tab)) btn.classList.add('active');
   });
+  document.body.className = tab === 'tv' ? 'tab-tv' : tab === 'songs' ? 'tab-songs' : '';
+  if (tab === 'songs' && !window.songsLoaded) loadSpotifyPlaylist();
+}
+
+const SPOTIFY_CLIENT_ID = 'fcb02d6386534839bae6b742a061971b';
+const SPOTIFY_CLIENT_SECRET = '0d33b8aac7424fe09e54f2d5aaf22978';
+const SPOTIFY_PLAYLIST_ID = '6PE4sx0FT3wQArsz5qWxIx';
+let spotifyToken = null;
+let currentAudio = null;
+let currentBtn = null;
+
+async function getSpotifyToken() {
+  const creds = btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`);
+  const res = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: { 'Authorization': `Basic ${creds}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=client_credentials'
+  });
+  const data = await res.json();
+  spotifyToken = data.access_token;
+  return spotifyToken;
+}
+
+async function loadSpotifyPlaylist() {
+  window.songsLoaded = true;
+  const loading = document.getElementById('songs-loading');
+  try {
+    const token = await getSpotifyToken();
+    // Fetch all tracks (may need multiple requests if >100)
+    let tracks = [];
+    let url = `https://api.spotify.com/v1/playlists/${SPOTIFY_PLAYLIST_ID}/tracks?limit=100&fields=items(track(id,name,artists,album(name,images,release_date),preview_url)),next`;
+    while (url) {
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      const data = await res.json();
+      tracks = tracks.concat(data.items.filter(i => i.track));
+      url = data.next;
+    }
+    loading.style.display = 'none';
+    buildSongsList(tracks);
+  } catch(e) {
+    loading.textContent = 'Could not load playlist. Check your Spotify credentials.';
+    console.error(e);
+  }
+}
+
+function buildSongsList(tracks) {
+  const container = document.getElementById('songs-list');
+  const sections = [
+    { label: 'Top 10', range: [0, 9] },
+    { label: '11–30', range: [10, 29] },
+    { label: '31–60', range: [30, 59] },
+    { label: '61–100', range: [60, 99] },
+  ];
+
+  sections.forEach(sec => {
+    const label = document.createElement('div');
+    label.className = 'songs-section-label';
+    label.textContent = sec.label;
+    container.appendChild(label);
+
+    const list = document.createElement('div');
+    list.style.cssText = 'padding: 0 40px;';
+
+    tracks.slice(sec.range[0], sec.range[1] + 1).forEach((item, idx) => {
+      const track = item.track;
+      const rank = sec.range[0] + idx + 1;
+      const artist = track.artists.map(a => a.name).join(', ');
+      const album = track.album.name;
+      const year = track.album.release_date ? track.album.release_date.slice(0, 4) : '';
+      const art = track.album.images && track.album.images[1] ? track.album.images[1].url : null;
+      const preview = track.preview_url;
+
+      const row = document.createElement('div');
+      row.className = 'song-row';
+      row.innerHTML = `
+        <span class="song-rank">${rank}</span>
+        <div class="song-art">
+          ${art ? `<img src="${art}" alt="${track.name}" onload="this.classList.add('loaded')">` : '<div class="song-art-placeholder">♪</div>'}
+        </div>
+        <div class="song-info">
+          <div class="song-title">${track.name}</div>
+          <div class="song-meta">${artist} · ${album} · ${year}</div>
+        </div>
+        ${preview ? `<button class="preview-btn" data-preview="${preview}">▶ Preview</button>` : ''}
+      `;
+
+      // Preview button
+      if (preview) {
+        const btn = row.querySelector('.preview-btn');
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (currentAudio && !currentAudio.paused) {
+            currentAudio.pause();
+            if (currentBtn) { currentBtn.textContent = '▶ Preview'; currentBtn.classList.remove('playing'); }
+            if (currentBtn === btn) { currentAudio = null; currentBtn = null; return; }
+          }
+          currentAudio = new Audio(preview);
+          currentAudio.play();
+          currentBtn = btn;
+          btn.textContent = '■ Stop';
+          btn.classList.add('playing');
+          currentAudio.onended = () => { btn.textContent = '▶ Preview'; btn.classList.remove('playing'); currentAudio = null; currentBtn = null; };
+        });
+      }
+
+      list.appendChild(row);
+    });
+    container.appendChild(list);
+  });
 }
 
 function buildYearList() {
@@ -1954,11 +2142,172 @@ async function fetchYearPosters() {
   }
 }
 
+const tvShows = [
+  { rank: 1, title: "LOST", year: 2004 },
+  { rank: 2, title: "Breaking Bad", year: 2008 },
+  { rank: 3, title: "Twin Peaks", year: 1990 },
+  { rank: 4, title: "The Sopranos", year: 1999 },
+  { rank: 5, title: "Mad Men", year: 2007 },
+  { rank: 6, title: "Game of Thrones", year: 2011 },
+  { rank: 7, title: "Succession", year: 2018 },
+  { rank: 8, title: "Band of Brothers", year: 2001 },
+  { rank: 9, title: "Friday Night Lights", year: 2006 },
+  { rank: 10, title: "The Wire", year: 2002 },
+  { rank: 11, title: "Station Eleven", year: 2021 },
+  { rank: 12, title: "Seinfeld", year: 1989 },
+  { rank: 13, title: "Friends", year: 1994 },
+  { rank: 14, title: "Andor", year: 2022 },
+  { rank: 15, title: "Adolescence", year: 2025 },
+  { rank: 16, title: "Ted Lasso", year: 2020 },
+  { rank: 17, title: "The Americans", year: 2013 },
+  { rank: 18, title: "House of Cards", year: 2013 },
+  { rank: 19, title: "Schitt's Creek", year: 2015 },
+  { rank: 20, title: "Black Mirror", year: 2011 },
+  { rank: 21, title: "Better Call Saul", year: 2015 },
+  { rank: 22, title: "The West Wing", year: 1999 },
+  { rank: 23, title: "True Detective", year: 2014 },
+  { rank: 24, title: "The Office", year: 2005 },
+  { rank: 25, title: "Freaks and Geeks", year: 1999 },
+  { rank: 26, title: "Narcos", year: 2015 },
+  { rank: 27, title: "Arrested Development", year: 2003 },
+  { rank: 28, title: "The Rehearsal", year: 2022 },
+  { rank: 29, title: "It's Always Sunny in Philadelphia", year: 2005 },
+  { rank: 30, title: "Chernobyl", year: 2019 },
+  { rank: 31, title: "Mr. Robot", year: 2015 },
+  { rank: 32, title: "House of Lies", year: 2012 },
+  { rank: 33, title: "Devs", year: 2020 },
+  { rank: 34, title: "The Queen's Gambit", year: 2020 },
+  { rank: 35, title: "Mindhunter", year: 2017 },
+  { rank: 36, title: "Ozark", year: 2017 },
+  { rank: 37, title: "Severance", year: 2022 },
+  { rank: 38, title: "Baby Reindeer", year: 2024 },
+  { rank: 39, title: "Squid Game", year: 2021 },
+  { rank: 40, title: "Watchmen", year: 2019 },
+  { rank: 41, title: "Mare of Easttown", year: 2021 },
+  { rank: 42, title: "Sharp Objects", year: 2018 },
+  { rank: 43, title: "Halt and Catch Fire", year: 2014 },
+  { rank: 44, title: "The Bear", year: 2022 },
+  { rank: 45, title: "Yellowjackets", year: 2021 },
+  { rank: 46, title: "Industry", year: 2020 },
+  { rank: 47, title: "House of the Dragon", year: 2022 },
+  { rank: 48, title: "Shogun", year: 2024 },
+  { rank: 49, title: "Boardwalk Empire", year: 2010 },
+  { rank: 50, title: "Man in the High Castle", year: 2015 },
+  { rank: 51, title: "Billions", year: 2016 },
+  { rank: 52, title: "Big Little Lies", year: 2017 },
+  { rank: 53, title: "Westworld", year: 2016 },
+  { rank: 54, title: "The Marvelous Mrs. Maisel", year: 2017 },
+  { rank: 55, title: "Battlestar Galactica", year: 2004 },
+  { rank: 56, title: "Sons of Anarchy", year: 2008 },
+  { rank: 57, title: "The Boys", year: 2019 },
+  { rank: 58, title: "The White Lotus", year: 2021 },
+  { rank: 59, title: "Catastrophe", year: 2015 },
+  { rank: 60, title: "The Brady Bunch", year: 1969 },
+  { rank: 61, title: "Barry", year: 2018 },
+  { rank: 62, title: "Euphoria", year: 2019 },
+  { rank: 63, title: "Entourage", year: 2004 },
+  { rank: 64, title: "Silicon Valley", year: 2014 },
+  { rank: 65, title: "The Twilight Zone", year: 1959 },
+  { rank: 66, title: "Rome", year: 2005 },
+  { rank: 67, title: "Oz", year: 1997 },
+  { rank: 68, title: "John Adams", year: 2008 },
+  { rank: 69, title: "For All Mankind", year: 2019 },
+  { rank: 70, title: "Jack Ryan", year: 2018 },
+  { rank: 71, title: "Shrinking", year: 2023 },
+  { rank: 72, title: "The Penguin", year: 2024 },
+  { rank: 73, title: "The Pacific", year: 2010 },
+  { rank: 74, title: "The Mandalorian", year: 2019 },
+  { rank: 75, title: "Daredevil", year: 2015 },
+  { rank: 76, title: "The X-Files", year: 1993 },
+  { rank: 77, title: "Homicide: Life on the Street", year: 1993 },
+  { rank: 78, title: "The Crown", year: 2016 },
+  { rank: 79, title: "The Newsroom", year: 2012 },
+  { rank: 80, title: "Alias", year: 2001 },
+  { rank: 81, title: "Six Feet Under", year: 2001 },
+  { rank: 82, title: "Downton Abbey", year: 2010 },
+  { rank: 83, title: "Gilmore Girls", year: 2000 },
+  { rank: 84, title: "The Diplomat", year: 2023 },
+  { rank: 85, title: "Tulsa King", year: 2022 },
+  { rank: 86, title: "The Dropout", year: 2022 },
+  { rank: 87, title: "Landman", year: 2024 },
+  { rank: 88, title: "From the Earth to the Moon", year: 1998 },
+  { rank: 89, title: "Yellowstone", year: 2018 },
+  { rank: 90, title: "The Pitt", year: 2025 },
+  { rank: 91, title: "ER", year: 1994 },
+  { rank: 92, title: "How I Met Your Mother", year: 2005 },
+  { rank: 93, title: "The Wonder Years", year: 1988 },
+  { rank: 94, title: "The Fresh Prince of Bel-Air", year: 1990 },
+  { rank: 95, title: "In Living Color", year: 1990 },
+  { rank: 96, title: "Beverly Hills 90210", year: 1990 },
+  { rank: 97, title: "Dharma and Greg", year: 1997 },
+  { rank: 98, title: "Newhart", year: 1982 },
+];
+
+function buildTvList() {
+  const container = document.getElementById('tv-list');
+  if (!container) return;
+
+  const sections = [
+    { label: 'Top 10 — The pantheon', range: [1, 10] },
+    { label: '11–30 — Elite tier', range: [11, 30] },
+    { label: '31–60 — Strong favorites', range: [31, 60] },
+    { label: '61–98 — Personal favorites', range: [61, 98] },
+  ];
+
+  sections.forEach(sec => {
+    const label = document.createElement('div');
+    label.className = 'tv-section-label';
+    label.textContent = sec.label;
+    container.appendChild(label);
+
+    const list = document.createElement('div');
+    list.style.cssText = 'padding: 0 40px;';
+
+    tvShows.filter(s => s.rank >= sec.range[0] && s.rank <= sec.range[1]).forEach(s => {
+      const slug = s.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/-$/, '');
+      const row = document.createElement('div');
+      row.className = 'tv-row';
+      row.innerHTML = `
+        <span class="tv-rank">${s.rank}</span>
+        <div class="tv-poster" id="tvposter-${s.rank}">
+          <div class="tv-poster-placeholder">📺</div>
+        </div>
+        <div class="tv-info">
+          <div class="tv-title">${s.title}</div>
+          <div class="tv-year">${s.year}</div>
+        </div>
+      `;
+      // no click handler
+      list.appendChild(row);
+    });
+    container.appendChild(list);
+  });
+}
+
+async function fetchTvPosters() {
+  for (const s of tvShows) {
+    try {
+      const query = encodeURIComponent(s.title);
+      const url = `https://api.themoviedb.org/3/search/tv?api_key=${TMDB_KEY}&query=${query}&first_air_date_year=${s.year}&language=en-US`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const match = data.results && data.results[0];
+      if (match && match.poster_path) {
+        const cell = document.getElementById(`tvposter-${s.rank}`);
+        if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${s.title}" onload="this.classList.add('loaded')">`;
+      }
+    } catch(e) {}
+    await new Promise(r => setTimeout(r, 60));
+  }
+}
+
 buildList();
 buildBubble();
 buildYearList();
+buildTvList();
 fetchPosters();
 fetchYearPosters();
+fetchTvPosters();
 </script>
 </body>
 </html>
