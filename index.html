@@ -1974,54 +1974,125 @@ function switchTab(tab) {
   if (tab === 'songs' && !window.songsLoaded) loadSpotifyPlaylist();
 }
 
-const SPOTIFY_CLIENT_ID = 'fcb02d6386534839bae6b742a061971b';
-const SPOTIFY_CLIENT_SECRET = '0d33b8aac7424fe09e54f2d5aaf22978';
-const SPOTIFY_PLAYLIST_ID = '6PE4sx0FT3wQArsz5qWxIx';
-let spotifyToken = null;
+const songs = [
+  { rank: 1, name: "Shine On You Crazy Diamond (Pts. 1-5)", artist: "Pink Floyd", album: "Wish You Were Here", year: "1975", art: "https://i.scdn.co/image/ab67616d0000b273828e52cfb7bf22869349799e", preview: "https://p.scdn.co/mp3-preview/f72ad71a9cd9498449bd94902038167baac70a8d?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6pnwfWyaWjQiHCKTiZLItr" },
+  { rank: 2, name: "When She Believes", artist: "Ben Harper", album: "Diamonds On The Inside", year: "2003", art: "https://i.scdn.co/image/ab67616d0000b27332dd150f999aa2b2366ad6b4", preview: "https://p.scdn.co/mp3-preview/802a2ea479950d331c09dbe07bfe9024d627d9cb?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5ccYZFke6GF9t0UbizGzze" },
+  { rank: 3, name: "The Way You Look Tonight", artist: "Tony Bennett", album: "My Best Friend's Wedding: Music From The Motion Picture", year: "1997", art: "https://i.scdn.co/image/ab67616d0000b273477a41b74b1ec0c2d89d7731", preview: "https://p.scdn.co/mp3-preview/f56de42620c7e7153c66c453e61e4d0c8b5a45de?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6Ycsw17H90I1vhACboKI41" },
+  { rank: 4, name: "Sometimes", artist: "James", album: "Laid (Deluxe Edition)", year: "2015", art: "https://i.scdn.co/image/ab67616d0000b273431f35b58ff9de2713b3947f", preview: "https://p.scdn.co/mp3-preview/570d1f10451e3a8454d6ccc41428ee6dbd4bf0d8?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3BsjH1ApI5qDIIE57fjUK6" },
+  { rank: 5, name: "Bad Luck Blue Eyes Goodbye", artist: "The Black Crowes", album: "The Southern Harmony And Musical Companion", year: "1992", art: "https://i.scdn.co/image/ab67616d0000b2730b61dc04d5f7878665bfe3d1", preview: "https://p.scdn.co/mp3-preview/a5b86744281c9b17fc266d094a59bdf973abb973?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3do4iqE5DTRgza3EnlMWpL" },
+  { rank: 6, name: "One", artist: "U2", album: "Achtung Baby (Deluxe Edition)", year: "1991", art: "https://i.scdn.co/image/ab67616d0000b27337cd18af5725b9cad0a5ab53", preview: "https://p.scdn.co/mp3-preview/e53bba655120cb3e8bc77f2afa387b595ef38a59?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3G69vJMWsX6ZohTykad2AU" },
+  { rank: 7, name: "Fantastic, That's You", artist: "Louis Armstrong", album: "What A Wonderful World", year: "1968", art: "https://i.scdn.co/image/ab67616d0000b273845a5660b804e5f3e821fbed", preview: "https://p.scdn.co/mp3-preview/84fc1e429a69e62b98f04bd8f9a609015f4ad9e8?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0SyYvxTKhF3fMxYBz3Zmdm" },
+  { rank: 8, name: "Stop This Train", artist: "John Mayer", album: "Continuum", year: "2006", art: "https://i.scdn.co/image/ab67616d0000b273ac9fea717d5b78e73cbd89f6", preview: "https://p.scdn.co/mp3-preview/e22d9d217c711407fa29314aaeda310e4b36518c?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3E6iea9uEmB7gRru4lyP6h" },
+  { rank: 9, name: "Careless Whisper", artist: "George Michael", album: "Ladies And Gentlemen... The Best Of George Michael", year: "1998", art: "https://i.scdn.co/image/ab67616d0000b27364c19b24ce947ffa363f8f96", preview: "https://p.scdn.co/mp3-preview/d9fb0097bda0af017d92fa167b9349f5eed0e609?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/4jDmJ51x1o9NZB5Nxxc7gY" },
+  { rank: 10, name: "The Blower's Daughter", artist: "Damien Rice", album: "O", year: "2003", art: "https://i.scdn.co/image/ab67616d0000b2735699ca5a7af862fa5a522016", preview: "https://p.scdn.co/mp3-preview/6e4f37e807d0c7868507401151d88363c5ad4060?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/4B2lJinAkeNLSJjcq3dg8Q" },
+  { rank: 11, name: "Rocket Queen", artist: "Guns N' Roses", album: "Appetite For Destruction", year: "1987", art: "https://i.scdn.co/image/ab67616d0000b273c8e5391a619e9e8ea2162073", preview: "https://p.scdn.co/mp3-preview/0dae818b3bf571b28444e8c26118700f76c3dfbd?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5j6WdDC183izbbjedKsSAe" },
+  { rank: 12, name: "Another One Bites The Dust", artist: "Queen", album: "The Game (Deluxe Remastered Version)", year: "1980", art: "https://i.scdn.co/image/ab67616d0000b27307744e2ed983efa3e6620a47", preview: "https://p.scdn.co/mp3-preview/e6591583ff919b3e2d0665a28c5c4cdac10e29bf?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/57JVGBtBLCfHw2muk5416J" },
+  { rank: 13, name: "Blue Sky Mine", artist: "Midnight Oil", album: "Blue Sky Mining (Remastered)", year: "1990", art: "https://i.scdn.co/image/ab67616d0000b273319e0e59309ab40af8fb5862", preview: "https://p.scdn.co/mp3-preview/77957a381e920c6541bbab0842bd9ca2d9799729?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6z9ehfxE973fOlKJKNJL2x" },
+  { rank: 14, name: "Glory of Love", artist: "Peter Cetera", album: "Solitude / Solitaire", year: "1986", art: "https://i.scdn.co/image/ab67616d0000b2739cd3665c5518c19b9ba36676", preview: "https://p.scdn.co/mp3-preview/db8481c754fe86fe6d76c517c089b02013666089?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1eyq8cjUQ2daFthW2PC2GM" },
+  { rank: 15, name: "Regulate", artist: "Warren G", album: "Regulate\u2026 G Funk Era", year: "1994", art: "https://i.scdn.co/image/ab67616d0000b273f6b9b62ea130943d371b69ef", preview: "https://p.scdn.co/mp3-preview/c3611b7884c4ee7370f3a0a52622bf29ae5f3311?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7nYvUtkQMx1v80S2FH2s9J" },
+  { rank: 16, name: "No Excuses", artist: "Alice In Chains", album: "Jar Of Flies", year: "1994", art: "https://i.scdn.co/image/ab67616d0000b27325b42be683b8d3c6500db726", preview: "https://p.scdn.co/mp3-preview/f7daa62fbd3b718a879a1c1eebf9355f7026d72d?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/4PtZE0h5oyPhCtPjg3NeYQ" },
+  { rank: 17, name: "Black", artist: "Pearl Jam", album: "Ten", year: "1991", art: "https://i.scdn.co/image/ab67616d0000b2732d0e5ab5bd2e234fbcffa3e0", preview: "https://p.scdn.co/mp3-preview/c41e68a3842aedd5da6e9a19cd5667f09d72b5c3?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5Xak5fmy089t0FYmh3VJiY" },
+  { rank: 18, name: "Carolina in My Mind", artist: "James Taylor", album: "Greatest Hits", year: "1976", art: "https://i.scdn.co/image/ab67616d0000b27323ed6d11c4dff5ce4c47a7e7", preview: "https://p.scdn.co/mp3-preview/324b051ba2f51c39b4ba25d4f2be7655460c92f1?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2T5Ch09nefwckOu5NQvjIk" },
+  { rank: 19, name: "Lay Down the Law", artist: "G. Love & Special Sauce", album: "Yeah, It's That Easy", year: "1997", art: "https://i.scdn.co/image/ab67616d0000b27312c77a0130b08387868d631f", preview: "https://p.scdn.co/mp3-preview/023d776e135787f11b20e0f1c435cc8b1477d7d9?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2ahcekWgN69QZe8UPeNBg6" },
+  { rank: 20, name: "No Diggity", artist: "Blackstreet", album: "Another Level", year: "1996", art: "https://i.scdn.co/image/ab67616d0000b27303ca37157b9ceefbe8fe225b", preview: "https://p.scdn.co/mp3-preview/35f670ec0a021fff5617f5d558bdfe8667d557ff?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6MdqqkQ8sSC0WB4i8PyRuQ" },
+  { rank: 21, name: "All The Right Reasons", artist: "The Jayhawks", album: "Rainy Day Music", year: "2003", art: "https://i.scdn.co/image/ab67616d0000b273adcb845fc5734c0c1346ebfa", preview: "https://p.scdn.co/mp3-preview/33b85f4be9a3bbf4c8bc8e245cfa69212da31f5c?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6s0HP7iEhQzUoniIzGpqZD" },
+  { rank: 22, name: "So What'Cha Want", artist: "Beastie Boys", album: "Check Your Head", year: "1992", art: "https://i.scdn.co/image/ab67616d0000b27308478de146aa7404e54dbf16", preview: "https://p.scdn.co/mp3-preview/344a5401765eacfef36cd42e8f9a35d498657ab9?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5h9mwffuipb2TSeTFp8Pu0" },
+  { rank: 23, name: "Space Oddity", artist: "David Bowie", album: "ChangesBowie (1990 Remaster)", year: "1990", art: "https://i.scdn.co/image/ab67616d0000b273cb5ab0331f9f9b25cd6f9bbe", preview: "https://p.scdn.co/mp3-preview/9240f576fa464f8e3fe38f1c83fd23cd4e516638?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6OoP5qBU6kzoD8S9q4yNpK" },
+  { rank: 24, name: "Make It Rain", artist: "Ed Sheeran", album: "x (Wembley Edition)", year: "2013", art: "https://i.scdn.co/image/ab67616d0000b273d08209944468440145f01524", preview: "https://p.scdn.co/mp3-preview/b676771efc55874c2105b1dfdb2e28c483440799?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5puU24G3lHVsUXPAWW2ZpV" },
+  { rank: 25, name: "Take Me To The Mardi Gras", artist: "Bob James", album: "Two", year: "1975", art: "https://i.scdn.co/image/ab67616d0000b273916d5384316d7d87388ce8e8", preview: "https://p.scdn.co/mp3-preview/81608ebff2ac9e2051636c85b03926688314484f?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6i5U5NyCknF93w4BilFity" },
+  { rank: 26, name: "Holier Than Thou", artist: "Metallica", album: "Metallica", year: "1991", art: "https://i.scdn.co/image/ab67616d0000b273af07dc851962508661bbcfce", preview: "https://p.scdn.co/mp3-preview/551d0bd6059d800eb5bcb14ab4c65d0feac264c0?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1kaB0BvQEmwHeAzNh4jziT" },
+  { rank: 27, name: "I'm Yours", artist: "Jason Mraz", album: "We Sing. We Dance. We Steal Things.", year: "2008", art: "https://i.scdn.co/image/ab67616d0000b273125b1a330b6f6100ab19dbed", preview: "https://p.scdn.co/mp3-preview/0952568e496914bb61383588ac417ec70abefc1d?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1EzrEOXmMH3G43AXT1y7pA" },
+  { rank: 28, name: "Hotel California", artist: "Eagles", album: "Hotel California (2013 Remaster)", year: "1976", art: "https://i.scdn.co/image/ab67616d0000b2734637341b9f507521afa9a778", preview: "https://p.scdn.co/mp3-preview/6fedc11d0f55bef176cc1c5725ac1c57f9a2534a?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/40riOy7x9W7GXjyGp4pjAv" },
+  { rank: 29, name: "Forever Blue", artist: "Chris Isaak", album: "Forever Blue", year: "1995", art: "https://i.scdn.co/image/ab67616d0000b2735b6a53efbcfda0394f563cc4", preview: "https://p.scdn.co/mp3-preview/cd71528ae70c3ff5253dc40ff25e5f642de82d1b?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1sCML1ht4H6PsGCugOZAto" },
+  { rank: 30, name: "Under the Bridge", artist: "Red Hot Chili Peppers", album: "Greatest Hits", year: "2003", art: "https://i.scdn.co/image/ab67616d0000b2735590b4ee88187cb06a5b102d", preview: "https://p.scdn.co/mp3-preview/0d50e4b2b378a104daf488db681d023a78993703?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/23NPGXlSaIqWzvxIRhM2oG" },
+  { rank: 31, name: "Let's Stay Together", artist: "Al Green", album: "Let's Stay Together", year: "1972", art: "https://i.scdn.co/image/ab67616d0000b273a1fc113a6858d0824d9aaf38", preview: "https://p.scdn.co/mp3-preview/027817c11eaff28a45d96046a1c5da43d8a1e155?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/63xdwScd1Ai1GigAwQxE8y" },
+  { rank: 32, name: "Smells Like Teen Spirit", artist: "Nirvana", album: "Nevermind (Remastered)", year: "1991", art: "https://i.scdn.co/image/ab67616d0000b273e175a19e530c898d167d39bf", preview: "https://p.scdn.co/mp3-preview/91219ebc0d0505a1001c4b854f8b2451fcec95b8?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5ghIJDpPoe3CfHMGu71E6T" },
+  { rank: 33, name: "Pick Up the Pieces", artist: "Average White Band", album: "AWB", year: "1974", art: "https://i.scdn.co/image/ab67616d0000b273d4a6817b14d3dea6f23c680c", preview: "https://p.scdn.co/mp3-preview/bedf045bbaf123f3df052fdfef7d3fa9275cf586?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2x1LQq8lsUzAA2wNj8yjC9" },
+  { rank: 34, name: "Hypnotize", artist: "The Notorious B.I.G.", album: "Greatest Hits", year: "2007", art: "https://i.scdn.co/image/ab67616d0000b273639fea4197e676cfe9512e04", preview: "https://p.scdn.co/mp3-preview/f8b83434f57ca0b952c59fb792cbaceda1fda864?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6Tsu3OsuMz4KEGKbOYd6A0" },
+  { rank: 35, name: "We're Only Gonna Die For Our Arrogance", artist: "Sublime", album: "40oz. To Freedom", year: "1992", art: "https://i.scdn.co/image/ab67616d0000b273d77299e3d29f44495cd7fbcb", preview: "https://p.scdn.co/mp3-preview/3e43d4ce0510609b909e055156f344f4366c0587?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1XvMlowIHtiLoMd0rH8vHz" },
+  { rank: 36, name: "More Than Words", artist: "Extreme", album: "Extreme II - Pornograffitti", year: "1990", art: "https://i.scdn.co/image/ab67616d0000b273fb16b9b69eb891027654bcb1", preview: "https://p.scdn.co/mp3-preview/271b123e8fb03d1ca301205f8c47ca13461c9ff0?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1gVgkQFOKa8Wc1HYsJtPdH" },
+  { rank: 37, name: "Georgia", artist: "Vance Joy", album: "Dream Your Life Away (Special Edition)", year: "2014", art: "https://i.scdn.co/image/ab67616d0000b273a9929deb093a6617d2493b03", preview: "https://p.scdn.co/mp3-preview/f9de8456a17cc0ee19de4f789b100f4ad56cd019?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/429EttO8gs0bDo2SQfUNSm" },
+  { rank: 38, name: "And We Danced", artist: "The Hooters", album: "Super Hits", year: "2001", art: "https://i.scdn.co/image/ab67616d0000b2739280b5fea3cde8e6caeaef00", preview: "https://p.scdn.co/mp3-preview/12f138c4f1fec405b6f386a48b419d2c4d6bba81?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5xkNd7kCRmjT2DxSAYVVyC" },
+  { rank: 39, name: "Every Rose Has Its Thorn", artist: "Poison", album: "Open Up And Say...Ahh! (20th Anniversary Edition)", year: "1988", art: "https://i.scdn.co/image/ab67616d0000b273b4e4e7ee52c6fc8be77d8a33", preview: "https://p.scdn.co/mp3-preview/0f4b7c6d7971c4cbbe38a54775ac41a301ace5e0?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/43GS3mtezoIFiuIZCLLiDY" },
+  { rank: 40, name: "L.A. Woman", artist: "The Doors", album: "L.A. Woman", year: "1971", art: "https://i.scdn.co/image/ab67616d0000b2733992c7ab57975935b29fa22b", preview: "https://p.scdn.co/mp3-preview/7fe7693b74f604ca0c332931d5acc146cb969c01?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6DmfWj5kOa1fX8AwN9byOn" },
+  { rank: 41, name: "Take on Me", artist: "a-ha", album: "Hunting High and Low", year: "1985", art: "https://i.scdn.co/image/ab67616d0000b273e8dd4db47e7177c63b0b7d53", preview: "https://p.scdn.co/mp3-preview/d1427dd0a300eeccfc53b99a2ebf3c664a67414a?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2WfaOiMkCvy7F5fcp2zZ8L" },
+  { rank: 42, name: "Let's Stay Together", artist: "Al Green", album: "We Are Marshall Soundtrack", year: "2007", art: "https://i.scdn.co/image/ab67616d0000b273be2528999e9ae5c1928ae8b2", preview: "https://p.scdn.co/mp3-preview/027817c11eaff28a45d96046a1c5da43d8a1e155?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3uJ8zHRASayItvcSRh8TIm" },
+  { rank: 43, name: "Hold Me Now", artist: "Thompson Twins", album: "Into The Gap", year: "1984", art: "https://i.scdn.co/image/ab67616d0000b27370205e56bcc6a7619911adff", preview: "https://p.scdn.co/mp3-preview/e17625c0d5ffe9165cec52e953f6175c7b1b5420?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0BJU4rYOfj43xHw6gvTIwE" },
+  { rank: 44, name: "Know Your Enemy", artist: "Rage Against The Machine", album: "Rage Against The Machine - XX (20th Anniversary Special Edition)", year: "1992", art: "https://i.scdn.co/image/ab67616d0000b27354ab617bc2d4974ab6ffbece", preview: "https://p.scdn.co/mp3-preview/e3c3364bdb88f3763b778570eb4be5a32a7ab4a4?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1XTGyfJeMiZXrZ1W3NolcB" },
+  { rank: 45, name: "Need You Tonight", artist: "INXS", album: "Kick", year: "1987", art: "https://i.scdn.co/image/ab67616d0000b2734053ce7818f114a4e8dde08f", preview: "https://p.scdn.co/mp3-preview/d8da4599d7eb76f3292cfa621714c23300e4d788?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5eU8qMd0TpaLqTGDZJaLDs" },
+  { rank: 46, name: "At This Moment", artist: "Billy Vera & The Beaters", album: "Hopeless Romantic: The Best Of Billy Vera & The Beaters", year: "2008", art: "https://i.scdn.co/image/ab67616d0000b273f52eddc168eccea76a78735b", preview: "https://p.scdn.co/mp3-preview/3252486ab552c314e1dfc0ee718c1240b168aa24?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/136nAEqaPwbQguey2Unze7" },
+  { rank: 47, name: "Africa", artist: "TOTO", album: "Hold The Line: The Ultimate Toto Collection", year: "2015", art: "https://i.scdn.co/image/ab67616d0000b273a096f4d109adadf8e8ee2db7", preview: "https://p.scdn.co/mp3-preview/e7321b4ea1af32a9c622bc8ec3adcd0a0bb06b1e?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5tJjo5JDF9zhzYD7yQfATH" },
+  { rank: 48, name: "One Thing Leads To Another", artist: "The Fixx", album: "Reach The Beach", year: "1983", art: "https://i.scdn.co/image/ab67616d0000b27332765fe0edd65835fe4232a7", preview: "https://p.scdn.co/mp3-preview/be5314bf8034e45f72df5fb04cbaf2a944834dbb?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5B37ocpk2zxeZL1lq5F6ui" },
+  { rank: 49, name: "Billie Jean", artist: "Michael Jackson", album: "Thriller 25 Super Deluxe Edition", year: "2008", art: "https://i.scdn.co/image/ab67616d0000b2734121faee8df82c526cbab2be", preview: "https://p.scdn.co/mp3-preview/0f6b8a3524ec410020457da4cdd7717f9addce2f?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5ChkMS8OtdzJeqyybCc9R5" },
+  { rank: 50, name: "Can't Fight This Feeling", artist: "REO Speedwagon", album: "Wheels Are Turnin'", year: "1984", art: "https://i.scdn.co/image/ab67616d0000b273b815265c56ecfa5136a4015d", preview: "https://p.scdn.co/mp3-preview/47811ce4b58e8fb058e13bdfb21225aa357a5c9f?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5WwqdeavrQrbeAMDxGawse" },
+  { rank: 51, name: "Come Undone", artist: "Duran Duran", album: "Duran Duran", year: "1993", art: "https://i.scdn.co/image/ab67616d0000b2735d11c2fe73a7d376d3b06107", preview: "https://p.scdn.co/mp3-preview/0d2feb79ee2feb74cb790024554144674d0cc7a7?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0yfNXxlyXdmP0ue1iJijx1" },
+  { rank: 52, name: "Mary Jane's Last Dance", artist: "Tom Petty and the Heartbreakers", album: "Anthology: Through The Years", year: "2000", art: "https://i.scdn.co/image/ab67616d0000b2736cfd76ded516a7f12768a4b2", preview: "https://p.scdn.co/mp3-preview/be0def4ad5842afde18b1d54891020564b235db2?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5eYwDBLucWfWI5KsV7oYX2" },
+  { rank: 53, name: "Mustang Sally", artist: "The Commitments", album: "The Commitments", year: "1991", art: "https://i.scdn.co/image/ab67616d0000b2738e790709b9f3ce9dc731f49f", preview: "https://p.scdn.co/mp3-preview/9b7b42d96362d897b5b0575ae6bd2a8844f29b1a?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1XlCCgKKrQQfXaDyv4GrZe" },
+  { rank: 54, name: "Runaway", artist: "Bon Jovi", album: "Bon Jovi", year: "1984", art: "https://i.scdn.co/image/ab67616d0000b273ede118b5f0e159dd18d42b90", preview: "https://p.scdn.co/mp3-preview/eae4e69de022d463fb0cb4b2fc10e9e800721fb5?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0X1sqQ652p1sceKM2nJlIJ" },
+  { rank: 55, name: "Love And Happiness", artist: "Al Green", album: "The Love Songs Collection", year: "2003", art: "https://i.scdn.co/image/ab67616d0000b273cb146069bf03088aa7469f01", preview: "https://p.scdn.co/mp3-preview/aa3aab6e807bc84c4453080a4194c30f7e3f8cd4?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1wFuVWvqJUE4qHbCEooK2F" },
+  { rank: 56, name: "I Can't Go for That (No Can Do)", artist: "Daryl Hall & John Oates", album: "Hall & Oates", year: "2006", art: "https://i.scdn.co/image/ab67616d0000b2732e3a2ad092091f6b8e792f56", preview: "https://p.scdn.co/mp3-preview/5780af796e94eb1bc54ac4fd86cb54b1d5c65ca0?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1OpOBarPBwCi56P1i04Qdy" },
+  { rank: 57, name: "Too Hot", artist: "Kool & The Gang", album: "The Very Best Of Kool & The Gang", year: "1999", art: "https://i.scdn.co/image/ab67616d0000b273d8159e565f1fa96cb9f83a5e", preview: "https://p.scdn.co/mp3-preview/0a760b5bd4366c6eff55fc94a10b91db1d4b9f31?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0NuYaR56bIWPY01Fwo7hXX" },
+  { rank: 58, name: "Unchained Melody", artist: "The Righteous Brothers", album: "The Very Best Of The Righteous Brothers - Unchained Melody", year: "1990", art: "https://i.scdn.co/image/ab67616d0000b2731682e25596b8ecccb47644d1", preview: "https://p.scdn.co/mp3-preview/6dfd2f4c2862e2090c5910a6ba58d50dd7b36aa1?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1jFhnVoJkcB4lf9tT0rSZS" },
+  { rank: 59, name: "War Pigs / Luke's Wall", artist: "Black Sabbath", album: "Paranoid (Remaster)", year: "1970", art: "https://i.scdn.co/image/ab67616d0000b273d5fccf9ce08b6a1e7d12a222", preview: "https://p.scdn.co/mp3-preview/05dbcf53486767cb5a34e42f7a8e0ba74414f39f?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2rd9ETlulTbz6BYZcdvIE1" },
+  { rank: 60, name: "When I Was Your Man", artist: "Bruno Mars", album: "Unorthodox Jukebox", year: "2012", art: "https://i.scdn.co/image/ab67616d0000b273926f43e7cce571e62720fd46", preview: "https://p.scdn.co/mp3-preview/159fc05584217baa99581c4821f52d04670db6b2?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0nJW01T7XtvILxQgC5J7Wh" },
+  { rank: 61, name: "Don't Dream It's Over", artist: "Crowded House", album: "The Very Very Best Of Crowded House (Deluxe Edition)", year: "2010", art: "https://i.scdn.co/image/ab67616d0000b27375842f0e271b392b98fbb1c3", preview: "https://p.scdn.co/mp3-preview/e3443f2c3b18fc9e108abc8e8ec6225f5d7a9c7c?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/68wIBE5dVVX8RyfZCJnAj5" },
+  { rank: 62, name: "Brown Eyed Girl", artist: "Van Morrison", album: "Blowin' Your Mind!", year: "1967", art: "https://i.scdn.co/image/ab67616d0000b2733f29a976eea00141514ab936", preview: "https://p.scdn.co/mp3-preview/23db5d37f456f0a07f7d638d88edc8abc21c357d?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3yrSvpt2l1xhsV9Em88Pul" },
+  { rank: 63, name: "Shattered Dreams", artist: "Johnny Hates Jazz", album: "Turn Back The Clock", year: "1988", art: "https://i.scdn.co/image/ab67616d0000b2732f915da5ca987450e615f863", preview: "https://p.scdn.co/mp3-preview/f963af3f4023343d25593893d0d7f25c32b35bc3?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5KXKhCfPNS4342ly8tTf6w" },
+  { rank: 64, name: "A Whiter Shade Of Pale", artist: "Procol Harum", album: "A Whiter Shade Of Pale", year: "1967", art: "https://i.scdn.co/image/ab67616d0000b273cf631fa808736f9ff55bc2cb", preview: "https://p.scdn.co/mp3-preview/0d306c52975e53a3af856cc13cabe99c015e9d6f?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3qitymULqEibr7yknRMKU4" },
+  { rank: 65, name: "Harvest Moon", artist: "Neil Young", album: "Greatest Hits", year: "2004", art: "https://i.scdn.co/image/ab67616d0000b2739ccaa7931619cf504014a987", preview: "https://p.scdn.co/mp3-preview/eb44c7946421ba6b462dfdb4b76dcbeb142ec010?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7sCHy8QQUz3CRvUMp53Cbm" },
+  { rank: 66, name: "Them Changes", artist: "Buddy Miles", album: "Them Changes", year: "1970", art: "https://i.scdn.co/image/ab67616d0000b273e56fa33678b78030ef42aace", preview: "https://p.scdn.co/mp3-preview/b84e865b2df0885345c497ed38ec71e1f35fbeb1?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0WoOHWp82bWaFBwrox1oGA" },
+  { rank: 67, name: "What's the Use?", artist: "Mac Miller", album: "Swimming", year: "2018", art: "https://i.scdn.co/image/ab67616d0000b273175c577a61aa13d4fb4b6534", preview: "https://p.scdn.co/mp3-preview/f3992cadc24b4516addd63d779e9cde068e88bd7?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2dgrYdgguVZKeCsrVb9XEs" },
+  { rank: 68, name: "Roads", artist: "Portishead", album: "Dummy", year: "1994", art: "https://i.scdn.co/image/ab67616d0000b273dc20397b139223620af148f6", preview: "https://p.scdn.co/mp3-preview/f0ca8afa51f7f1884e42886549a278d597934c29?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2sW8fmnISifQTRgnRrQTYW" },
+  { rank: 69, name: "Wild Horses - 2009 Mix", artist: "The Rolling Stones", album: "Sticky Fingers (Remastered)", year: "1971", art: "https://i.scdn.co/image/ab67616d0000b273a1d9c9969f2a7ed27e449a3c", preview: "https://p.scdn.co/mp3-preview/0b748c84540d3115c73b68d31ed906d9847e97da?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/52dm9op3rbfAkc1LGXgipW" },
+  { rank: 70, name: "Babe I'm Gonna Leave You", artist: "Led Zeppelin", album: "Led Zeppelin", year: "1969", art: "https://i.scdn.co/image/ab67616d0000b2736f2f499c1df1f210c9b34b32", preview: "https://p.scdn.co/mp3-preview/a8e3880460bab38cda1247a9d34152d985388336?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/4OMu5a8sFpcRCPCcsoEaov" },
+  { rank: 71, name: "The Concept", artist: "Teenage Fanclub", album: "Bandwagonesque", year: "1991", art: "https://i.scdn.co/image/ab67616d0000b273267bc422b348bc278af4fa81", preview: "https://p.scdn.co/mp3-preview/489be2505cc656b26f76023b268121e643cdd3eb?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/702Gf3Gh3NsC1KbCFrlrpe" },
+  { rank: 72, name: "Dr. D", artist: "The Mighty Mighty Bosstones", album: "More Noise And Other Disturbances", year: "1992", art: "https://i.scdn.co/image/ab67616d0000b2731a6a51facf2a0fcec01f2018", preview: "https://p.scdn.co/mp3-preview/2e8e91677d6aac064e853687012ec81407efc750?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3PuCSJkZ5MgojEdo9vK4yY" },
+  { rank: 73, name: "When Doves Cry", artist: "Prince", album: "Purple Rain", year: "1984", art: "https://i.scdn.co/image/ab67616d0000b273d52bfb90ee8dfeda8378b99b", preview: "https://p.scdn.co/mp3-preview/f7110b93ffc4b3746092e331c2e7188cfc283800?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/51H2y6YrNNXcy3dfc3qSbA" },
+  { rank: 74, name: "Kissing a Fool", artist: "George Michael", album: "Ladies And Gentlemen... The Best Of George Michael", year: "1998", art: "https://i.scdn.co/image/ab67616d0000b27364c19b24ce947ffa363f8f96", preview: "https://p.scdn.co/mp3-preview/4a1837c26d784efe33a1b17a1391904b787848c7?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/4ZCaO5I6XdIHb0X2UwNDtZ" },
+  { rank: 75, name: "I'm Gonna Find Another You", artist: "John Mayer", album: "Continuum", year: "2006", art: "https://i.scdn.co/image/ab67616d0000b273ac9fea717d5b78e73cbd89f6", preview: "https://p.scdn.co/mp3-preview/b844fa5fd09ebebc25c1627f6137f81f6bb5854c?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0bYDebBlQxsDR4hCgbbpOW" },
+  { rank: 76, name: "And So It Goes", artist: "Billy Joel", album: "The Essential Billy Joel", year: "2001", art: "https://i.scdn.co/image/ab67616d0000b273d287ed0734d4fcf11f9a0000", preview: "https://p.scdn.co/mp3-preview/ad61b9bd94f39990885f01868d14b35bb46573be?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2r2XzhBMB4liDL9YW80Fqs" },
+  { rank: 77, name: "The Wind Cries Mary", artist: "Jimi Hendrix", album: "Are You Experienced", year: "1967", art: "https://i.scdn.co/image/ab67616d0000b273c9adfbd773852e286faed040", preview: "https://p.scdn.co/mp3-preview/c2d447765c96dee1cb47ecc708c118282162b368?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5H6Jp0syB5yEPk7SWYdlmk" },
+  { rank: 78, name: "Bury Me", artist: "The Smashing Pumpkins", album: "Gish (Remastered)", year: "1991", art: "https://i.scdn.co/image/ab67616d0000b273595413e021bc54c8d1c4a86a", preview: "https://p.scdn.co/mp3-preview/4ec1fc1910353ff9dcb45e028f90825e06ac2f99?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/67T8GmlYhtMpPGzGXzXgIw" },
+  { rank: 79, name: "Hold Back The River", artist: "James Bay", album: "Chaos And The Calm", year: "2015", art: "https://i.scdn.co/image/ab67616d0000b273b36f5e7575a59b21aef432f2", preview: "https://p.scdn.co/mp3-preview/aba30de13d468df5bd7762a55a7ac0e210041f09?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7tmtOEDxPN7CWaQWBsG1DY" },
+  { rank: 80, name: "Hey Pachuco!", artist: "Royal Crown Revue", album: "Caught In The Act", year: "1997", art: "https://i.scdn.co/image/ab67616d0000b273e20395f86f6fbed337e0a1b0", preview: "https://p.scdn.co/mp3-preview/18a7341cb169741ee588f0f4e2fced392b69c9fb?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5W9DGmmB8pIgJg7BQeMKyG" },
+  { rank: 81, name: "Son of a Preacher Man", artist: "Dusty Springfield", album: "Dusty In Memphis [Deluxe Edition]", year: "1969", art: "https://i.scdn.co/image/ab67616d0000b2735aaa2395bb5c2016c1e2f6f0", preview: "https://p.scdn.co/mp3-preview/af4ae13baf6ac3c08703b0651b774ac017f8baeb?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7odHgoLFi3GQ90E9PeraI3" },
+  { rank: 82, name: "Streets of Philadelphia", artist: "Bruce Springsteen", album: "Greatest Hits", year: "1995", art: "https://i.scdn.co/image/ab67616d0000b2736c4b9a2a1a51b76e5182f8bb", preview: "https://p.scdn.co/mp3-preview/149aff474d2ec3216e61ddb86366bf7625eb1d9b?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/0oVSvrU612xkj7vbvbUAT2" },
+  { rank: 83, name: "Run", artist: "Collective Soul", album: "Dosage", year: "1999", art: "https://i.scdn.co/image/ab67616d0000b273987bd2151f0f4e8b7bfdf55a", preview: "https://p.scdn.co/mp3-preview/b0fd4f6e1f272f98bceb87a5320132738da86ffc?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/1jfzCY0ca2Uvf0Zu4ncBSY" },
+  { rank: 84, name: "Every Breath You Take", artist: "The Police", album: "Synchronicity", year: "1983", art: "https://i.scdn.co/image/ab67616d0000b273e7b53d0f9fb616521cdbfc03", preview: "https://p.scdn.co/mp3-preview/92d7997134bb18b99eb5fdc65926e4ef613f9781?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2sXp9Qmvc7mRaDBjBgcGGi" },
+  { rank: 85, name: "The Lady In Red", artist: "Chris de Burgh", album: "Into The Light", year: "1986", art: "https://i.scdn.co/image/ab67616d0000b2739a7a48b48454c44e818464a0", preview: "https://p.scdn.co/mp3-preview/1ac458262cf02491e364dec2477f5c6e7595415a?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5tHbBxWjTxaQpL5SrT17Tz" },
+  { rank: 86, name: "I Wanna Riot", artist: "Rancid", album: "All The Moon Stompers", year: "2015", art: "https://i.scdn.co/image/ab67616d0000b273e1609e90aee6dcb740806c39", preview: "https://p.scdn.co/mp3-preview/76e991ba84e0e99ab6300b54e93e05a2602fba7d?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/3prgCqodybVT758HNY2SXW" },
+  { rank: 87, name: "Bad Bad News", artist: "Leon Bridges", album: "Good Thing", year: "2018", art: "https://i.scdn.co/image/ab67616d0000b273d8ba7edac14684336ba0f507", preview: "https://p.scdn.co/mp3-preview/477bdba14a81b7d192809761a04d4dc684984d3f?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7FxzgizJRGTQ3fxUqfvljg" },
+  { rank: 88, name: "I Want To Break Free", artist: "Queen", album: "The Works (Deluxe Remastered Version)", year: "1984", art: "https://i.scdn.co/image/ab67616d0000b2734aab69127abbdced0dec07e0", preview: "https://p.scdn.co/mp3-preview/0a53d40273109b7b3f65cbad979b0c54d00a7e30?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7h2yhVxcZOGyQdOwD4Hu8J" },
+  { rank: 89, name: "Wicked Game", artist: "Chris Isaak", album: "Best of Chris Isaak (Remastered)", year: "2006", art: "https://i.scdn.co/image/ab67616d0000b273b4faff3f38618b2e3381811f", preview: "https://p.scdn.co/mp3-preview/116da575b713d8fe2c698dbb3bbd31c065bff4c3?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/390AWnOn2rfe9FzQjYmxIH" },
+  { rank: 90, name: "Stairway to Heaven", artist: "Led Zeppelin", album: "Led Zeppelin IV (Deluxe Edition)", year: "1971", art: "https://i.scdn.co/image/ab67616d0000b273c8a11e48c91a982d086afc69", preview: "https://p.scdn.co/mp3-preview/337c8d45ac66899bc2db9ef3ed9438fe1d035ab1?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5CQ30WqJwcep0pYcV4AMNc" },
+  { rank: 91, name: "Eleanor Rigby", artist: "The Beatles", album: "Revolver (Remastered)", year: "1966", art: "https://i.scdn.co/image/ab67616d0000b27328b8b9b46428896e6491e97a", preview: "https://p.scdn.co/mp3-preview/7ef39591e786ae25bdf67bb92abe2460ade35fbf?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/5GjPQ0eI7AgmOnADn1EO6Q" },
+  { rank: 92, name: "Kickstart My Heart", artist: "M\u00f6tley Cr\u00fce", album: "Dr. Feelgood", year: "1989", art: "https://i.scdn.co/image/ab67616d0000b2739a81658775e67d37b9e13be1", preview: "https://p.scdn.co/mp3-preview/caae765db662522588bf820b6730e12fd968ace1?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7GonnnalI2s19OCQO1J7Tf" },
+  { rank: 93, name: "This Night", artist: "Billy Joel", album: "An Innocent Man", year: "1983", art: "https://i.scdn.co/image/ab67616d0000b27329c68eb2726f08eca5ba8613", preview: "https://p.scdn.co/mp3-preview/f7eccdaac331310a38c89b3503f1903c00a8f4e8?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6ZTRRn6pGCt2qxkiUKgqqk" },
+  { rank: 94, name: "Don't Push", artist: "Sublime", album: "40oz. To Freedom", year: "1992", art: "https://i.scdn.co/image/ab67616d0000b273d77299e3d29f44495cd7fbcb", preview: "https://p.scdn.co/mp3-preview/61cb47e6a966116eda4f925f0d790935922eb423?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/4FlWVsDRnYa28oJSAApL4t" },
+  { rank: 95, name: "Say Something", artist: "James", album: "Laid", year: "1993", art: "https://i.scdn.co/image/ab67616d0000b273b67dbb84e0c1f82be886c8ea", preview: "https://p.scdn.co/mp3-preview/7b773dd3cc78b9eb4ae2a9426056613a14ab1c8a?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7MMbYOpnyQU4CzPqK7Tu2x" },
+  { rank: 96, name: "Pretty Tied Up (The Perils Of Rock N' Roll Decadence)", artist: "Guns N' Roses", album: "Use Your Illusion II", year: "1991", art: "https://i.scdn.co/image/ab67616d0000b27392d21aef6c0d288cc4c05973", preview: "https://p.scdn.co/mp3-preview/6a7a07c5c8e4d757c0bdb82d45f51c920d18337e?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/2hAt6y582UsTcwvCKTcTMs" },
+  { rank: 97, name: "Audition (The Fools Who Dream)", artist: "Emma Stone", album: "La La Land (Original Motion Picture Soundtrack)", year: "2016", art: "https://i.scdn.co/image/ab67616d0000b2730bdf4dd39843ad48c5b66bc4", preview: "https://p.scdn.co/mp3-preview/cd61cf975c1e50256e8370fdf90559fb45e86caa?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/6j0wBBAP3hMe4t1Ymj7GIe" },
+  { rank: 98, name: "The Sounds of Silence", artist: "Simon & Garfunkel", album: "Greatest Hits", year: "1972", art: "https://i.scdn.co/image/ab67616d0000b273ebb9f3c341e85db31408652e", preview: "https://p.scdn.co/mp3-preview/8d9b74974ad656a3c84032b0b5c1f8ecda2a467e?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/39CGrUZUozjtjgAASzzB56" },
+  { rank: 99, name: "25 or 6 to 4", artist: "Chicago", album: "Chicago II", year: "1970", art: "https://i.scdn.co/image/ab67616d0000b273f97c928726d4abbaed5aebf9", preview: "https://p.scdn.co/mp3-preview/d9ce63eb1efb4e1baf88ddfde5c04f6cd40d7a6b?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/7GqIDx2QVGOpd4r1fZaUUW" },
+  { rank: 100, name: "With Or Without You", artist: "U2", album: "The Joshua Tree (Deluxe)", year: "1987", art: "https://i.scdn.co/image/ab67616d0000b2733251458b655b95a4f6efc1df", preview: "https://p.scdn.co/mp3-preview/a7e5de3437eecf201cc1817a7b2d8fae96910199?cid=9950ac751e34487dbbe027c4fd7f8e99", spotify: "https://open.spotify.com/track/4ha9ajL4Kz98uldAfuos6p" },
+];
+
 let currentAudio = null;
 let currentBtn = null;
 
-async function getSpotifyToken() {
-  const creds = btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`);
-  const res = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: { 'Authorization': `Basic ${creds}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'grant_type=client_credentials'
-  });
-  const data = await res.json();
-  spotifyToken = data.access_token;
-  return spotifyToken;
-}
-
-async function loadSpotifyPlaylist() {
+function loadSpotifyPlaylist() {
   window.songsLoaded = true;
-  const loading = document.getElementById('songs-loading');
-  try {
-    const token = await getSpotifyToken();
-    // Fetch all tracks (may need multiple requests if >100)
-    let tracks = [];
-    let url = `https://api.spotify.com/v1/playlists/${SPOTIFY_PLAYLIST_ID}/tracks?limit=100&fields=items(track(id,name,artists,album(name,images,release_date),preview_url)),next`;
-    while (url) {
-      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-      const data = await res.json();
-      tracks = tracks.concat(data.items.filter(i => i.track));
-      url = data.next;
-    }
-    loading.style.display = 'none';
-    buildSongsList(tracks);
-  } catch(e) {
-    loading.textContent = 'Could not load playlist. Check your Spotify credentials.';
-    console.error(e);
-  }
+  document.getElementById('songs-loading').style.display = 'none';
+  buildSongsList();
 }
 
-function buildSongsList(tracks) {
+function buildSongsList() {
   const container = document.getElementById('songs-list');
   const sections = [
-    { label: 'Top 10', range: [0, 9] },
-    { label: '11–30', range: [10, 29] },
-    { label: '31–60', range: [30, 59] },
-    { label: '61–100', range: [60, 99] },
+    { label: 'Top 10', range: [1, 10] },
+    { label: '11–30', range: [11, 30] },
+    { label: '31–60', range: [31, 60] },
+    { label: '61–100', range: [61, 100] },
   ];
 
   sections.forEach(sec => {
@@ -2033,31 +2104,25 @@ function buildSongsList(tracks) {
     const list = document.createElement('div');
     list.style.cssText = 'padding: 0 40px;';
 
-    tracks.slice(sec.range[0], sec.range[1] + 1).forEach((item, idx) => {
-      const track = item.track;
-      const rank = sec.range[0] + idx + 1;
-      const artist = track.artists.map(a => a.name).join(', ');
-      const album = track.album.name;
-      const year = track.album.release_date ? track.album.release_date.slice(0, 4) : '';
-      const art = track.album.images && track.album.images[1] ? track.album.images[1].url : null;
-      const preview = track.preview_url;
-
+    songs.filter(s => s.rank >= sec.range[0] && s.rank <= sec.range[1]).forEach(s => {
       const row = document.createElement('div');
       row.className = 'song-row';
       row.innerHTML = `
-        <span class="song-rank">${rank}</span>
+        <span class="song-rank">${s.rank}</span>
         <div class="song-art">
-          ${art ? `<img src="${art}" alt="${track.name}" onload="this.classList.add('loaded')">` : '<div class="song-art-placeholder">♪</div>'}
+          <img src="${s.art}" alt="${s.name.replace(/"/g,'&quot;')}" onload="this.classList.add('loaded')">
         </div>
         <div class="song-info">
-          <div class="song-title">${track.name}</div>
-          <div class="song-meta">${artist} · ${album} · ${year}</div>
+          <div class="song-title">${s.name}</div>
+          <div class="song-meta">${s.artist} · ${s.album} · ${s.year}</div>
         </div>
-        ${preview ? `<button class="preview-btn" data-preview="${preview}">▶ Preview</button>` : ''}
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          ${s.preview ? `<button class="preview-btn" data-preview="${s.preview}">▶ Preview</button>` : ''}
+          <a href="${s.spotify}" target="_blank" class="preview-btn" style="text-decoration:none;">♫ Spotify</a>
+        </div>
       `;
 
-      // Preview button
-      if (preview) {
+      if (s.preview) {
         const btn = row.querySelector('.preview-btn');
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -2066,7 +2131,7 @@ function buildSongsList(tracks) {
             if (currentBtn) { currentBtn.textContent = '▶ Preview'; currentBtn.classList.remove('playing'); }
             if (currentBtn === btn) { currentAudio = null; currentBtn = null; return; }
           }
-          currentAudio = new Audio(preview);
+          currentAudio = new Audio(s.preview);
           currentAudio.play();
           currentBtn = btn;
           btn.textContent = '■ Stop';
