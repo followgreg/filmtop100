@@ -450,6 +450,20 @@
     .songs-section-label { padding: 16px 20px 8px; }
     .preview-btn { display: none; }
   }
+  /* Film Diary */
+  .diary-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; border-radius: 6px; }
+  .diary-row:hover { background: var(--surface); }
+  .diary-poster { width: 36px; height: 52px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .diary-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .diary-poster img.loaded { opacity: 1; }
+  .diary-info { min-width: 0; }
+  .diary-title { font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .diary-meta { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .diary-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+  .diary-rating { font-size: 13px; color: var(--accent); font-family: 'DM Mono', monospace; }
+  .diary-date { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .diary-rewatch { font-size: 9px; color: var(--up); text-transform: uppercase; letter-spacing: 0.06em; }
+
   .tv-intro { padding: 28px 40px 4px; max-width: 680px; }
   .tv-intro p { font-size: 14px; line-height: 1.8; color: var(--muted); }
   .tv-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid var(--border); }
@@ -579,28 +593,16 @@
 <div class="header">
   <div class="header-top">
     <div class="title-block">
-      <h1>Greg's Top 100 Films</h1>
-      <p>Joy-first ranking · Updated March 2026 · <a href="https://letterboxd.com/Followgreg/" target="_blank" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(200,169,110,0.4);">Letterboxd ↗</a></p>
-    </div>
-    <div class="stats-row">
-      <div class="stat">
-        <span class="stat-value" id="stat-rated">—</span>
-        <span class="stat-label">Films Rated</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="stat-new">2</span>
-        <span class="stat-label">New Entries</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="stat-biggest-rise">—</span>
-        <span class="stat-label">Biggest Rise</span>
-      </div>
+      <h1>Greg Loves Movies</h1>
+      <p>Updated March 2026 · <a href="https://letterboxd.com/Followgreg/" target="_blank" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(200,169,110,0.4);">Letterboxd ↗</a></p>
     </div>
   </div>
 </div>
 
 <div class="tab-nav">
   <button class="tab-btn film-tab active" onclick="switchTab('top100')">Top 100</button>
+  <button class="tab-btn film-tab" onclick="switchTab('collection')">Physical Collection</button>
+  <button class="tab-btn film-tab" onclick="switchTab('diary')">Film Diary</button>
   <button class="tab-btn film-tab" onclick="switchTab('byyear')">Fave Every Year</button>
   <span class="tab-divider">Also by Greg:</span>
   <button class="tab-btn" onclick="switchTab('tv')">Fave TV</button>
@@ -626,6 +628,7 @@
     <h2>The List</h2>
     <p>One hundred films. Ranked by joy, not quality. The top 40 require five or more viewings to qualify — you can't accidentally love something that many times.</p>
     <p>This list is re-evaluated every 6 months and while informed by quantified data points, finalized by gut and passion.</p>
+    <p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any film to go deeper</p>
     <div class="criteria">
       <div class="criterion"><span class="crit-label">Framework</span><span class="crit-val">Joy over quality</span></div>
       <div class="criterion"><span class="crit-label">Top 40 rule</span><span class="crit-val">5+ viewings required</span></div>
@@ -666,9 +669,40 @@
 </div><!-- end tab-top100 -->
 
 <div id="tab-byyear" class="tab-panel">
-  <div class="year-intro"><p>One film per year, every year since 1970. No runners-up, no ties. Just the pick.</p></div>
+  <div class="year-intro"><p>One film per year, every year since 1970. No runners-up, no ties. Just the pick.</p><p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any film to go deeper</p></div>
   <div id="year-list"></div>
 </div><!-- end tab-byyear -->
+
+<div id="tab-collection" class="tab-panel">
+  <div class="about">
+    <div class="about-inner">
+      <h2>The Physical Collection</h2>
+      <p>Alphabetical. Tap any title for details, streaming, and more.</p>
+      <p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any title to go deeper</p>
+    </div>
+  </div>
+  <div class="controls" style="position:sticky;top:49px;">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="collection-search" placeholder="Search collection..." oninput="filterCollection()">
+    </div>
+    <span class="results-count" id="collection-count">442 titles</span>
+  </div>
+  <div id="collection-list"></div>
+</div><!-- end tab-collection -->
+
+<div id="tab-diary" class="tab-panel">
+  <div class="about">
+    <div class="about-inner">
+      <h2>Film Diary</h2>
+      <p>Recent watches pulled live from Letterboxd. Every film Greg has logged, in order.</p>
+      <p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any film to go deeper</p>
+    </div>
+  </div>
+  <div id="diary-loading" style="padding:40px;color:var(--muted);font-size:14px;">Loading from Letterboxd...</div>
+  <div id="diary-list" style="padding:0 40px;"></div>
+  <div id="diary-error" style="padding:40px;color:var(--muted);font-size:14px;display:none;">Could not load diary. Check back later.</div>
+</div><!-- end tab-diary -->
 
 <div id="tab-tv" class="tab-panel">
   <div class="tv-intro"><p>One hundred television series. Ranked by the same principle as the films -- joy, rewatchability, and gut. Drama, comedy, limited series, documentary. All of it.</p></div>
@@ -1972,6 +2006,111 @@ function switchTab(tab) {
   });
   document.body.className = tab === 'tv' ? 'tab-tv' : tab === 'songs' ? 'tab-songs' : '';
   if (tab === 'songs' && !window.songsLoaded) loadSpotifyPlaylist();
+  if (tab === 'collection' && !window.collectionLoaded) {
+    window.collectionLoaded = true;
+    buildCollectionGrid(collection);
+    fetchCollectionPosters();
+  }
+  if (tab === 'diary' && !window.diaryLoaded) loadLetterboxdDiary();
+}
+
+async function loadLetterboxdDiary() {
+  window.diaryLoaded = true;
+  const loading = document.getElementById('diary-loading');
+  const errorEl = document.getElementById('diary-error');
+  const container = document.getElementById('diary-list');
+
+  try {
+    const rssUrl = 'https://letterboxd.com/followgreg/rss/';
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+    const res = await fetch(proxyUrl);
+    const data = await res.json();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(data.contents, 'text/xml');
+    const items = Array.from(xml.querySelectorAll('item'));
+
+    loading.style.display = 'none';
+
+    if (!items.length) {
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    for (const item of items) {
+      const title = item.querySelector('title')?.textContent || '';
+      const link = item.querySelector('link')?.textContent || '';
+      const pubDate = item.querySelector('pubDate')?.textContent || '';
+      const desc = item.querySelector('description')?.textContent || '';
+
+      // Parse film title and year from RSS title (format: "Film Title, Year - ★★★½")
+      const titleMatch = title.match(/^(.+?),\s*(\d{4})\s*(?:-\s*(.+))?$/);
+      const filmTitle = titleMatch ? titleMatch[1].trim() : title.replace(/\s*-\s*★.*$/, '').trim();
+      const filmYear = titleMatch ? titleMatch[2] : '';
+      const ratingRaw = titleMatch ? (titleMatch[3] || '') : title.match(/★[★½]*/)?.[0] || '';
+
+      // Parse rewatch from description
+      const isRewatch = desc.toLowerCase().includes('rewatch') || desc.includes('↺');
+
+      // Format date
+      const date = pubDate ? new Date(pubDate) : null;
+      const dateStr = date ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+      // Build row
+      const row = document.createElement('div');
+      row.className = 'diary-row';
+      row.innerHTML = `
+        <div class="diary-poster" id="dp2-${filmTitle.replace(/[^a-z0-9]/gi,'').toLowerCase().slice(0,10)}">
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0.3;">🎬</div>
+        </div>
+        <div class="diary-info">
+          <div class="diary-title">${filmTitle}${filmYear ? ' <span style="color:var(--muted);font-size:11px;font-family:DM Mono,monospace">'+filmYear+'</span>' : ''}</div>
+          <div class="diary-meta">${filmTitle}</div>
+        </div>
+        <div class="diary-right">
+          ${ratingRaw ? `<span class="diary-rating">${ratingRaw}</span>` : ''}
+          <span class="diary-date">${dateStr}</span>
+          ${isRewatch ? '<span class="diary-rewatch">↺ rewatch</span>' : ''}
+        </div>
+      `;
+
+      // Click handler
+      row.addEventListener('click', () => {
+        const listFilm = films.find(f =>
+          f.title.toLowerCase().replace(/[^a-z0-9]/g,'') ===
+          filmTitle.toLowerCase().replace(/[^a-z0-9]/g,'')
+        );
+        if (listFilm) {
+          openFilmPanel(listFilm);
+        } else {
+          window.open(link, '_blank');
+        }
+      });
+
+      container.appendChild(row);
+
+      // Fetch poster async
+      fetchDiaryPoster(filmTitle, filmYear, row.querySelector('.diary-poster'));
+    }
+
+  } catch(e) {
+    loading.style.display = 'none';
+    errorEl.style.display = 'block';
+    console.error('Diary load error:', e);
+  }
+}
+
+async function fetchDiaryPoster(title, year, cell) {
+  try {
+    await new Promise(r => setTimeout(r, Math.random() * 500));
+    const query = encodeURIComponent(title);
+    const yearParam = year ? `&year=${year}` : '';
+    const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}${yearParam}&language=en-US`);
+    const data = await res.json();
+    const match = data.results && data.results[0];
+    if (match && match.poster_path && cell) {
+      cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${title}" onload="this.classList.add('loaded')">`;
+    }
+  } catch(e) {}
 }
 
 const songs = [
@@ -2363,6 +2502,592 @@ async function fetchTvPosters() {
       }
     } catch(e) {}
     await new Promise(r => setTimeout(r, 60));
+  }
+}
+
+const collection = [
+  { id: 1, title: "A Beautiful Mind", search: "A Beautiful Mind" },
+  { id: 2, title: "A Bug's Life", search: "A Bug's Life" },
+  { id: 3, title: "A Clockwork Orange", search: "A Clockwork Orange" },
+  { id: 4, title: "A Star Is Born", search: "A Star Is Born" },
+  { id: 5, title: "Adaptation", search: "Adaptation" },
+  { id: 6, title: "Aladdin", search: "Aladdin" },
+  { id: 7, title: "Alien", search: "Alien" },
+  { id: 8, title: "Aliens", search: "Aliens" },
+  { id: 9, title: "Amadeus", search: "Amadeus" },
+  { id: 10, title: "American Beauty", search: "American Beauty" },
+  { id: 11, title: "American Horror Story: Season 1", search: "American Horror Story" },
+  { id: 12, title: "American Psycho", search: "American Psycho" },
+  { id: 13, title: "Anchorman", search: "Anchorman" },
+  { id: 14, title: "Animatrix", search: "Animatrix" },
+  { id: 15, title: "Anna and the King", search: "Anna and the King" },
+  { id: 16, title: "Annie", search: "Annie" },
+  { id: 17, title: "Anora", search: "Anora" },
+  { id: 18, title: "Ant-Man", search: "Ant-Man" },
+  { id: 19, title: "Any Given Sunday", search: "Any Given Sunday" },
+  { id: 20, title: "Apocalypto", search: "Apocalypto" },
+  { id: 21, title: "Apollo 13", search: "Apollo 13" },
+  { id: 22, title: "The Apprentice", search: "The Apprentice" },
+  { id: 23, title: "Argo", search: "Argo" },
+  { id: 24, title: "The Aristocrats", search: "The Aristocrats" },
+  { id: 25, title: "Armageddon", search: "Armageddon" },
+  { id: 26, title: "Arrival", search: "Arrival" },
+  { id: 27, title: "A.I. Artificial Intelligence", search: "A.I. Artificial Intelligence" },
+  { id: 28, title: "Avatar", search: "Avatar" },
+  { id: 29, title: "The Avengers", search: "The Avengers" },
+  { id: 30, title: "Avengers: Age of Ultron", search: "Avengers: Age of Ultron" },
+  { id: 31, title: "The Aviator", search: "The Aviator" },
+  { id: 32, title: "Back to the Future: The Complete Trilogy", search: "Back to the Future" },
+  { id: 33, title: "Balls of Fury", search: "Balls of Fury" },
+  { id: 34, title: "Band of Brothers", search: "Band of Brothers" },
+  { id: 35, title: "Barry Lyndon", search: "Barry Lyndon" },
+  { id: 36, title: "Batman Begins", search: "Batman Begins" },
+  { id: 37, title: "Batman v Superman: Dawn of Justice", search: "Batman v Superman: Dawn of Justice" },
+  { id: 38, title: "Battle: Los Angeles", search: "Battle: Los Angeles" },
+  { id: 39, title: "Beauty and the Beast", search: "Beauty and the Beast" },
+  { id: 40, title: "Being John Malkovich", search: "Being John Malkovich" },
+  { id: 41, title: "Ben-Hur", search: "Ben-Hur" },
+  { id: 42, title: "The Curious Case of Benjamin Button", search: "The Curious Case of Benjamin Button" },
+  { id: 43, title: "The Big Short", search: "The Big Short" },
+  { id: 44, title: "Big Trouble in Little China", search: "Big Trouble in Little China" },
+  { id: 45, title: "Black Hawk Down", search: "Black Hawk Down" },
+  { id: 46, title: "The Blair Witch Project", search: "The Blair Witch Project" },
+  { id: 47, title: "Blood Simple", search: "Blood Simple" },
+  { id: 48, title: "Boiler Room", search: "Boiler Room" },
+  { id: 49, title: "Boogie Nights", search: "Boogie Nights" },
+  { id: 50, title: "Borat", search: "Borat" },
+  { id: 51, title: "Boston Red Sox: 100 Years of Baseball History", search: "Boston Red Sox: 100 Years of Baseball History" },
+  { id: 52, title: "The Bourne Identity", search: "The Bourne Identity" },
+  { id: 53, title: "Breakin' 2: Electric Boogaloo", search: "Breakin' 2: Electric Boogaloo" },
+  { id: 54, title: "Bridesmaids", search: "Bridesmaids" },
+  { id: 55, title: "Bruce Lee: Ultimate DVD Collection", search: "Bruce Lee: Ultimate DVD Collection" },
+  { id: 56, title: "Bruce Lee: Fist of Fear, Touch of Death", search: "Bruce Lee: Fist of Fear, Touch of Death" },
+  { id: 57, title: "Captain America: The First Avenger", search: "Captain America: The First Avenger" },
+  { id: 58, title: "Captain America: The Winter Soldier", search: "Captain America: The Winter Soldier" },
+  { id: 59, title: "Cars", search: "Cars" },
+  { id: 60, title: "Casino", search: "Casino" },
+  { id: 61, title: "Casino Royale", search: "Casino Royale" },
+  { id: 62, title: "Cast Away", search: "Cast Away" },
+  { id: 63, title: "Catch Me If You Can", search: "Catch Me If You Can" },
+  { id: 64, title: "The Cell", search: "The Cell" },
+  { id: 65, title: "Charlie's Angels", search: "Charlie's Angels" },
+  { id: 66, title: "National Lampoon's Christmas Vacation", search: "National Lampoon's Christmas Vacation" },
+  { id: 67, title: "Cinderella", search: "Cinderella" },
+  { id: 68, title: "Citizen Kane", search: "Citizen Kane" },
+  { id: 69, title: "City of Angels", search: "City of Angels" },
+  { id: 70, title: "Clash of the Titans (1981)", search: "Clash of the Titans" },
+  { id: 71, title: "Clash of the Titans (2010)", search: "Clash of the Titans" },
+  { id: 72, title: "Star Wars: The Clone Wars", search: "Star Wars: The Clone Wars" },
+  { id: 73, title: "Close Encounters of the Third Kind", search: "Close Encounters of the Third Kind" },
+  { id: 74, title: "Clueless", search: "Clueless" },
+  { id: 75, title: "Contact", search: "Contact" },
+  { id: 76, title: "Cop Land", search: "Cop Land" },
+  { id: 77, title: "Creed", search: "Creed" },
+  { id: 78, title: "Crouching Tiger, Hidden Dragon", search: "Crouching Tiger, Hidden Dragon" },
+  { id: 79, title: "The Dark Knight", search: "The Dark Knight" },
+  { id: 80, title: "The Dark Knight Rises", search: "The Dark Knight Rises" },
+  { id: 81, title: "The Da Vinci Code", search: "The Da Vinci Code" },
+  { id: 82, title: "The Day After Tomorrow", search: "The Day After Tomorrow" },
+  { id: 83, title: "Dazed and Confused", search: "Dazed and Confused" },
+  { id: 84, title: "Deadpool", search: "Deadpool" },
+  { id: 85, title: "Deadpool 2", search: "Deadpool 2" },
+  { id: 86, title: "Death Proof", search: "Death Proof" },
+  { id: 87, title: "The Departed", search: "The Departed" },
+  { id: 88, title: "Despicable Me", search: "Despicable Me" },
+  { id: 89, title: "The Devil Wears Prada", search: "The Devil Wears Prada" },
+  { id: 90, title: "Die Hard", search: "Die Hard" },
+  { id: 91, title: "Dinner with Friends", search: "Dinner with Friends" },
+  { id: 92, title: "Dirty Rotten Scoundrels", search: "Dirty Rotten Scoundrels" },
+  { id: 93, title: "District 9", search: "District 9" },
+  { id: 94, title: "Django Unchained", search: "Django Unchained" },
+  { id: 95, title: "Dodgeball: A True Underdog Story", search: "Dodgeball: A True Underdog Story" },
+  { id: 96, title: "Draft Day", search: "Draft Day" },
+  { id: 97, title: "Dune (1984)", search: "Dune" },
+  { id: 98, title: "Dunkirk", search: "Dunkirk" },
+  { id: 99, title: "Elf", search: "Elf" },
+  { id: 100, title: "Enchanted", search: "Enchanted" },
+  { id: 101, title: "Erin Brockovich", search: "Erin Brockovich" },
+  { id: 102, title: "Everest", search: "Everest" },
+  { id: 103, title: "Everest: A MacGillivray Freeman Film", search: "Everest: A MacGillivray Freeman Film" },
+  { id: 104, title: "Everything Everywhere All at Once", search: "Everything Everywhere All at Once" },
+  { id: 105, title: "Ex Machina", search: "Ex Machina" },
+  { id: 106, title: "The Fabelmans", search: "The Fabelmans" },
+  { id: 107, title: "Face/Off", search: "Face/Off" },
+  { id: 108, title: "The Family Man", search: "The Family Man" },
+  { id: 109, title: "Fantastic Four: First Steps", search: "Fantastic Four: First Steps" },
+  { id: 110, title: "The Fast and the Furious", search: "The Fast and the Furious" },
+  { id: 111, title: "Fast Five", search: "Fast Five" },
+  { id: 112, title: "Fever Pitch", search: "Fever Pitch" },
+  { id: 113, title: "Field of Dreams", search: "Field of Dreams" },
+  { id: 114, title: "Fight Club", search: "Fight Club" },
+  { id: 115, title: "Finding Nemo", search: "Finding Nemo" },
+  { id: 116, title: "For Love of the Game", search: "For Love of the Game" },
+  { id: 117, title: "Forgetting Sarah Marshall", search: "Forgetting Sarah Marshall" },
+  { id: 118, title: "Forrest Gump", search: "Forrest Gump" },
+  { id: 119, title: "Frequency", search: "Frequency" },
+  { id: 120, title: "From the Earth to the Moon", search: "From the Earth to the Moon" },
+  { id: 121, title: "Frozen", search: "Frozen" },
+  { id: 122, title: "The Game", search: "The Game" },
+  { id: 123, title: "Gattaca", search: "Gattaca" },
+  { id: 124, title: "Get Shorty", search: "Get Shorty" },
+  { id: 125, title: "Ghostbusters", search: "Ghostbusters" },
+  { id: 126, title: "Ghostbusters: Answer the Call", search: "Ghostbusters: Answer the Call" },
+  { id: 127, title: "G.I. Joe: The Movie", search: "G.I. Joe: The Movie" },
+  { id: 128, title: "G.I. Joe: The Rise of Cobra", search: "G.I. Joe: The Rise of Cobra" },
+  { id: 129, title: "The Girl with the Dragon Tattoo", search: "The Girl with the Dragon Tattoo" },
+  { id: 130, title: "Gladiator", search: "Gladiator" },
+  { id: 131, title: "The Godfather", search: "The Godfather" },
+  { id: 132, title: "The Godfather Part II", search: "The Godfather" },
+  { id: 133, title: "The Godfather Part III", search: "The Godfather" },
+  { id: 134, title: "The Godfather Coda", search: "The Godfather Coda" },
+  { id: 135, title: "Godzilla", search: "Godzilla" },
+  { id: 136, title: "Godzilla Minus One", search: "Godzilla Minus One" },
+  { id: 137, title: "Gone in 60 Seconds", search: "Gone in 60 Seconds" },
+  { id: 138, title: "Gone Girl", search: "Gone Girl" },
+  { id: 139, title: "Goodfellas", search: "Goodfellas" },
+  { id: 140, title: "The Goonies", search: "The Goonies" },
+  { id: 141, title: "Gravity", search: "Gravity" },
+  { id: 142, title: "The Great Gatsby", search: "The Great Gatsby" },
+  { id: 143, title: "The Great Muppet Caper", search: "The Great Muppet Caper" },
+  { id: 144, title: "Grease: Rockin' Rydell Edition", search: "Grease: Rockin' Rydell Edition" },
+  { id: 145, title: "The Green Mile", search: "The Green Mile" },
+  { id: 146, title: "Groundhog Day", search: "Groundhog Day" },
+  { id: 147, title: "Guardians of the Galaxy", search: "Guardians of the Galaxy" },
+  { id: 148, title: "The Hangover", search: "The Hangover" },
+  { id: 149, title: "Hanna", search: "Hanna" },
+  { id: 150, title: "Happy Gilmore", search: "Happy Gilmore" },
+  { id: 151, title: "Hard Boiled", search: "Hard Boiled" },
+  { id: 152, title: "Hard Eight", search: "Hard Eight" },
+  { id: 153, title: "Harry Potter and the Sorcerer's Stone", search: "Harry Potter and the Sorcerer's Stone" },
+  { id: 154, title: "Harry Potter and the Chamber of Secrets", search: "Harry Potter and the Chamber of Secrets" },
+  { id: 155, title: "Harry Potter and the Prisoner of Azkaban", search: "Harry Potter and the Prisoner of Azkaban" },
+  { id: 156, title: "Harry Potter and the Goblet of Fire", search: "Harry Potter and the Goblet of Fire" },
+  { id: 157, title: "Harry Potter and the Order of the Phoenix", search: "Harry Potter and the Order of the Phoenix" },
+  { id: 158, title: "Harry Potter and the Half-Blood Prince", search: "Harry Potter and the Half-Blood Prince" },
+  { id: 159, title: "The Hateful Eight", search: "The Hateful Eight" },
+  { id: 160, title: "Heat", search: "Heat" },
+  { id: 161, title: "Hercules", search: "Hercules" },
+  { id: 162, title: "Hero", search: "Hero" },
+  { id: 163, title: "High Fidelity", search: "High Fidelity" },
+  { id: 164, title: "High and Low", search: "High and Low" },
+  { id: 165, title: "The Hobbit: An Unexpected Journey", search: "The Hobbit: An Unexpected Journey" },
+  { id: 166, title: "The Hobbit: The Desolation of Smaug", search: "The Hobbit: The Desolation of Smaug" },
+  { id: 167, title: "Home Alone", search: "Home Alone" },
+  { id: 168, title: "Hot Tub Time Machine", search: "Hot Tub Time Machine" },
+  { id: 169, title: "The Hunger Games: Complete 4-Film Collection", search: "The Hunger Games" },
+  { id: 170, title: "Ice Age: The Meltdown", search: "Ice Age: The Meltdown" },
+  { id: 171, title: "Inception", search: "Inception" },
+  { id: 172, title: "The Incredibles", search: "The Incredibles" },
+  { id: 173, title: "Independence Day", search: "Independence Day" },
+  { id: 174, title: "Indiana Jones: The Complete Adventures", search: "Indiana Jones" },
+  { id: 175, title: "Indiana Jones: Raiders of the Lost Ark", search: "Indiana Jones: Raiders of the Lost Ark" },
+  { id: 176, title: "Inglourious Basterds", search: "Inglourious Basterds" },
+  { id: 177, title: "Inside Out", search: "Inside Out" },
+  { id: 178, title: "Insomnia", search: "Insomnia" },
+  { id: 179, title: "Interstellar", search: "Interstellar" },
+  { id: 180, title: "Invincible", search: "Invincible" },
+  { id: 181, title: "I, Robot", search: "I, Robot" },
+  { id: 182, title: "I Am Legend", search: "I Am Legend" },
+  { id: 183, title: "Iron Man", search: "Iron Man" },
+  { id: 184, title: "Iron Man 2", search: "Iron Man 2" },
+  { id: 185, title: "Iron Man 3", search: "Iron Man 3" },
+  { id: 186, title: "Jackie Brown", search: "Jackie Brown" },
+  { id: 187, title: "James: Seven... The Live Concert", search: "James: Seven... The Live Concert" },
+  { id: 188, title: "Jaws: Collector's Edition", search: "Jaws" },
+  { id: 189, title: "Jerry Maguire", search: "Jerry Maguire" },
+  { id: 190, title: "Jurassic Park: The Collection", search: "Jurassic Park: The Collection" },
+  { id: 191, title: "Justice League", search: "Justice League" },
+  { id: 192, title: "The Karate Kid: Special Edition", search: "The Karate Kid" },
+  { id: 193, title: "Kick-Ass", search: "Kick-Ass" },
+  { id: 194, title: "Kill Bill: Volume 1", search: "Kill Bill: Volume 1" },
+  { id: 195, title: "Kill Bill: Volume 2", search: "Kill Bill: Volume 2" },
+  { id: 196, title: "The Killer", search: "The Killer" },
+  { id: 197, title: "Killers of the Flower Moon", search: "Killers of the Flower Moon" },
+  { id: 198, title: "King Kong: 2-Disc Special Edition", search: "King Kong: 2-Disc Special Edition" },
+  { id: 199, title: "Kingpin", search: "Kingpin" },
+  { id: 200, title: "The King's Speech", search: "The King's Speech" },
+  { id: 201, title: "Knives Out", search: "Knives Out" },
+  { id: 202, title: "Knocked Up: 2-Disc Collector's Edition", search: "Knocked Up: 2-Disc Collector's Edition" },
+  { id: 203, title: "Kung Fu Hustle", search: "Kung Fu Hustle" },
+  { id: 204, title: "La La Land", search: "La La Land" },
+  { id: 205, title: "The Last Five Years", search: "The Last Five Years" },
+  { id: 206, title: "The Last of the Mohicans", search: "The Last of the Mohicans" },
+  { id: 207, title: "The Last Starfighter", search: "The Last Starfighter" },
+  { id: 208, title: "The Legend of Drunken Master", search: "The Legend of Drunken Master" },
+  { id: 209, title: "Legends of the Fall", search: "Legends of the Fall" },
+  { id: 210, title: "The Lego Movie", search: "The Lego Movie" },
+  { id: 211, title: "The Lego Brickumentary", search: "The Lego Brickumentary" },
+  { id: 212, title: "L\u00e9on: The Professional", search: "Leon: The Professional" },
+  { id: 213, title: "Lethal Weapon", search: "Lethal Weapon" },
+  { id: 214, title: "The Little Mermaid", search: "The Little Mermaid" },
+  { id: 215, title: "The Little Mermaid: Ariel's Beginning", search: "The Little Mermaid: Ariel's Beginning" },
+  { id: 216, title: "Little Miss Sunshine", search: "Little Miss Sunshine" },
+  { id: 217, title: "Lock, Stock and Two Smoking Barrels", search: "Lock, Stock and Two Smoking Barrels" },
+  { id: 218, title: "The Lord of the Rings: The Fellowship of the Ring", search: "The Lord of the Rings: The Fellowship of the Ring" },
+  { id: 219, title: "The Lord of the Rings: The Two Towers", search: "The Lord of the Rings: The Two Towers" },
+  { id: 220, title: "The Lord of the Rings: The Return of the King", search: "The Lord of the Rings: The Return of the King" },
+  { id: 221, title: "The Lord of the Rings: The Motion Picture Trilogy", search: "The Lord of the Rings" },
+  { id: 222, title: "Lost in Translation", search: "Lost in Translation" },
+  { id: 223, title: "Mad Max", search: "Mad Max" },
+  { id: 224, title: "Mad Max: The Road Warrior", search: "Mad Max: The Road Warrior" },
+  { id: 225, title: "Mad Max Beyond Thunderdome", search: "Mad Max Beyond Thunderdome" },
+  { id: 226, title: "Mad Max: Fury Road", search: "Mad Max: Fury Road" },
+  { id: 227, title: "Mad Max: Fury Road \u2014 Black and Chrome Edition", search: "Mad Max: Fury Road \u2014 Black and Chrome Edition" },
+  { id: 228, title: "Made", search: "Made" },
+  { id: 229, title: "The Magnificent Seven", search: "The Magnificent Seven" },
+  { id: 230, title: "Major League", search: "Major League" },
+  { id: 231, title: "Man of Steel", search: "Man of Steel" },
+  { id: 232, title: "The Man Who Wasn't There", search: "The Man Who Wasn't There" },
+  { id: 233, title: "Margin Call", search: "Margin Call" },
+  { id: 234, title: "The Martian", search: "The Martian" },
+  { id: 235, title: "The Matrix", search: "The Matrix" },
+  { id: 236, title: "The Matrix Reloaded", search: "The Matrix Reloaded" },
+  { id: 237, title: "The Matrix Revolutions", search: "The Matrix Revolutions" },
+  { id: 238, title: "Mean Girls", search: "Mean Girls" },
+  { id: 239, title: "Mean Streets", search: "Mean Streets" },
+  { id: 240, title: "Meet the Parents", search: "Meet the Parents" },
+  { id: 241, title: "Memento", search: "Memento" },
+  { id: 242, title: "The Messenger: The Story of Joan of Arc", search: "The Messenger: The Story of Joan of Arc" },
+  { id: 243, title: "Miami Vice", search: "Miami Vice" },
+  { id: 244, title: "Minority Report", search: "Minority Report" },
+  { id: 245, title: "Miracle", search: "Miracle" },
+  { id: 246, title: "Mission to Mars", search: "Mission to Mars" },
+  { id: 247, title: "Mission: Impossible", search: "Mission: Impossible" },
+  { id: 248, title: "Mission: Impossible 2", search: "Mission: Impossible 2" },
+  { id: 249, title: "Mission: Impossible 3", search: "Mission: Impossible 3" },
+  { id: 250, title: "Mission: Impossible \u2014 Ghost Protocol", search: "Mission: Impossible \u2014 Ghost Protocol" },
+  { id: 251, title: "Mission: Impossible \u2014 Rogue Nation", search: "Mission: Impossible \u2014 Rogue Nation" },
+  { id: 252, title: "Mission: Impossible \u2014 Dead Reckoning", search: "Mission: Impossible \u2014 Dead Reckoning" },
+  { id: 253, title: "Mission: Impossible \u2014 The Final Reckoning", search: "Mission: Impossible \u2014 The Final Reckoning" },
+  { id: 254, title: "Moneyball", search: "Moneyball" },
+  { id: 255, title: "Monsters, Inc.", search: "Monsters, Inc." },
+  { id: 256, title: "Mr. Mom", search: "Mr. Mom" },
+  { id: 257, title: "Moulin Rouge!", search: "Moulin Rouge!" },
+  { id: 258, title: "Mulan", search: "Mulan" },
+  { id: 259, title: "Mulholland Drive", search: "Mulholland Drive" },
+  { id: 260, title: "The Mummy: Deluxe Edition", search: "The Mummy" },
+  { id: 261, title: "The Mummy Returns: Collector's Edition", search: "The Mummy Returns" },
+  { id: 262, title: "The Muppets", search: "The Muppets" },
+  { id: 263, title: "A Muppets Christmas", search: "A Muppets Christmas" },
+  { id: 264, title: "Muppets from Space", search: "Muppets from Space" },
+  { id: 265, title: "The Muppet Movie", search: "The Muppet Movie" },
+  { id: 266, title: "The Muppet Show: Season 2", search: "The Muppet Show" },
+  { id: 267, title: "The Muppets Take Manhattan", search: "The Muppets Take Manhattan" },
+  { id: 268, title: "Sesame Street's 25th Birthday: A Musical Celebration", search: "Sesame Street's 25th Birthday: A Musical Celebration" },
+  { id: 269, title: "My Big Fat Greek Wedding", search: "My Big Fat Greek Wedding" },
+  { id: 270, title: "Mystic River", search: "Mystic River" },
+  { id: 271, title: "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe", search: "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe" },
+  { id: 272, title: "National Treasure", search: "National Treasure" },
+  { id: 273, title: "National Lampoon's Christmas Vacation", search: "National Lampoon's Christmas Vacation" },
+  { id: 274, title: "The Natural", search: "The Natural" },
+  { id: 275, title: "Natural Born Killers: Director's Cut", search: "Natural Born Killers" },
+  { id: 276, title: "NEAT", search: "NEAT" },
+  { id: 277, title: "Need for Speed", search: "Need for Speed" },
+  { id: 278, title: "No Country for Old Men", search: "No Country for Old Men" },
+  { id: 279, title: "O Brother, Where Art Thou?", search: "O Brother, Where Art Thou?" },
+  { id: 280, title: "Ocean's Eleven", search: "Ocean's Eleven" },
+  { id: 281, title: "Ocean's Twelve", search: "Ocean's Twelve" },
+  { id: 282, title: "Ocean's Thirteen", search: "Ocean's Thirteen" },
+  { id: 283, title: "Once a Thief", search: "Once a Thief" },
+  { id: 284, title: "Once Upon a Time in Hollywood", search: "Once Upon a Time in Hollywood" },
+  { id: 285, title: "One Battle After Another", search: "One Battle After Another" },
+  { id: 286, title: "One Crazy Summer", search: "One Crazy Summer" },
+  { id: 287, title: "One Flew Over the Cuckoo's Nest", search: "One Flew Over the Cuckoo's Nest" },
+  { id: 288, title: "Oppenheimer", search: "Oppenheimer" },
+  { id: 289, title: "The Others", search: "The Others" },
+  { id: 290, title: "Out of Sight", search: "Out of Sight" },
+  { id: 291, title: "Pacific Rim", search: "Pacific Rim" },
+  { id: 292, title: "Panic Room", search: "Panic Room" },
+  { id: 293, title: "Parasite (Criterion Collection)", search: "Parasite" },
+  { id: 294, title: "The Patriot", search: "The Patriot" },
+  { id: 295, title: "Pirates of the Caribbean: The Curse of the Black Pearl", search: "Pirates of the Caribbean: The Curse of the Black Pearl" },
+  { id: 296, title: "Pirates of the Caribbean: Dead Man's Chest", search: "Pirates of the Caribbean: Dead Man's Chest" },
+  { id: 297, title: "Philadelphia", search: "Philadelphia" },
+  { id: 298, title: "Pitch Perfect", search: "Pitch Perfect" },
+  { id: 299, title: "Pitch Perfect 2", search: "Pitch Perfect 2" },
+  { id: 300, title: "Planet Terror", search: "Planet Terror" },
+  { id: 301, title: "Planes, Trains and Automobiles", search: "Planes, Trains and Automobiles" },
+  { id: 302, title: "Pocahontas", search: "Pocahontas" },
+  { id: 303, title: "Pocahontas II: Journey to a New World", search: "Pocahontas II: Journey to a New World" },
+  { id: 304, title: "Point Break", search: "Point Break" },
+  { id: 305, title: "The Prestige", search: "The Prestige" },
+  { id: 306, title: "Pretty Woman", search: "Pretty Woman" },
+  { id: 307, title: "The Princess and the Frog", search: "The Princess and the Frog" },
+  { id: 308, title: "Prometheus", search: "Prometheus" },
+  { id: 309, title: "Pulp Fiction: Collector's Edition", search: "Pulp Fiction" },
+  { id: 310, title: "Punch-Drunk Love", search: "Punch-Drunk Love" },
+  { id: 311, title: "The Queen", search: "The Queen" },
+  { id: 312, title: "The Raid: Redemption", search: "The Raid: Redemption" },
+  { id: 313, title: "Ran (Criterion Collection)", search: "Ran" },
+  { id: 314, title: "Ratatouille", search: "Ratatouille" },
+  { id: 315, title: "Remember the Titans", search: "Remember the Titans" },
+  { id: 316, title: "Requiem for a Dream", search: "Requiem for a Dream" },
+  { id: 317, title: "Reservoir Dogs: 10th Anniversary Edition", search: "Reservoir Dogs" },
+  { id: 318, title: "The Revenant", search: "The Revenant" },
+  { id: 319, title: "The Right Stuff", search: "The Right Stuff" },
+  { id: 320, title: "Road to Perdition", search: "Road to Perdition" },
+  { id: 321, title: "Rocky", search: "Rocky" },
+  { id: 322, title: "Rocky IV", search: "Rocky IV" },
+  { id: 323, title: "Rogue One: A Star Wars Story", search: "Rogue One: A Star Wars Story" },
+  { id: 324, title: "Ronin", search: "Ronin" },
+  { id: 325, title: "Rounders", search: "Rounders" },
+  { id: 326, title: "Rudy", search: "Rudy" },
+  { id: 327, title: "Run Lola Run", search: "Run Lola Run" },
+  { id: 328, title: "Sanjuro (Criterion Collection)", search: "Sanjuro" },
+  { id: 329, title: "Saving Private Ryan", search: "Saving Private Ryan" },
+  { id: 330, title: "Scarface", search: "Scarface" },
+  { id: 331, title: "School of Rock", search: "School of Rock" },
+  { id: 332, title: "Scott Pilgrim vs. the World", search: "Scott Pilgrim vs. the World" },
+  { id: 333, title: "Se7en", search: "Se7en" },
+  { id: 334, title: "Seven Samurai (Criterion Collection)", search: "Seven Samurai" },
+  { id: 335, title: "Shakespeare in Love", search: "Shakespeare in Love" },
+  { id: 336, title: "Shaolin Soccer", search: "Shaolin Soccer" },
+  { id: 337, title: "Sherlock Holmes", search: "Sherlock Holmes" },
+  { id: 338, title: "The Shining", search: "The Shining" },
+  { id: 339, title: "Shoot 'Em Up", search: "Shoot 'Em Up" },
+  { id: 340, title: "Shutter Island", search: "Shutter Island" },
+  { id: 341, title: "Signs", search: "Signs" },
+  { id: 342, title: "Sin City", search: "Sin City" },
+  { id: 343, title: "The Sixth Sense", search: "The Sixth Sense" },
+  { id: 344, title: "Sleeping Beauty", search: "Sleeping Beauty" },
+  { id: 345, title: "Snow White and the Seven Dwarfs", search: "Snow White and the Seven Dwarfs" },
+  { id: 346, title: "The Smashing Machine", search: "The Smashing Machine" },
+  { id: 347, title: "Snatch", search: "Snatch" },
+  { id: 348, title: "The Social Network", search: "The Social Network" },
+  { id: 349, title: "The Sound of Music", search: "The Sound of Music" },
+  { id: 350, title: "The Sound of Music: Singalong Edition", search: "The Sound of Music" },
+  { id: 351, title: "The Amazing Spider-Man", search: "The Amazing Spider-Man" },
+  { id: 352, title: "Spider-Man", search: "Spider-Man" },
+  { id: 353, title: "Spider-Man 2", search: "Spider-Man 2" },
+  { id: 354, title: "Spider-Man 3", search: "Spider-Man 3" },
+  { id: 355, title: "Spider-Man: Into the Spider-Verse", search: "Spider-Man: Into the Spider-Verse" },
+  { id: 356, title: "Spy Game", search: "Spy Game" },
+  { id: 357, title: "Star Trek", search: "Star Trek" },
+  { id: 358, title: "Star Wars: Episode I \u2014 The Phantom Menace", search: "Star Wars: Episode I \u2014 The Phantom Menace" },
+  { id: 359, title: "Star Wars: Episode II \u2014 Attack of the Clones", search: "Star Wars: Episode II \u2014 Attack of the Clones" },
+  { id: 360, title: "Star Wars: Episode III \u2014 Revenge of the Sith", search: "Star Wars: Episode III \u2014 Revenge of the Sith" },
+  { id: 361, title: "Star Wars: Episodes IV\u2013VI", search: "Star Wars" },
+  { id: 362, title: "Star Wars Trilogy", search: "Star Wars Trilogy" },
+  { id: 363, title: "Star Wars: The Force Awakens", search: "Star Wars: The Force Awakens" },
+  { id: 364, title: "Step Up 3D", search: "Step Up 3D" },
+  { id: 365, title: "Strange Brew", search: "Strange Brew" },
+  { id: 366, title: "Stranger Than Fiction", search: "Stranger Than Fiction" },
+  { id: 367, title: "Street Fighter / The Return of the Street Fighter", search: "Street Fighter / The Return of the Street Fighter" },
+  { id: 368, title: "Stick It!", search: "Stick It!" },
+  { id: 369, title: "Still We Believe: The Boston Red Sox Movie", search: "Still We Believe: The Boston Red Sox Movie" },
+  { id: 370, title: "Straight Outta Compton", search: "Straight Outta Compton" },
+  { id: 371, title: "Superbad", search: "Superbad" },
+  { id: 372, title: "Superman Returns", search: "Superman Returns" },
+  { id: 373, title: "Super 8", search: "Super 8" },
+  { id: 374, title: "Swingers", search: "Swingers" },
+  { id: 375, title: "The Talented Mr. Ripley", search: "The Talented Mr. Ripley" },
+  { id: 376, title: "Tangled", search: "Tangled" },
+  { id: 377, title: "Tenet", search: "Tenet" },
+  { id: 378, title: "Terminator 2: Judgment Day", search: "Terminator 2: Judgment Day" },
+  { id: 379, title: "That Thing You Do!", search: "That Thing You Do!" },
+  { id: 380, title: "The Thin Red Line", search: "The Thin Red Line" },
+  { id: 381, title: "The Thing", search: "The Thing" },
+  { id: 382, title: "The Thomas Crown Affair", search: "The Thomas Crown Affair" },
+  { id: 383, title: "Three Amigos!", search: "Three Amigos!" },
+  { id: 384, title: "There Will Be Blood", search: "There Will Be Blood" },
+  { id: 385, title: "Thor", search: "Thor" },
+  { id: 386, title: "Time Bandits", search: "Time Bandits" },
+  { id: 387, title: "Top Gun", search: "Top Gun" },
+  { id: 388, title: "Top Gun: Maverick", search: "Top Gun: Maverick" },
+  { id: 389, title: "The Town", search: "The Town" },
+  { id: 390, title: "Toy Story: The Ultimate Toy Box", search: "Toy Story" },
+  { id: 391, title: "Toy Story 3", search: "Toy Story 3" },
+  { id: 392, title: "Traffic", search: "Traffic" },
+  { id: 393, title: "Transformers", search: "Transformers" },
+  { id: 394, title: "Transformers: Dark of the Moon", search: "Transformers: Dark of the Moon" },
+  { id: 395, title: "Transformers: More Than Meets the Eye", search: "Transformers: More Than Meets the Eye" },
+  { id: 396, title: "Transformers: Revenge of the Fallen", search: "Transformers: Revenge of the Fallen" },
+  { id: 397, title: "Transformers: The Movie", search: "Transformers: The Movie" },
+  { id: 398, title: "True Grit", search: "True Grit" },
+  { id: 399, title: "True Romance", search: "True Romance" },
+  { id: 400, title: "Twin Peaks", search: "Twin Peaks" },
+  { id: 401, title: "Twin Peaks: Fire Walk with Me", search: "Twin Peaks: Fire Walk with Me" },
+  { id: 402, title: "Twin Peaks: The First Season Special Edition", search: "Twin Peaks" },
+  { id: 403, title: "Twin Peaks: The Second Season", search: "Twin Peaks" },
+  { id: 404, title: "Twin Peaks: A Limited Event Series", search: "Twin Peaks" },
+  { id: 405, title: "Unbreakable", search: "Unbreakable" },
+  { id: 406, title: "Uncle Buck", search: "Uncle Buck" },
+  { id: 407, title: "Up", search: "Up" },
+  { id: 408, title: "U-571", search: "U-571" },
+  { id: 409, title: "V for Vendetta", search: "V for Vendetta" },
+  { id: 410, title: "Varsity Blues", search: "Varsity Blues" },
+  { id: 411, title: "A Very Merry Muppet Christmas Movie", search: "A Very Merry Muppet Christmas Movie" },
+  { id: 412, title: "Victory", search: "Victory" },
+  { id: 413, title: "Waking Life", search: "Waking Life" },
+  { id: 414, title: "WALL-E", search: "WALL-E" },
+  { id: 415, title: "Wall Street", search: "Wall Street" },
+  { id: 416, title: "Wanted", search: "Wanted" },
+  { id: 417, title: "Watchmen: The Director's Cut", search: "Watchmen: The Director's Cut" },
+  { id: 418, title: "Wedding Crashers", search: "Wedding Crashers" },
+  { id: 419, title: "The Wedding Singer", search: "The Wedding Singer" },
+  { id: 420, title: "What Lies Beneath", search: "What Lies Beneath" },
+  { id: 421, title: "Whiplash", search: "Whiplash" },
+  { id: 422, title: "The Whole Nine Yards", search: "The Whole Nine Yards" },
+  { id: 423, title: "The Wizard of Oz", search: "The Wizard of Oz" },
+  { id: 424, title: "The Wolf of Wall Street", search: "The Wolf of Wall Street" },
+  { id: 425, title: "Wonder Woman", search: "Wonder Woman" },
+  { id: 426, title: "The Wrestler", search: "The Wrestler" },
+  { id: 427, title: "X-Men", search: "X-Men" },
+  { id: 428, title: "X-Men: Days of Future Past", search: "X-Men: Days of Future Past" },
+  { id: 429, title: "X-Men: First Class", search: "X-Men: First Class" },
+  { id: 430, title: "Yesterday", search: "Yesterday" },
+  { id: 431, title: "You've Got Mail", search: "You've Got Mail" },
+  { id: 432, title: "The Young Victoria", search: "The Young Victoria" },
+  { id: 433, title: "Vanity Fair", search: "Vanity Fair" },
+  { id: 434, title: "Zodiac", search: "Zodiac" },
+  { id: 435, title: "Zombieland", search: "Zombieland" },
+  { id: 436, title: "1917", search: "1917" },
+  { id: 437, title: "28 Days Later", search: "28 Days Later" },
+  { id: 438, title: "28 Years Later", search: "28 Years Later" },
+  { id: 439, title: "10,000 BC", search: "10,000 BC" },
+  { id: 440, title: "The 40-Year-Old Virgin", search: "The 40-Year-Old Virgin" },
+  { id: 441, title: "8 Mile", search: "8 Mile" },
+  { id: 442, title: "300", search: "300" },
+];
+
+let collectionPosters = {};
+let collectionFiltered = null;
+
+function buildCollectionGrid(items) {
+  const container = document.getElementById('collection-list');
+  container.innerHTML = '';
+  const countEl = document.getElementById('collection-count');
+  if (countEl) countEl.textContent = items.length + ' title' + (items.length !== 1 ? 's' : '');
+
+  const listWrap = document.createElement('div');
+  listWrap.style.cssText = 'padding: 0 40px;';
+
+  items.forEach((item, idx) => {
+    const poster = collectionPosters[item.id];
+    const row = document.createElement('div');
+    row.className = 'film-row';
+    row.style.cssText = 'display:grid;grid-template-columns:40px 44px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;border-radius:6px;';
+    row.innerHTML = `
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);text-align:right;">${idx + 1}</span>
+      <div id="cposter-${item.id}" style="width:36px;height:52px;border-radius:4px;overflow:hidden;background:var(--surface2);flex-shrink:0;">
+        ${poster ? `<img src="${poster}" alt="" style="width:100%;height:100%;object-fit:cover;" onload="this.style.opacity=1" style="opacity:0">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0.3;">🎬</div>'}
+      </div>
+      <span style="font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.title}</span>
+    `;
+    row.addEventListener('mouseenter', () => row.style.background = 'var(--surface)');
+    row.addEventListener('mouseleave', () => row.style.background = '');
+    row.addEventListener('click', () => {
+      const listFilm = films.find(f => f.title.toLowerCase() === item.search.toLowerCase() ||
+        f.title.toLowerCase().replace(/[^a-z0-9]/g,'').startsWith(item.search.toLowerCase().replace(/[^a-z0-9]/g,'').substring(0, 10)));
+      if (listFilm) {
+        openFilmPanel(listFilm);
+      } else {
+        openCollectionPanel(item);
+      }
+    });
+    listWrap.appendChild(row);
+  });
+
+  container.appendChild(listWrap);
+
+  const empty = document.createElement('div');
+  empty.id = 'collection-empty';
+  empty.style.cssText = 'padding:40px;color:var(--muted);font-size:14px;text-align:center;display:none;';
+  empty.textContent = 'No titles match your search.';
+  container.appendChild(empty);
+}
+
+function filterCollection() {
+  const q = document.getElementById('collection-search').value.toLowerCase();
+  const filtered = q ? collection.filter(i => i.title.toLowerCase().includes(q)) : collection;
+  const empty = document.getElementById('collection-empty');
+  buildCollectionGrid(filtered);
+  if (filtered.length === 0 && empty) empty.style.display = 'block';
+}
+
+async function openCollectionPanel(item) {
+  const overlay = document.getElementById('detail-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const whySection = document.getElementById('dp-why').parentElement;
+  whySection.style.display = 'none';
+
+  document.getElementById('dp-rank').textContent = 'Physical Collection';
+  document.getElementById('dp-title').textContent = item.title;
+  document.getElementById('dp-year').textContent = '';
+  document.getElementById('dp-rating').textContent = '—';
+  document.getElementById('dp-watches').textContent = '—';
+  document.getElementById('dp-pitch').textContent = 'Loading...';
+  document.getElementById('dp-streaming').innerHTML = '<span style="color:var(--muted);font-size:13px">Loading...</span>';
+  document.getElementById('dp-actions').innerHTML = '';
+  document.getElementById('dp-poster').innerHTML = '';
+  document.getElementById('dp-similars-section').style.display = 'none';
+
+  try {
+    const query = encodeURIComponent(item.search);
+    const searchRes = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&language=en-US`);
+    const searchData = await searchRes.json();
+    const match = searchData.results && searchData.results[0];
+
+    if (match) {
+      if (match.poster_path) {
+        document.getElementById('dp-poster').innerHTML =
+          `<img src="https://image.tmdb.org/t/p/w185${match.poster_path}" style="width:100%;height:100%;object-fit:cover">`;
+        collectionPosters[item.id] = `https://image.tmdb.org/t/p/w185${match.poster_path}`;
+        const cell = document.getElementById(`cposter-${item.id}`);
+        if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w154${match.poster_path}" alt="${item.title}" onload="this.classList.add('loaded')">`;
+      }
+      document.getElementById('dp-year').textContent = match.release_date ? match.release_date.slice(0,4) : '';
+      const overview = match.overview || '';
+      document.getElementById('dp-pitch').textContent = overview.length > 140 ? overview.substring(0,137) + '...' : overview || 'No description available.';
+
+      const [videoRes, providerRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/videos?api_key=${TMDB_KEY}`),
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/watch/providers?api_key=${TMDB_KEY}`)
+      ]);
+      const videoData = await videoRes.json();
+      const providerData = await providerRes.json();
+      const trailer = videoData.results && videoData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+      const actions = [];
+      if (trailer) actions.push(`<a href="https://www.youtube.com/watch?v=${trailer.key}" target="_blank" class="detail-btn primary">▶ Watch Trailer</a>`);
+      const slug = item.search.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'');
+      actions.push(`<a href="https://letterboxd.com/film/${slug}/" target="_blank" class="detail-btn">Letterboxd ↗</a>`);
+      document.getElementById('dp-actions').innerHTML = actions.join('');
+
+      const us = providerData.results && providerData.results.US;
+      const streamingEl = document.getElementById('dp-streaming');
+      if (us && (us.flatrate || us.rent || us.buy)) {
+        const all = [...(us.flatrate||[]),...(us.rent||[]),...(us.buy||[])];
+        const unique = [...new Map(all.map(p=>[p.provider_id,p])).values()].slice(0,6);
+        streamingEl.innerHTML = unique.map(p=>`<span class="stream-badge">${p.provider_name}</span>`).join('');
+        document.getElementById('dp-streaming-section').style.display = 'block';
+      } else {
+        streamingEl.innerHTML = '<span style="color:var(--muted);font-size:13px">Not available to stream</span>';
+      }
+    } else {
+      document.getElementById('dp-pitch').textContent = 'No details found for this title.';
+    }
+  } catch(e) {
+    document.getElementById('dp-pitch').textContent = 'Could not load details.';
+  }
+}
+
+async function fetchCollectionPosters() {
+  // Fetch in batches with delay to avoid rate limiting
+  for (const item of collection) {
+    try {
+      const query = encodeURIComponent(item.search);
+      const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&language=en-US`);
+      const data = await res.json();
+      const match = data.results && data.results[0];
+      if (match && match.poster_path) {
+        collectionPosters[item.id] = `https://image.tmdb.org/t/p/w154${match.poster_path}`;
+        const cell = document.getElementById(`cposter-${item.id}`);
+        if (cell) cell.innerHTML = `<img src="${collectionPosters[item.id]}" alt="${item.title}" onload="this.classList.add('loaded')">`;
+      }
+    } catch(e) {}
+    await new Promise(r => setTimeout(r, 80));
   }
 }
 
