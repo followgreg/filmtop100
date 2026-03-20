@@ -593,7 +593,7 @@
 <div class="header">
   <div class="header-top">
     <div class="title-block">
-      <h1>Greg Loves Movies</h1>
+      <h1>Greg ❤️ Movies</h1>
       <p>Updated March 2026 · <a href="https://letterboxd.com/Followgreg/" target="_blank" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(200,169,110,0.4);">Letterboxd ↗</a></p>
     </div>
   </div>
@@ -602,7 +602,6 @@
 <div class="tab-nav">
   <button class="tab-btn film-tab active" onclick="switchTab('top100')">Top 100</button>
   <button class="tab-btn film-tab" onclick="switchTab('collection')">Physical Collection</button>
-  <button class="tab-btn film-tab" onclick="switchTab('diary')">Film Diary</button>
   <button class="tab-btn film-tab" onclick="switchTab('byyear')">Fave Every Year</button>
   <span class="tab-divider">Also by Greg:</span>
   <button class="tab-btn" onclick="switchTab('tv')">Fave TV</button>
@@ -691,18 +690,6 @@
   <div id="collection-list"></div>
 </div><!-- end tab-collection -->
 
-<div id="tab-diary" class="tab-panel">
-  <div class="about">
-    <div class="about-inner">
-      <h2>Film Diary</h2>
-      <p>Recent watches pulled live from Letterboxd. Every film Greg has logged, in order.</p>
-      <p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any film to go deeper</p>
-    </div>
-  </div>
-  <div id="diary-loading" style="padding:40px;color:var(--muted);font-size:14px;">Loading from Letterboxd...</div>
-  <div id="diary-list" style="padding:0 40px;"></div>
-  <div id="diary-error" style="padding:40px;color:var(--muted);font-size:14px;display:none;">Could not load diary. Check back later.</div>
-</div><!-- end tab-diary -->
 
 <div id="tab-tv" class="tab-panel">
   <div class="tv-intro"><p>One hundred television series. Ranked by the same principle as the films -- joy, rewatchability, and gut. Drama, comedy, limited series, documentary. All of it.</p></div>
@@ -1006,7 +993,7 @@ function buildList() {
           ${mobileStarsHtml()}
           <span class="mobile-stat-sep">·</span>
           <span class="mobile-stat">${f.watches}<span class="val"> views</span></span>
-          ${mobileMoveHtml() ? `<span class="mobile-stat-sep">·</span>${mobileMoveHtml()}` : ''}
+          ${mobileMoveHtml() ? '<span class="mobile-stat-sep">·</span>' + mobileMoveHtml() : ''}
         </div>
         ${moveInlineHtml()}
       </div>
@@ -1030,18 +1017,6 @@ function buildList() {
       list2.appendChild(row);
     }
   });
-
-  // Stats
-  const rated = films.filter(f => f.rating !== "—").length;
-  document.getElementById('stat-rated').textContent = rated;
-
-  const biggestRise = films.reduce((best, f) => {
-    if (typeof f.movement === 'number' && f.movement > (best.movement || 0)) return f;
-    return best;
-  }, {});
-  document.getElementById('stat-biggest-rise').textContent = biggestRise.title
-    ? `+${biggestRise.movement}`
-    : '—';
 }
 
 function toggleFilter(name) {
@@ -1118,21 +1093,23 @@ function buildBubble() {
 const TMDB_KEY = '5cd8e79a10121eadba6946dcb69e9e98';
 
 async function fetchPosters() {
-  for (const f of films) {
-    try {
-      const query = encodeURIComponent(f.title.replace('The ', '').replace(' (John Woo)', ''));
-      const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US&page=1`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const match = data.results && data.results[0];
-      if (match && match.poster_path) {
-        const cell = document.getElementById(`poster-${f.rank}`);
-        if (cell) {
-          cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${f.title}" onload="this.classList.add('loaded')">`;
+  const batchSize = 10;
+  for (let i = 0; i < films.length; i += batchSize) {
+    const batch = films.slice(i, i + batchSize);
+    await Promise.all(batch.map(async f => {
+      try {
+        const query = encodeURIComponent(f.title.replace(' (John Woo)', ''));
+        const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US&page=1`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const match = data.results && data.results[0];
+        if (match && match.poster_path) {
+          const cell = document.getElementById(`poster-${f.rank}`);
+          if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${f.title}" onload="this.classList.add('loaded')">`;
         }
-      }
-    } catch(e) {}
-    await new Promise(r => setTimeout(r, 60));
+      } catch(e) {}
+    }));
+    await new Promise(r => setTimeout(r, 100));
   }
 }
 
@@ -2000,18 +1977,26 @@ const byYear = [
 function switchTab(tab) {
   document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
+  const panel = document.getElementById('tab-' + tab);
+  if (panel) panel.classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    if (btn.getAttribute('onclick').includes(tab)) btn.classList.add('active');
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + tab + "'")) btn.classList.add('active');
   });
   document.body.className = tab === 'tv' ? 'tab-tv' : tab === 'songs' ? 'tab-songs' : '';
   if (tab === 'songs' && !window.songsLoaded) loadSpotifyPlaylist();
   if (tab === 'collection' && !window.collectionLoaded) {
     window.collectionLoaded = true;
     buildCollectionGrid(collection);
-    fetchCollectionPosters();
+    fetchCollectionPostersParallel();
   }
-  if (tab === 'diary' && !window.diaryLoaded) loadLetterboxdDiary();
+  if (tab === 'byyear' && !window.byyearPostersLoaded) {
+    window.byyearPostersLoaded = true;
+    fetchYearPosters();
+  }
+  if (tab === 'tv' && !window.tvPostersLoaded) {
+    window.tvPostersLoaded = true;
+    fetchTvPosters();
+  }
 }
 
 async function loadLetterboxdDiary() {
@@ -2067,7 +2052,7 @@ async function loadLetterboxdDiary() {
           <div class="diary-meta">${filmTitle}</div>
         </div>
         <div class="diary-right">
-          ${ratingRaw ? `<span class="diary-rating">${ratingRaw}</span>` : ''}
+          ${ratingRaw ? '<span class="diary-rating">' + ratingRaw + '</span>' : ''}
           <span class="diary-date">${dateStr}</span>
           ${isRewatch ? '<span class="diary-rewatch">↺ rewatch</span>' : ''}
         </div>
@@ -2256,7 +2241,7 @@ function buildSongsList() {
           <div class="song-meta">${s.artist} · ${s.album} · ${s.year}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
-          ${s.preview ? `<button class="preview-btn" data-preview="${s.preview}">▶ Preview</button>` : ''}
+          ${s.preview ? '<button class="preview-btn" data-preview="' + s.preview + '">▶ Preview</button>' : ''}
           <a href="${s.spotify}" target="_blank" class="preview-btn" style="text-decoration:none;">♫ Spotify</a>
         </div>
       `;
@@ -2313,7 +2298,7 @@ function buildYearList() {
           <div class="year-poster-placeholder">🎬</div>
         </div>
         <span class="year-title">${f.title}</span>
-        ${f.top100rank ? `<span class="year-on-list">#${f.top100rank} on list</span>` : ''}
+        ${f.top100rank ? '<span class="year-on-list">#' + f.top100rank + ' on list</span>' : ''}
       `;
 
       if (f.top100rank) {
@@ -2330,19 +2315,23 @@ function buildYearList() {
 }
 
 async function fetchYearPosters() {
-  for (const f of byYear) {
-    try {
-      const query = encodeURIComponent(f.title.replace(' (John Woo)', ''));
-      const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US&page=1`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const match = data.results && data.results[0];
-      if (match && match.poster_path) {
-        const cell = document.getElementById(`yposter-${f.year}`);
-        if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${f.title}" onload="this.classList.add('loaded')">`;
-      }
-    } catch(e) {}
-    await new Promise(r => setTimeout(r, 60));
+  const batchSize = 10;
+  for (let i = 0; i < byYear.length; i += batchSize) {
+    const batch = byYear.slice(i, i + batchSize);
+    await Promise.all(batch.map(async f => {
+      try {
+        const query = encodeURIComponent(f.title);
+        const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US&page=1`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const match = data.results && data.results[0];
+        if (match && match.poster_path) {
+          const cell = document.getElementById(`yposter-${f.year}`);
+          if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${f.title}" onload="this.classList.add('loaded')">`;
+        }
+      } catch(e) {}
+    }));
+    await new Promise(r => setTimeout(r, 100));
   }
 }
 
@@ -2489,19 +2478,23 @@ function buildTvList() {
 }
 
 async function fetchTvPosters() {
-  for (const s of tvShows) {
-    try {
-      const query = encodeURIComponent(s.title);
-      const url = `https://api.themoviedb.org/3/search/tv?api_key=${TMDB_KEY}&query=${query}&first_air_date_year=${s.year}&language=en-US`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const match = data.results && data.results[0];
-      if (match && match.poster_path) {
-        const cell = document.getElementById(`tvposter-${s.rank}`);
-        if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${s.title}" onload="this.classList.add('loaded')">`;
-      }
-    } catch(e) {}
-    await new Promise(r => setTimeout(r, 60));
+  const batchSize = 10;
+  for (let i = 0; i < tvShows.length; i += batchSize) {
+    const batch = tvShows.slice(i, i + batchSize);
+    await Promise.all(batch.map(async s => {
+      try {
+        const query = encodeURIComponent(s.title);
+        const url = `https://api.themoviedb.org/3/search/tv?api_key=${TMDB_KEY}&query=${query}&first_air_date_year=${s.year}&language=en-US`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const match = data.results && data.results[0];
+        if (match && match.poster_path) {
+          const cell = document.getElementById(`tvposter-${s.rank}`);
+          if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${s.title}" onload="this.classList.add('loaded')">`;
+        }
+      } catch(e) {}
+    }));
+    await new Promise(r => setTimeout(r, 100));
   }
 }
 
@@ -2967,13 +2960,12 @@ function buildCollectionGrid(items) {
     const row = document.createElement('div');
     row.className = 'film-row';
     row.style.cssText = 'display:grid;grid-template-columns:40px 44px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;border-radius:6px;';
-    row.innerHTML = `
-      <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);text-align:right;">${idx + 1}</span>
-      <div id="cposter-${item.id}" style="width:36px;height:52px;border-radius:4px;overflow:hidden;background:var(--surface2);flex-shrink:0;">
-        ${poster ? `<img src="${poster}" alt="" style="width:100%;height:100%;object-fit:cover;" onload="this.style.opacity=1" style="opacity:0">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0.3;">🎬</div>'}
-      </div>
-      <span style="font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.title}</span>
-    `;
+    const posterHtml = poster
+        ? '<img src="' + poster + '" alt="" style="width:100%;height:100%;object-fit:cover;" onload="this.style.opacity=1">'
+        : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0.3;">&#127916;</div>';
+      row.innerHTML = '<span style="font-family:DM Mono,monospace;font-size:12px;color:var(--muted);text-align:right;">' + (idx + 1) + '</span>'
+        + '<div id="cposter-' + item.id + '" style="width:36px;height:52px;border-radius:4px;overflow:hidden;background:var(--surface2);flex-shrink:0;">' + posterHtml + '</div>'
+        + '<span style="font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.title + '</span>';
     row.addEventListener('mouseenter', () => row.style.background = 'var(--surface)');
     row.addEventListener('mouseleave', () => row.style.background = '');
     row.addEventListener('click', () => {
@@ -3073,21 +3065,26 @@ async function openCollectionPanel(item) {
   }
 }
 
-async function fetchCollectionPosters() {
-  // Fetch in batches with delay to avoid rate limiting
-  for (const item of collection) {
-    try {
-      const query = encodeURIComponent(item.search);
-      const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&language=en-US`);
-      const data = await res.json();
-      const match = data.results && data.results[0];
-      if (match && match.poster_path) {
-        collectionPosters[item.id] = `https://image.tmdb.org/t/p/w154${match.poster_path}`;
-        const cell = document.getElementById(`cposter-${item.id}`);
-        if (cell) cell.innerHTML = `<img src="${collectionPosters[item.id]}" alt="${item.title}" onload="this.classList.add('loaded')">`;
-      }
-    } catch(e) {}
-    await new Promise(r => setTimeout(r, 80));
+async function fetchCollectionPosters() {}
+
+async function fetchCollectionPostersParallel() {
+  const batchSize = 10;
+  for (let i = 0; i < collection.length; i += batchSize) {
+    const batch = collection.slice(i, i + batchSize);
+    await Promise.all(batch.map(async item => {
+      try {
+        const query = encodeURIComponent(item.search);
+        const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&language=en-US`);
+        const data = await res.json();
+        const match = data.results && data.results[0];
+        if (match && match.poster_path) {
+          collectionPosters[item.id] = `https://image.tmdb.org/t/p/w92${match.poster_path}`;
+          const cell = document.getElementById(`cposter-${item.id}`);
+          if (cell) cell.innerHTML = `<img src="${collectionPosters[item.id]}" alt="${item.title}" onload="this.classList.add('loaded')">`;
+        }
+      } catch(e) {}
+    }));
+    await new Promise(r => setTimeout(r, 100));
   }
 }
 
@@ -3096,8 +3093,6 @@ buildBubble();
 buildYearList();
 buildTvList();
 fetchPosters();
-fetchYearPosters();
-fetchTvPosters();
 </script>
 </body>
 </html>
