@@ -450,6 +450,20 @@
     .songs-section-label { padding: 16px 20px 8px; }
     .preview-btn { display: none; }
   }
+  /* Theater Map */
+  #theater-map .leaflet-container { background: #1a1814; }
+  .theater-bubble { border-radius: 50%; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(200,169,110,0.6); background: rgba(200,169,110,0.2); }
+  .theater-bubble:hover { transform: scale(1.15); box-shadow: 0 0 20px rgba(200,169,110,0.5); }
+  .theater-bubble span { font-family: "DM Mono", monospace; font-size: 11px; color: var(--accent); font-weight: 500; }
+  .theater-popup-title { font-family: "Playfair Display", serif; font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 4px; padding-right: 24px; }
+  .theater-popup-meta { font-size: 11px; color: var(--muted); font-family: "DM Mono", monospace; margin-bottom: 14px; }
+  .theater-film-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); gap: 10px; }
+  .theater-film-row:last-child { border-bottom: none; }
+  .theater-film-name { font-size: 13px; color: var(--text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .theater-film-rating { font-size: 12px; color: var(--accent); font-family: "DM Mono", monospace; flex-shrink: 0; }
+  .theater-film-date { font-size: 10px; color: var(--muted); font-family: "DM Mono", monospace; flex-shrink: 0; }
+  .theater-no-films { font-size: 13px; color: var(--muted); font-style: italic; }
+
   /* Film Diary */
   .diary-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; border-radius: 6px; }
   .diary-row:hover { background: var(--surface); }
@@ -603,6 +617,7 @@
   <button class="tab-btn film-tab active" onclick="switchTab('top100')">Top 100</button>
   <button class="tab-btn film-tab" onclick="switchTab('collection')">Physical Collection</button>
   <button class="tab-btn film-tab" onclick="switchTab('byyear')">Fave Every Year</button>
+  <button class="tab-btn film-tab" onclick="switchTab('theaters')">Theater Map</button>
   <span class="tab-divider">Also by Greg:</span>
   <button class="tab-btn" onclick="switchTab('tv')">Fave TV</button>
   <button class="tab-btn" onclick="switchTab('songs')">Top 100 Songs</button>
@@ -671,6 +686,24 @@
   <div class="year-intro"><p>One film per year, every year since 1970. No runners-up, no ties. Just the pick.</p><p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any film to go deeper</p></div>
   <div id="year-list"></div>
 </div><!-- end tab-byyear -->
+
+<div id="tab-theaters" class="tab-panel">
+  <div class="about">
+    <div class="about-inner">
+      <h2>Theaters</h2>
+      <p>Every movie theater Greg has checked into on Swarm since 2009. Bubble size reflects visit count. Tap any theater to see films watched there, cross-referenced with Letterboxd.</p>
+    </div>
+  </div>
+  <div id="theater-map-wrap" style="position:relative;width:100%;height:600px;background:var(--surface);overflow:hidden;">
+    <div id="theater-map" style="width:100%;height:100%;"></div>
+    <div id="theater-popup" style="display:none;position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:340px;max-width:90vw;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;z-index:1000;max-height:400px;overflow-y:auto;">
+      <button onclick="document.getElementById('theater-popup').style.display='none'" style="position:absolute;top:12px;right:14px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">✕</button>
+      <div id="theater-popup-content"></div>
+    </div>
+  </div>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</div><!-- end tab-theaters -->
 
 <div id="tab-collection" class="tab-panel">
   <div class="about">
@@ -1974,6 +2007,107 @@ const byYear = [
   { year: 2025, title: "One Battle After Another", top100rank: null },
 ];
 
+const theaterData = [
+  { id: "55a1385b498e1d7b357bccc8", name: "CineBowl & Grille - Frank Theatres", lat: 35.84872176339583, lng: -78.88907367507436, visits: 47, firstVisit: "2015-07-29", films: [{"name": "Deadpool & Wolverine", "rating": "3.5", "date": "2024-08-02", "visit_date": "2024-08-02"}, {"name": "Charlie Hustle & the Matter of Pete Rose", "rating": "2.5", "date": "2024-08-02", "visit_date": "2024-08-02"}, {"name": "Step Dogs", "rating": "", "date": "2019-12-11", "visit_date": "2019-12-10"}, {"name": "Muppets from Space", "rating": "", "date": "2019-12-11", "visit_date": "2019-12-10"}, {"name": "Major League", "rating": "5", "date": "2019-12-11", "visit_date": "2019-12-10"}, {"name": "The Social Network", "rating": "", "date": "2019-12-11", "visit_date": "2019-12-10"}, {"name": "Get Shorty", "rating": "", "date": "2019-11-27", "visit_date": "2019-11-27"}, {"name": "Chef", "rating": "", "date": "2019-11-27", "visit_date": "2019-11-27"}, {"name": "Spaceballs", "rating": "3.5", "date": "2019-08-10", "visit_date": "2019-08-10"}, {"name": "Bloodsport", "rating": "3", "date": "2019-08-10", "visit_date": "2019-08-10"}, {"name": "The Fast and the Furious", "rating": "", "date": "2019-08-11", "visit_date": "2019-08-10"}, {"name": "Reservoir Dogs", "rating": "", "date": "2019-07-26", "visit_date": "2019-07-25"}, {"name": "Jim Gaffigan: Cinco", "rating": "", "date": "2018-11-03", "visit_date": "2018-11-02"}, {"name": "The Spectacular Now", "rating": "", "date": "2018-07-21", "visit_date": "2018-07-21"}, {"name": "Father of the Year", "rating": "", "date": "2018-07-21", "visit_date": "2018-07-21"}, {"name": "The Commitments", "rating": "", "date": "2018-07-22", "visit_date": "2018-07-21"}, {"name": "Game Over, Man!", "rating": "", "date": "2018-07-15", "visit_date": "2018-07-14"}, {"name": "Birthmarked", "rating": "", "date": "2018-07-15", "visit_date": "2018-07-14"}, {"name": "The Last Laugh", "rating": "", "date": "2018-07-15", "visit_date": "2018-07-14"}, {"name": "Penalty Kick", "rating": "", "date": "2018-07-15", "visit_date": "2018-07-14"}, {"name": "The Family Man", "rating": "", "date": "2018-07-15", "visit_date": "2018-07-14"}, {"name": "Face/Off", "rating": "", "date": "2018-07-15", "visit_date": "2018-07-14"}, {"name": "A Hologram for the King", "rating": "", "date": "2018-07-08", "visit_date": "2018-07-08"}, {"name": "Meatballs", "rating": "", "date": "2018-07-08", "visit_date": "2018-07-08"}, {"name": "The Truman Show", "rating": "", "date": "2018-03-17", "visit_date": "2018-03-17"}, {"name": "Five Year Diary, Reel 29: New York City & the Berry Season (June 29\u2013August 4, 1983)", "rating": "", "date": "2017-11-22", "visit_date": "2017-11-22"}, {"name": "Tommy Boy", "rating": "", "date": "2017-07-20", "visit_date": "2017-07-19"}, {"name": "Brian Gaar: Jokes I Wrote At Work", "rating": "", "date": "2017-06-15", "visit_date": "2017-06-14"}, {"name": "John Caparulo: Come Inside Me", "rating": "", "date": "2017-05-17", "visit_date": "2017-05-17"}, {"name": "Ralphie May: Unruly", "rating": "", "date": "2017-05-17", "visit_date": "2017-05-17"}, {"name": "Gabriel Iglesias: Hot and Fluffy", "rating": "", "date": "2017-05-18", "visit_date": "2017-05-17"}, {"name": "Grease 2", "rating": "1", "date": "2016-10-23", "visit_date": "2016-10-23"}, {"name": "Zootopia", "rating": "", "date": "2016-10-23", "visit_date": "2016-10-23"}, {"name": "The Do-Over", "rating": "", "date": "2016-09-30", "visit_date": "2016-09-29"}, {"name": "Furry Vengeance", "rating": "", "date": "2015-10-16", "visit_date": "2015-10-15"}, {"name": "Wet Hot American Summer", "rating": "", "date": "2015-10-03", "visit_date": "2015-10-03"}, {"name": "Whitey: United States of America v. James J. Bulger", "rating": "", "date": "2015-09-23", "visit_date": "2015-09-22"}] },
+  { id: "4adb6a54f964a520322721e3", name: "AMC Southpoint 17", lat: 35.9049754791206, lng: -78.94538328333638, visits: 45, firstVisit: "2009-11-28", films: [{"name": "It's Never Over, Jeff Buckley", "rating": "4", "date": "2025-12-13", "visit_date": "2025-12-13"}, {"name": "Wake Up Dead Man", "rating": "3.5", "date": "2025-12-13", "visit_date": "2025-12-13"}, {"name": "Ghosting: The Spirit of Christmas", "rating": "2.5", "date": "2025-12-13", "visit_date": "2025-12-13"}, {"name": "Sean Combs: The Reckoning", "rating": "", "date": "2025-12-14", "visit_date": "2025-12-13"}, {"name": "Darkest Hour", "rating": "4", "date": "2024-09-28", "visit_date": "2024-09-28"}, {"name": "Mending the Line", "rating": "4", "date": "2024-09-28", "visit_date": "2024-09-28"}, {"name": "Lee", "rating": "4.5", "date": "2024-09-28", "visit_date": "2024-09-28"}, {"name": "Poor Things", "rating": "3.5", "date": "2024-01-14", "visit_date": "2024-01-14"}, {"name": "Gary Gulman: Born on 3rd Base", "rating": "4", "date": "2024-01-14", "visit_date": "2024-01-14"}, {"name": "Trevor Noah: Where Was I", "rating": "3", "date": "2024-01-14", "visit_date": "2024-01-14"}, {"name": "Love at First Sight", "rating": "4", "date": "2024-01-15", "visit_date": "2024-01-14"}, {"name": "The Whale", "rating": "5", "date": "2023-01-01", "visit_date": "2023-01-01"}, {"name": "White Noise", "rating": "2", "date": "2023-01-02", "visit_date": "2023-01-01"}, {"name": "Full Metal Jacket", "rating": "4", "date": "2018-04-19", "visit_date": "2018-04-18"}, {"name": "Adoration", "rating": "", "date": "2014-04-14", "visit_date": "2014-04-13"}, {"name": "Like Crazy", "rating": "", "date": "2012-12-01", "visit_date": "2012-11-30"}, {"name": "The Perfect Host", "rating": "", "date": "2012-05-01", "visit_date": "2012-05-01"}, {"name": "Princess", "rating": "", "date": "2012-02-26", "visit_date": "2012-02-26"}, {"name": "Step Up 3D", "rating": "", "date": "2012-02-27", "visit_date": "2012-02-26"}, {"name": "Yes, Virginia", "rating": "", "date": "2011-12-22", "visit_date": "2011-12-21"}] },
+  { id: "51031745e4b0a221c47baca4", name: "Stone Theaters Park West 14", lat: 35.80740265584953, lng: -78.82023246822841, visits: 39, firstVisit: "2013-02-27", films: [{"name": "Neville Shah Going Downhill", "rating": "", "date": "2019-09-20", "visit_date": "2019-09-19"}, {"name": "Somm: Into the Bottle", "rating": "", "date": "2017-03-10", "visit_date": "2017-03-09"}, {"name": "Noah", "rating": "", "date": "2015-05-02", "visit_date": "2015-05-02"}, {"name": "Bill Burr: I'm Sorry You Feel That Way", "rating": "", "date": "2014-12-27", "visit_date": "2014-12-27"}, {"name": "Alpha House", "rating": "", "date": "2014-12-27", "visit_date": "2014-12-27"}, {"name": "The Life", "rating": "", "date": "2014-12-27", "visit_date": "2014-12-27"}, {"name": "Nymphomaniac: Vol. I", "rating": "", "date": "2014-12-27", "visit_date": "2014-12-27"}, {"name": "Bad Santa", "rating": "", "date": "2014-12-27", "visit_date": "2014-12-27"}, {"name": "The One I Love", "rating": "", "date": "2014-12-27", "visit_date": "2014-12-27"}, {"name": "A Teacher", "rating": "", "date": "2014-12-28", "visit_date": "2014-12-27"}, {"name": "Ernest Saves Christmas", "rating": "2", "date": "2014-11-27", "visit_date": "2014-11-26"}, {"name": "Mickey's Magical Christmas: Snowed in at the House of Mouse", "rating": "", "date": "2014-11-27", "visit_date": "2014-11-26"}, {"name": "Radio", "rating": "", "date": "2014-11-15", "visit_date": "2014-11-14"}, {"name": "The Big Wedding", "rating": "", "date": "2014-08-16", "visit_date": "2014-08-15"}, {"name": "Khumba", "rating": "", "date": "2014-08-10", "visit_date": "2014-08-10"}, {"name": "Blackfish", "rating": "", "date": "2014-06-07", "visit_date": "2014-06-07"}, {"name": "Four Rooms", "rating": "", "date": "2014-06-05", "visit_date": "2014-06-05"}, {"name": "The Hunger Games", "rating": "", "date": "2013-11-27", "visit_date": "2013-11-27"}, {"name": "The Fab Five", "rating": "", "date": "2013-02-27", "visit_date": "2013-02-27"}] },
+  { id: "4aff9706f964a520a43922e3", name: "Regal Brier Creek", lat: 35.904991550608656, lng: -78.78470100181448, visits: 26, firstVisit: "2010-02-06", films: [{"name": "Pretty in Pink", "rating": "2.5", "date": "2018-08-19", "visit_date": "2018-08-18"}, {"name": "Iliza Shlesinger: Elder Millennial", "rating": "", "date": "2018-07-28", "visit_date": "2018-07-27"}, {"name": "The Natural", "rating": "4.5", "date": "2018-07-28", "visit_date": "2018-07-27"}, {"name": "Transformers: The Last Knight", "rating": "", "date": "2018-07-28", "visit_date": "2018-07-27"}, {"name": "The Witcher Bestiary Season 1, Part 2", "rating": "", "date": "2017-10-07", "visit_date": "2017-10-07"}, {"name": "Iliza Shlesinger: Confirmed Kills", "rating": "", "date": "2016-09-25", "visit_date": "2016-09-25"}, {"name": "Beverly Hills Chihuahua 2", "rating": "", "date": "2013-02-01", "visit_date": "2013-02-01"}, {"name": "A Matter of Loaf and Death", "rating": "", "date": "2013-02-01", "visit_date": "2013-02-01"}, {"name": "Bones Brigade: An Autobiography", "rating": "", "date": "2013-02-02", "visit_date": "2013-02-01"}, {"name": "The Philosopher Kings", "rating": "", "date": "2012-04-20", "visit_date": "2012-04-20"}, {"name": "Saint Ralph", "rating": "", "date": "2012-04-06", "visit_date": "2012-04-05"}, {"name": "Meet Monica Velour", "rating": "", "date": "2012-01-21", "visit_date": "2012-01-20"}, {"name": "Astro Boy", "rating": "", "date": "2011-09-17", "visit_date": "2011-09-16"}] },
+  { id: "4ad9fcb8f964a520d21c21e3", name: "Regal Beaver Creek", lat: 35.745289865582166, lng: -78.88286662972774, visits: 21, firstVisit: "2009-11-14", films: [{"name": "Cristela Alonzo: Lower Classy", "rating": "", "date": "2017-06-03", "visit_date": "2017-06-02"}, {"name": "Meet Monica Velour", "rating": "", "date": "2012-01-21", "visit_date": "2012-01-21"}] },
+  { id: "5b79d9e916ef67002c3b5797", name: "AMC Park Place 16", lat: 35.80980010967849, lng: -78.81808645077827, visits: 13, firstVisit: "2019-02-15", films: [{"name": "Sinners", "rating": "4.5", "date": "2025-04-27", "visit_date": "2025-04-27"}, {"name": "Here", "rating": "4", "date": "2024-11-05", "visit_date": "2024-11-05"}, {"name": "A Quiet Place: Day One", "rating": "4", "date": "2024-07-12", "visit_date": "2024-07-12"}, {"name": "Beverly Hills Cop: Axel F", "rating": "3.5", "date": "2024-07-12", "visit_date": "2024-07-12"}, {"name": "The Blind Side", "rating": "3", "date": "2024-07-13", "visit_date": "2024-07-12"}, {"name": "American Heist", "rating": "3", "date": "2024-07-13", "visit_date": "2024-07-12"}, {"name": "A Most Violent Year", "rating": "3.5", "date": "2024-07-13", "visit_date": "2024-07-12"}, {"name": "Mysteries of the Terracotta Warriors", "rating": "3.5", "date": "2024-07-13", "visit_date": "2024-07-12"}, {"name": "Falling for Christmas", "rating": "", "date": "2022-11-23", "visit_date": "2022-11-23"}, {"name": "1917", "rating": "5", "date": "2020-01-11", "visit_date": "2020-01-10"}, {"name": "Knives Out", "rating": "5", "date": "2020-01-11", "visit_date": "2020-01-10"}, {"name": "Once Upon a Time... in Hollywood", "rating": "4", "date": "2020-01-11", "visit_date": "2020-01-10"}, {"name": "Joker", "rating": "4", "date": "2020-01-11", "visit_date": "2020-01-10"}, {"name": "The Irishman", "rating": "5", "date": "2020-01-11", "visit_date": "2020-01-10"}, {"name": "Indiana Jones and the Last Crusade", "rating": "4", "date": "2020-01-11", "visit_date": "2020-01-10"}, {"name": "Spider-Man: Into the Spider-Verse", "rating": "4", "date": "2020-01-11", "visit_date": "2020-01-10"}, {"name": "Whiplash", "rating": "5", "date": "2020-01-11", "visit_date": "2020-01-10"}, {"name": "Olympus Has Fallen", "rating": "", "date": "2019-08-03", "visit_date": "2019-08-03"}, {"name": "Music and Lyrics", "rating": "", "date": "2019-08-04", "visit_date": "2019-08-03"}, {"name": "The Dirt", "rating": "", "date": "2019-05-05", "visit_date": "2019-05-04"}] },
+  { id: "4b117868f964a5203d7d23e3", name: "Marbles IMAX", lat: 35.779422060854635, lng: -78.63530509380797, visits: 4, firstVisit: "2010-07-22", films: [] },
+  { id: "4ad4c00af964a5201eed20e3", name: "Carolina Theatre Of Durham", lat: 35.997794160193266, lng: -78.90224368334356, visits: 3, firstVisit: "2011-02-09", films: [] },
+  { id: "4ada4ce5f964a520172121e3", name: "Regal North Hills", lat: 35.836705667855654, lng: -78.64201529736384, visits: 3, firstVisit: "2013-01-30", films: [] },
+  { id: "4ad4c009f964a5201bed20e3", name: "Rialto Theatre", lat: 35.80306994535697, lng: -78.64585503825222, visits: 2, firstVisit: "2023-10-12", films: [{"name": "UnCharitable", "rating": "3", "date": "2024-02-22", "visit_date": "2024-02-22"}, {"name": "Body of Lies", "rating": "3", "date": "2023-10-13", "visit_date": "2023-10-12"}] },
+  { id: "5a8f165ee679bc7909bb4693", name: "Alamo Drafthouse Cinema", lat: 35.77905214025866, lng: -78.60476273407856, visits: 2, firstVisit: "2022-11-08", films: [{"name": "The Miracle Season", "rating": "4", "date": "2023-10-29", "visit_date": "2023-10-29"}, {"name": "Greater", "rating": "3", "date": "2023-10-29", "visit_date": "2023-10-29"}, {"name": "The Killer", "rating": "4", "date": "2023-10-29", "visit_date": "2023-10-29"}] },
+  { id: "58e909d2109dfe0a7453bd92", name: "AMC Bradenton 20", lat: 27.449659271408734, lng: -82.53294411207786, visits: 2, firstVisit: "2018-12-27", films: [{"name": "Spider-Man: Across the Spider-Verse", "rating": "5", "date": "2023-06-09", "visit_date": "2023-06-09"}] },
+  { id: "4b05f929f964a520c0e622e3", name: "AMC Town Center 20", lat: 38.91586307152165, lng: -94.64843282597045, visits: 2, firstVisit: "2013-06-22", films: [] },
+  { id: "4adb80fef964a520572821e3", name: "Cinemark Bistro Raleigh", lat: 35.87145745226329, lng: -78.71722628585066, visits: 1, firstVisit: "2025-08-10", films: [{"name": "Echo Valley", "rating": "3", "date": "2025-08-10", "visit_date": "2025-08-10"}, {"name": "Weapons", "rating": "3.5", "date": "2025-08-10", "visit_date": "2025-08-10"}, {"name": "The Mortician", "rating": "3", "date": "2025-08-10", "visit_date": "2025-08-10"}] },
+  { id: "6223bd8cc4e97270f342a8b2", name: "Apple Cinemas", lat: 41.72191128400949, lng: -71.47396532792366, visits: 1, firstVisit: "2025-06-13", films: [{"name": "A Working Man", "rating": "2.5", "date": "2025-06-13", "visit_date": "2025-06-13"}, {"name": "Last Breath", "rating": "3", "date": "2025-06-13", "visit_date": "2025-06-13"}, {"name": "Materialists", "rating": "4", "date": "2025-06-13", "visit_date": "2025-06-13"}] },
+  { id: "4a1c43d5f964a520307b1fe3", name: "AMC DINE-IN 600 North Michigan 9", lat: 41.89288233301588, lng: -87.62406342813627, visits: 1, firstVisit: "2024-05-21", films: [{"name": "The Beekeeper", "rating": "3", "date": "2024-05-21", "visit_date": "2024-05-21"}, {"name": "True Story", "rating": "2.5", "date": "2024-05-21", "visit_date": "2024-05-21"}, {"name": "Challengers", "rating": "3.5", "date": "2024-05-21", "visit_date": "2024-05-21"}, {"name": "Don't Worry, He Won't Get Far on Foot", "rating": "2", "date": "2024-05-22", "visit_date": "2024-05-21"}] },
+  { id: "4b303561f964a520caf724e3", name: "Showcase Providence Place & IMAX", lat: 41.82585337645123, lng: -71.41425577640095, visits: 1, firstVisit: "2024-04-26", films: [{"name": "Baby Reindeer", "rating": "4", "date": "2024-04-26", "visit_date": "2024-04-26"}] },
+  { id: "4b53aee0f964a520afa727e3", name: "Regal Hollywood", lat: 34.83343488268905, lng: -82.30471242430468, visits: 1, firstVisit: "2023-04-29", films: [{"name": "Beau Is Afraid", "rating": "4", "date": "2023-04-29", "visit_date": "2023-04-29"}] },
+  { id: "4a4bb8e8f964a520a0ac1fe3", name: "Regal Perimeter Pointe", lat: 33.93215756740751, lng: -84.34822525236274, visits: 1, firstVisit: "2020-01-22", films: [{"name": "Uncut Gems", "rating": "5", "date": "2020-01-23", "visit_date": "2020-01-22"}, {"name": "The Irishman", "rating": "", "date": "2020-01-23", "visit_date": "2020-01-22"}, {"name": "Inception", "rating": "", "date": "2020-01-23", "visit_date": "2020-01-22"}] },
+  { id: "4a3d0b90f964a520bfa11fe3", name: "Regal Atlantic Station", lat: 33.79333689560343, lng: -84.39638436537523, visits: 1, firstVisit: "2019-04-16", films: [] },
+  { id: "4b36a7ebf964a520113a25e3", name: "Regal Phillips Place", lat: 35.145449243061286, lng: -80.82481666423993, visits: 1, firstVisit: "2019-04-02", films: [] },
+  { id: "4b326158f964a520130a25e3", name: "Regal New Town", lat: 37.278898087708924, lng: -76.74117935528638, visits: 1, firstVisit: "2018-11-10", films: [] },
+  { id: "4d5473ab48ea6ea82772caa3", name: "IMAX, Polynesia Cultural Center", lat: 21.64013365125195, lng: -157.921486622407, visits: 1, firstVisit: "2018-06-20", films: [] },
+  { id: "5228d5d711d26544e9c9defc", name: "Regal Virginia Gateway", lat: 38.78736684158907, lng: -77.60640729438414, visits: 1, firstVisit: "2018-05-27", films: [] },
+  { id: "49d814e4f964a5209e5d1fe3", name: "AMC River East 21", lat: 41.891256914108375, lng: -87.6197249992059, visits: 1, firstVisit: "2018-03-31", films: [] },
+  { id: "4bae71eaf964a5205ab33be3", name: "Regal Oakmont", lat: 27.45669588939524, lng: -82.6112062875053, visits: 1, firstVisit: "2017-07-22", films: [{"name": "Dirty Grandpa", "rating": "", "date": "2017-07-23", "visit_date": "2017-07-22"}] },
+  { id: "4b350b69f964a520ee2925e3", name: "Regal Hollywood", lat: 27.3361864383976, lng: -82.53168654168873, visits: 1, firstVisit: "2016-12-27", films: [] },
+  { id: "4bba1aeb53649c7425a048fb", name: "United Artists Beaucatcher Cinemas 7", lat: 35.58361676118776, lng: -82.52233330123227, visits: 1, firstVisit: "2015-01-18", films: [] },
+  { id: "4ad4c00af964a52034ed20e3", name: "Raleighwood Cinema Grill", lat: 35.87272742004999, lng: -78.62359025169417, visits: 1, firstVisit: "2014-09-01", films: [{"name": "Unstable Fables: Tortoise vs. Hare", "rating": "", "date": "2014-09-01", "visit_date": "2014-09-01"}] },
+  { id: "4b55c3f3f964a520faee27e3", name: "Regal Biltmore Grande", lat: 35.487307597682616, lng: -82.56093758898504, visits: 1, firstVisit: "2011-06-23", films: [] },
+  { id: "4b109871f964a520767323e3", name: "Regal Crossroads", lat: 35.82830052931621, lng: -78.90501230878232, visits: 1, firstVisit: "2011-06-12", films: [] },
+  { id: "4a5824e5f964a5206db71fe3", name: "AMC Metreon 16", lat: 37.78498809952764, lng: -122.4015713786259, visits: 1, firstVisit: "2011-03-15", films: [] },
+  { id: "47da763df964a520354e1fe3", name: "Alamo Drafthouse Cinema", lat: 30.267140588843468, lng: -97.73975261890396, visits: 1, firstVisit: "2010-03-13", films: [] },
+];
+
+let theaterMap = null;
+
+function initTheaterMap() {
+  if (theaterMap) return;
+  
+  const mapEl = document.getElementById('theater-map');
+  if (!mapEl) return;
+
+  theaterMap = L.map('theater-map', {
+    center: [35.85, -78.85],
+    zoom: 10,
+    zoomControl: true,
+    attributionControl: false
+  });
+
+  // Dark tile layer
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(theaterMap);
+
+  // Add bubbles
+  const maxVisits = Math.max(...theaterData.map(t => t.visits));
+  theaterData.forEach(theater => {
+    if (!theater.lat || !theater.lng) return;
+    
+    const size = Math.max(32, Math.min(80, 20 + (theater.visits / maxVisits) * 60));
+    
+    const icon = L.divIcon({
+      className: '',
+      html: '<div class="theater-bubble" style="width:' + size + 'px;height:' + size + 'px;"><span>' + theater.visits + '</span></div>',
+      iconSize: [size, size],
+      iconAnchor: [size/2, size/2]
+    });
+
+    const marker = L.marker([theater.lat, theater.lng], { icon }).addTo(theaterMap);
+    marker.on('click', () => showTheaterPopup(theater));
+  });
+}
+
+function showTheaterPopup(theater) {
+  const popup = document.getElementById('theater-popup');
+  const content = document.getElementById('theater-popup-content');
+  
+  const firstYear = theater.firstVisit ? theater.firstVisit.slice(0,4) : '';
+  const filmsHtml = theater.films.length > 0
+    ? theater.films.map(f => {
+        const stars = f.rating ? f.rating + '★' : '—';
+        const date = f.date ? f.date.slice(0,7) : '';
+        return '<div class="theater-film-row">'
+          + '<span class="theater-film-name">' + f.name + '</span>'
+          + '<span class="theater-film-date">' + date + '</span>'
+          + '<span class="theater-film-rating">' + stars + '</span>'
+          + '</div>';
+      }).join('')
+    : '<div class="theater-no-films">No Letterboxd matches found for this theater.</div>';
+
+  content.innerHTML = '<div class="theater-popup-title">' + theater.name + '</div>'
+    + '<div class="theater-popup-meta">' + theater.visits + ' visit' + (theater.visits !== 1 ? 's' : '') + (firstYear ? ' · first visit ' + firstYear : '') + (theater.films.length ? ' · ' + theater.films.length + ' films matched' : '') + '</div>'
+    + filmsHtml;
+
+  popup.style.display = 'block';
+}
+
 function switchTab(tab) {
   document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -1988,6 +2122,10 @@ function switchTab(tab) {
     window.collectionLoaded = true;
     buildCollectionGrid(collection);
     fetchCollectionPostersParallel();
+  }
+  if (tab === 'theaters' && !window.theatersLoaded) {
+    window.theatersLoaded = true;
+    setTimeout(initTheaterMap, 100);
   }
   if (tab === 'byyear' && !window.byyearPostersLoaded) {
     window.byyearPostersLoaded = true;
