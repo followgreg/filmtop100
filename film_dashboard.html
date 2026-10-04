@@ -1,0 +1,3085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greg's Top 100 Films</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0906;
+    --surface: #131210;
+    --surface2: #1c1a18;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e4dc;
+    --muted: #7a756c;
+    --accent: #c8a96e;
+    --accent-dim: rgba(200,169,110,0.12);
+    --up: #5dcaa5;
+    --up-dim: rgba(93,202,165,0.12);
+    --down: #e07a5f;
+    --down-dim: rgba(224,122,95,0.1);
+    --new: #9b8ec4;
+    --new-dim: rgba(155,142,196,0.12);
+    --star: #c8a96e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* Header */
+  .header {
+    padding: 56px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .title-block h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .title-block p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .stat-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Controls */
+  .controls {
+    padding: 20px 40px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,9,6,0.95);
+    backdrop-filter: blur(12px);
+    z-index: 10;
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 14px 9px 36px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-wrap input:focus { border-color: rgba(200,169,110,0.4); }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover { border-color: rgba(200,169,110,0.3); color: var(--text); }
+  .filter-btn.active { background: var(--accent-dim); border-color: rgba(200,169,110,0.4); color: var(--accent); }
+
+  .results-count {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Section dividers */
+  .section-header {
+    padding: 20px 40px 8px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  .section-header:first-of-type { border-top: none; margin-top: 0; }
+
+  /* Film rows */
+  .film-list { padding: 0 40px; }
+
+  .film-row {
+    display: grid;
+    grid-template-columns: 52px 44px 1fr 60px 80px 80px;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.15s;
+    cursor: default;
+  }
+
+  .film-row:hover { background: var(--surface); }
+
+  .film-row.hidden { display: none; }
+
+  /* Rank */
+  .rank-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .rank-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    min-width: 24px;
+    text-align: right;
+  }
+
+  .move-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  .move-up { background: var(--up-dim); color: var(--up); }
+  .move-down { background: var(--down-dim); color: var(--down); }
+  .move-new { background: var(--new-dim); color: var(--new); }
+  .move-same { opacity: 0; }
+
+  /* Title */
+  .title-cell { min-width: 0; }
+
+  .film-title {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .film-year {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Poster */
+  .poster-cell { width: 44px; height: 62px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .poster-cell img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.3s; }
+  .poster-cell img.loaded { opacity: 1; }
+  .poster-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--muted); opacity: 0.3; }
+
+  /* Poster */
+  .data-cell {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+
+  .col-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .rating-val {
+    color: var(--accent);
+    font-size: 13px;
+  }
+
+  .watches-val { color: var(--text); }
+  .rewatches-val { color: var(--up); }
+  .no-data { color: var(--muted); opacity: 0.4; }
+
+  /* Stars */
+  .stars {
+    display: inline-flex;
+    gap: 1px;
+    align-items: center;
+  }
+
+  .star { color: var(--star); font-size: 10px; }
+  .star-empty { color: var(--muted); font-size: 10px; opacity: 0.3; }
+  .star-half { color: var(--star); font-size: 10px; opacity: 0.6; }
+
+  /* Column headers */
+  .col-headers {
+    display: grid;
+    grid-template-columns: 52px 44px 1fr 60px 80px 80px;
+    gap: 12px;
+    padding: 12px 12px 8px 12px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    margin: 0 40px 4px;
+  }
+
+  .col-h { text-align: center; }
+  .col-h:nth-child(2) { text-align: left; }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    padding: 16px 40px;
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Empty state */
+  .empty-state {
+    padding: 60px 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    display: none;
+  }
+
+  .mobile-rating { display: none; }
+  .desktop-stars { display: inline-flex; }
+  .mobile-stats { display: none; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 5px; }
+  .mobile-stat { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); display: flex; align-items: center; gap: 2px; }
+  .mobile-stat .val { color: var(--text); }
+  .mobile-stat .val-gold { color: var(--accent); }
+  .mobile-stat .val-up { color: var(--up); }
+  .mobile-stat-sep { color: var(--muted); opacity: 0.3; font-size: 10px; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header { padding: 32px 20px 24px; }
+    .controls { padding: 14px 20px; }
+    .film-list { padding: 0 12px; }
+    .col-headers { display: none; }
+    .section-header { padding: 16px 20px 8px; }
+    .legend { padding: 16px 20px; }
+
+    .film-row {
+      grid-template-columns: 30px 44px 1fr;
+      padding: 8px 4px;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .rank-cell { flex-direction: column; align-items: flex-end; padding-top: 6px; }
+    .rank-num { font-size: 11px; min-width: 18px; }
+    .move-badge { display: none; }
+    .poster-cell { width: 44px; height: 62px; display: block; }
+    .title-cell { padding-top: 2px; }
+    .film-title { font-size: 13px; }
+    .film-year { font-size: 10px; }
+    .hide-mobile { display: none; }
+    .data-cell { display: none; }
+    .mobile-stats { display: flex; }
+    .move-inline { display: block; }
+  }
+  .move-inline { display: none; font-size: 11px; margin-top: 3px; }
+  .move-inline-up { color: var(--up); }
+  .move-inline-down { color: var(--down); }
+  .move-inline-new { color: var(--new); }
+  .bd-badge { font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 4px; background: rgba(56,139,255,0.12); color: #89C4FF; letter-spacing: 0.04em; white-space: nowrap; }
+  .no-disc { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border); display: inline-block; opacity: 0.3; }
+  /* About section */
+  .about { border-bottom: 1px solid var(--border); padding: 40px; }
+  .about-inner { max-width: 680px; }
+  .about h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+  .about p { font-size: 14px; line-height: 1.8; color: var(--muted); margin-bottom: 12px; }
+  .about p:last-of-type { margin-bottom: 24px; }
+  .criteria { display: flex; gap: 24px; flex-wrap: wrap; }
+  .criterion { display: flex; flex-direction: column; gap: 3px; }
+  .crit-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .crit-val { font-size: 13px; font-family: 'DM Mono', monospace; color: var(--text); }
+  /* Bubble section */
+  .bubble-section { padding: 20px 40px 80px; border-top: 1px solid var(--border); margin-top: 24px; }
+  .bubble-header { max-width: 680px; margin-bottom: 32px; }
+  .bubble-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .bubble-header p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+  .bubble-card { display: grid; grid-template-columns: 52px 1fr; gap: 12px; padding: 18px 12px; border-bottom: 1px solid var(--border); transition: background 0.15s; border-radius: 8px; }
+  .bubble-card:hover { background: var(--surface); }
+  .bubble-card:last-child { border-bottom: none; }
+  .bubble-rank { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); text-align: right; padding-top: 2px; }
+  .bubble-title-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+  .bubble-title { font-size: 15px; font-weight: 400; color: var(--text); }
+  .bubble-year { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .bubble-meta { display: flex; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+  .bubble-data { font-size: 11px; color: var(--muted); display: flex; gap: 4px; align-items: center; }
+  .bubble-data span { color: var(--text); font-family: 'DM Mono', monospace; }
+  .bubble-data .up-val { color: var(--up); }
+  .bubble-note { font-size: 13px; line-height: 1.7; color: var(--muted); }
+  .tag-nodata { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--surface2); color: var(--muted); font-weight: 500; }
+  .tag-strong { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--up-dim); color: var(--up); font-weight: 500; }
+  .tag-quality { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--down-dim); color: var(--down); font-weight: 500; }
+  /* Film Diary */
+  .diary-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; border-radius: 6px; }
+  .diary-row:hover { background: var(--surface); }
+  .diary-poster { width: 36px; height: 52px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .diary-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .diary-poster img.loaded { opacity: 1; }
+  .diary-info { min-width: 0; }
+  .diary-title { font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .diary-meta { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .diary-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+  .diary-rating { font-size: 13px; color: var(--accent); font-family: 'DM Mono', monospace; }
+  .diary-date { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .diary-rewatch { font-size: 9px; color: var(--up); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .tv-intro { padding: 28px 40px 4px; max-width: 680px; }
+  .tv-intro p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+  .tv-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid var(--border); }
+  .tv-row:hover { background: var(--surface); }
+  .tv-rank { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); min-width: 32px; text-align: right; }
+  .tv-poster { width: 44px; height: 62px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .tv-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .tv-poster img.loaded { opacity: 1; }
+  .tv-poster-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); opacity: 0.3; }
+  .tv-info { flex: 1; min-width: 0; }
+  .tv-title { font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tv-year { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .tv-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 20px 52px 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+  .tv-section-label:first-child { border-top: none; margin-top: 0; }
+  @media (max-width: 600px) {
+    .tv-intro { padding: 20px 20px 4px; }
+    .tv-section-label { padding: 16px 20px 8px; }
+  }
+  .detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: flex-end; justify-content: center; }
+  .detail-overlay.open { display: flex; }
+  .detail-panel { background: var(--surface); border-top: 1px solid var(--border); border-radius: 20px 20px 0 0; width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto; padding: 0 0 40px; }
+  .detail-drag { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 20px; }
+  .detail-header { display: flex; gap: 16px; padding: 0 24px 20px; border-bottom: 1px solid var(--border); }
+  .detail-poster { width: 72px; height: 100px; border-radius: 6px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .detail-poster img { width: 100%; height: 100%; object-fit: cover; }
+  .detail-meta { flex: 1; min-width: 0; padding-top: 4px; }
+  .detail-rank { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+  .detail-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+  .detail-year { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .detail-stats { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .detail-stat { display: flex; flex-direction: column; gap: 2px; }
+  .detail-stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .detail-stat-val { font-size: 13px; font-family: 'DM Mono', monospace; color: var(--text); }
+  .detail-stat-val.gold { color: var(--accent); }
+  .detail-body { padding: 20px 24px 0; display: flex; flex-direction: column; gap: 20px; }
+  .detail-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+  .detail-pitch { font-size: 14px; line-height: 1.7; color: var(--muted); font-style: italic; }
+  .detail-why { font-size: 14px; line-height: 1.7; color: var(--text); min-height: 48px; }
+  .detail-why.loading { color: var(--muted); animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+  .detail-similars { display: flex; flex-wrap: wrap; gap: 8px; }
+  .detail-similar { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .detail-similar:hover { border-color: var(--accent); color: var(--accent); }
+  .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .detail-btn { display: flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; cursor: pointer; text-decoration: none; transition: all 0.15s; border: 1px solid var(--border); background: var(--surface2); color: var(--text); }
+  .detail-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .detail-btn.primary { background: var(--accent-dim); border-color: rgba(200,169,110,0.4); color: var(--accent); }
+  .detail-streaming { display: flex; flex-wrap: wrap; gap: 8px; }
+  .stream-badge { font-size: 11px; padding: 4px 10px; border-radius: 6px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .detail-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 4px 8px; }
+
+  /* Film row clickable */
+  .film-row { cursor: pointer; }
+  /* Tabs */
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 40px; background: var(--bg); }
+  .tab-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; padding: 14px 20px; cursor: pointer; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* By Year tab */
+  .year-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid var(--border); }
+  .year-row:hover { background: var(--surface); }
+  .year-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); min-width: 36px; }
+  .year-poster { width: 36px; height: 50px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .year-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .year-poster img.loaded { opacity: 1; }
+  .year-poster-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); opacity: 0.3; }
+  .year-title { font-size: 14px; color: var(--text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .year-on-list { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--accent-dim); color: var(--accent); font-weight: 500; white-space: nowrap; }
+  .year-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 20px 52px 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+  .year-section-label:first-child { border-top: none; margin-top: 0; }
+  .year-intro { padding: 28px 40px 4px; max-width: 680px; }
+  .year-intro p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .tabs { padding: 0 20px; }
+    .year-grid { padding: 0 12px; grid-template-columns: 1fr; }
+    .year-section-label { padding: 16px 24px 8px; }
+  }
+
+  /* Tabs */
+  .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 40px; background: var(--bg); position: sticky; top: 0; z-index: 9; }
+  .tab-btn { padding: 12px 18px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; margin-bottom: -1px; letter-spacing: 0.02em; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn.film-tab { color: var(--muted); }
+  .tab-btn.film-tab.active { background: var(--accent); color: #0a0906; border-bottom-color: transparent; border-radius: 6px 6px 0 0; font-weight: 500; padding: 10px 18px; margin-top: 4px; }
+  .tab-btn.film-tab:hover:not(.active) { color: var(--accent); }
+  .tab-divider { display: flex; align-items: center; gap: 10px; padding: 0 14px 0 20px; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text); opacity: 0.7; white-space: nowrap; }
+  .tab-divider::before { content: ''; display: block; width: 1px; height: 22px; background: rgba(255,255,255,0.25); }
+  @media (max-width: 600px) { .tab-divider { font-size: 9px; padding: 0 8px 0 12px; letter-spacing: 0.08em; } }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px; padding: 20px 40px 80px; }
+  .year-card { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; transition: background 0.15s; text-decoration: none; }
+  .year-card:hover { background: var(--surface); }
+  .year-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); min-width: 34px; }
+  .year-poster { width: 34px; height: 50px; border-radius: 4px; overflow: hidden; background: var(--surface2); flex-shrink: 0; }
+  .year-poster img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+  .year-poster img.loaded { opacity: 1; }
+  .year-info { flex: 1; min-width: 0; }
+  .year-title { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .year-badge { font-size: 10px; color: var(--accent); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .year-intro { padding: 28px 40px 4px; max-width: 680px; }
+  .year-intro p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+  @media (max-width: 600px) {
+    .tab-nav { padding: 0 16px; }
+    .tab-btn { padding: 12px 12px; font-size: 12px; }
+    .year-grid { padding: 12px 12px 80px; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .year-intro { padding: 20px 20px 4px; }
+    .year-card { padding: 8px 6px; gap: 8px; }
+    .year-num { font-size: 11px; min-width: 28px; }
+    .year-title { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title-block">
+      <h1>Greg ❤️ Movies</h1>
+      <p>Updated June 2026 · <a href="https://letterboxd.com/Followgreg/" target="_blank" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(200,169,110,0.4);">Letterboxd ↗</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn film-tab active" onclick="switchTab('top100')">Top 100</button>
+  <button class="tab-btn film-tab" onclick="switchTab('collection')">Physical Collection</button>
+  <button class="tab-btn film-tab" onclick="switchTab('byyear')">Fave Every Year</button>
+</div>
+
+<div id="tab-top100" class="tab-panel active">
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search films..." oninput="filterFilms()">
+  </div>
+  <button class="filter-btn" onclick="toggleFilter('movers')" id="btn-movers">↑↓ Movers</button>
+  <button class="filter-btn" onclick="toggleFilter('new')" id="btn-new">✦ New</button>
+  <button class="filter-btn" onclick="toggleFilter('rewatched')" id="btn-rewatched">↻ Rewatched</button>
+  <button class="filter-btn" onclick="toggleFilter('top40')" id="btn-top40">Top 40</button>
+  <span class="results-count" id="results-count">100 films</span>
+</div>
+
+<div class="about">
+  <div class="about-inner">
+    <h2>The List</h2>
+    <p>One hundred films. Ranked by joy, not quality. The top 40 require five or more viewings to qualify — you can't accidentally love something that many times.</p>
+    <p>This list is re-evaluated every 6 months and while informed by quantified data points, finalized by gut and passion.</p>
+    <p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any film to go deeper</p>
+    <div class="criteria">
+      <div class="criterion"><span class="crit-label">Framework</span><span class="crit-val">Joy over quality</span></div>
+      <div class="criterion"><span class="crit-label">Top 40 rule</span><span class="crit-val">5+ viewings required</span></div>
+      <div class="criterion"><span class="crit-label">Data from</span><span class="crit-val">Letterboxd, 2020–present</span></div>
+      <div class="criterion"><span class="crit-label">Last updated</span><span class="crit-val">March 2026</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="film-container">
+  <div class="col-headers">
+    <div class="col-h"></div>
+    <div class="col-h"></div>
+    <div class="col-h" style="text-align:left">Film</div>
+    <div class="col-h">Rating</div>
+    <div class="col-h hide-mobile">Watches</div>
+    <div class="col-h hide-mobile">From</div>
+  </div>
+</div>
+
+<div class="empty-state" id="empty-state">No films match your search.</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="move-badge move-up">↑ 10</span> Moved up</div>
+  <div class="legend-item"><span class="move-badge move-down">↓ 5</span> Moved down</div>
+  <div class="legend-item"><span class="move-badge move-new">NEW</span> New entry</div>
+  <div class="legend-item" style="margin-left:8px; font-size:10px;">★ = Letterboxd rating &nbsp;·&nbsp; Watches/Rewatches from 2020 onward only</div>
+</div>
+
+<div class="bubble-section">
+  <div class="bubble-header">
+    <h2>The Bubble — #101 to #120</h2>
+    <p>Films knocking on the door. Some are strong candidates to move inside the top 100 at the next reassessment. Others need a rewatch to confirm their place. A few are here on the strength of memory alone, with no Letterboxd data to back them up yet.</p>
+  </div>
+  <div id="bubble-list"></div>
+</div>
+
+</div><!-- end tab-top100 -->
+
+<div id="tab-byyear" class="tab-panel">
+  <div class="year-intro"><p>One film per year, every year since 1970. No runners-up, no ties. Just the pick.</p><p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any film to go deeper</p></div>
+  <div id="year-list"></div>
+</div><!-- end tab-byyear -->
+
+
+<div id="tab-collection" class="tab-panel">
+  <div class="about">
+    <div class="about-inner">
+      <h2>The Physical Collection</h2>
+      <p>Alphabetical. Tap any title for details, streaming, and more.</p>
+      <p style="font-size:12px;color:var(--accent);opacity:0.8;margin-top:8px;">✦ Tap any title to go deeper</p>
+    </div>
+  </div>
+  <div class="controls" style="position:sticky;top:49px;">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="collection-search" placeholder="Search collection..." oninput="filterCollection()">
+    </div>
+    <span class="results-count" id="collection-count">442 titles</span>
+  </div>
+  <div id="collection-list"></div>
+</div><!-- end tab-collection -->
+
+
+
+
+<div class="detail-overlay" id="detail-overlay" onclick="closePanel(event)">
+  <div class="detail-panel" id="detail-panel">
+    <button class="detail-close" onclick="closeDetailPanel()">✕</button>
+    <div class="detail-drag"></div>
+    <div class="detail-header">
+      <div class="detail-poster" id="dp-poster"></div>
+      <div class="detail-meta">
+        <div class="detail-rank" id="dp-rank"></div>
+        <div class="detail-title" id="dp-title"></div>
+        <div class="detail-year" id="dp-year"></div>
+        <div class="detail-stats">
+          <div class="detail-stat"><span class="detail-stat-label">Rating</span><span class="detail-stat-val gold" id="dp-rating"></span></div>
+          <div class="detail-stat"><span class="detail-stat-label">Watches</span><span class="detail-stat-val" id="dp-watches"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div>
+        <div class="detail-section-label">The pitch</div>
+        <div class="detail-pitch" id="dp-pitch">Loading...</div>
+      </div>
+      <div>
+        <div class="detail-section-label">Why it made the list</div>
+        <div class="detail-why" id="dp-why"></div>
+      </div>
+      <div id="dp-similars-section">
+        <div class="detail-section-label">If you like this, you may also like</div>
+        <div class="detail-similars" id="dp-similars"></div>
+      </div>
+      <div id="dp-streaming-section">
+        <div class="detail-section-label">Where to watch</div>
+        <div class="detail-streaming" id="dp-streaming"></div>
+      </div>
+      <div class="detail-actions" id="dp-actions"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const owned = new Set([
+  "The Godfather", "Back to the Future", "Pulp Fiction", "La La Land", "Inception",
+  "Fight Club", "Saving Private Ryan", "Casino", "Gladiator", "Parasite",
+  "Moneyball", "The Shawshank Redemption", "The Dark Knight", "Interstellar",
+  "Heat", "Unbreakable", "The Matrix", "Raiders of the Lost Ark", "Whiplash",
+  "Jerry Maguire", "Jaws", "For Love of the Game", "American Psycho", "Reservoir Dogs",
+  "Swingers", "Blade Runner", "The Departed", "The Social Network", "Major League",
+  "Dazed and Confused", "Jurassic Park", "Arrival", "Memento", "The Game",
+  "Killers of the Flower Moon", "The Right Stuff", "Leon: The Professional",
+  "Mr. Mom", "Planes, Trains and Automobiles", "Godzilla Minus One", "300",
+  "Everything Everywhere All At Once", "The Killer (John Woo)", "The Sound of Music",
+  "Star Wars: Empire Strikes Back", "Out of Sight", "Get Shorty", "Apollo 13",
+  "Armageddon", "That Thing You Do!", "Forrest Gump", "Lord of the Rings: Fellowship",
+  "True Romance", "Se7en", "Goodfellas", "Wolf of Wall Street", "Rocky IV",
+  "Die Hard", "Remember the Titans", "Aliens", "Field of Dreams", "Mulholland Drive",
+  "Mad Max Fury Road", "Draft Day", "Star Trek: Wrath of Khan", "The Incredibles",
+  "Face/Off", "Rounders", "Contact", "The Sixth Sense", "Toy Story 2",
+  "The Natural", "Groundhog Day", "The Shining", "Big Trouble in Little China",
+  "Indiana Jones: Temple of Doom", "No Country for Old Men", "Godfather Part II",
+  "Casino Royale", "Crouching Tiger, Hidden Dragon", "Close Encounters of the Third Kind",
+  "Beauty and the Beast", "Scott Pilgrim vs. the World", "The Town", "Margin Call", "Gravity",
+]);
+
+const films = [
+  { rank: 1, title: "The Godfather", year: 1972, oldRank: 1, movement: 0, rating: "5", watches: 7, rewatches: 0 },
+  { rank: 2, title: "Back to the Future", year: 1985, oldRank: 2, movement: 0, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 3, title: "Pulp Fiction", year: 1994, oldRank: 3, movement: 0, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 4, title: "La La Land", year: 2016, oldRank: 4, movement: 0, rating: "5", watches: 7, rewatches: 0 },
+  { rank: 5, title: "Moneyball", year: 2011, oldRank: 11, movement: 6, rating: "5", watches: 10, rewatches: 3 },
+  { rank: 6, title: "Inception", year: 2010, oldRank: 5, movement: -1, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 7, title: "Fight Club", year: 1999, oldRank: 6, movement: -1, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 8, title: "Saving Private Ryan", year: 1998, oldRank: 7, movement: -1, rating: "5", watches: 5, rewatches: 0 },
+  { rank: 9, title: "Casino", year: 1995, oldRank: 8, movement: -1, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 10, title: "Gladiator", year: 2000, oldRank: 9, movement: -1, rating: "5", watches: 5, rewatches: 0 },
+  { rank: 11, title: "Parasite", year: 2019, oldRank: 10, movement: -1, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 12, title: "The Matrix", year: 1999, oldRank: 18, movement: 6, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 13, title: "The Usual Suspects", year: 1995, oldRank: 12, movement: -1, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 14, title: "The Shawshank Redemption", year: 1994, oldRank: 13, movement: -1, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 15, title: "Whiplash", year: 2014, oldRank: 20, movement: 5, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 16, title: "The Dark Knight", year: 2008, oldRank: 14, movement: -2, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 17, title: "Interstellar", year: 2014, oldRank: 15, movement: -2, rating: "5", watches: 5, rewatches: 0 },
+  { rank: 18, title: "Heat", year: 1995, oldRank: 16, movement: -2, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 19, title: "For Love of the Game", year: 1999, oldRank: null, movement: "NEW", rating: "5", watches: 8, rewatches: 2 },
+  { rank: 20, title: "Unbreakable", year: 2000, oldRank: 17, movement: -3, rating: "4", watches: 6, rewatches: 1 },
+  { rank: 21, title: "Raiders of the Lost Ark", year: 1981, oldRank: 19, movement: -2, rating: "5", watches: 7, rewatches: 0 },
+  { rank: 22, title: "The Social Network", year: 2010, oldRank: 30, movement: 8, rating: "5", watches: 8, rewatches: 2 },
+  { rank: 23, title: "Jerry Maguire", year: 1996, oldRank: 21, movement: -2, rating: "5", watches: 8, rewatches: 1 },
+  { rank: 24, title: "Jaws", year: 1975, oldRank: 22, movement: -2, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 25, title: "Good Will Hunting", year: 1997, oldRank: 32, movement: 7, rating: "5", watches: 8, rewatches: 1 },
+  { rank: 26, title: "American Psycho", year: 2000, oldRank: 24, movement: -2, rating: "4", watches: 6, rewatches: 0 },
+  { rank: 27, title: "Major League", year: 1989, oldRank: 31, movement: 4, rating: "5", watches: 9, rewatches: 3 },
+  { rank: 28, title: "Reservoir Dogs", year: 1992, oldRank: 25, movement: -3, rating: "4.5", watches: 7, rewatches: 1 },
+  { rank: 29, title: "Swingers", year: 1996, oldRank: 26, movement: -3, rating: "4.5", watches: 6, rewatches: 0 },
+  { rank: 30, title: "Blade Runner", year: 1982, oldRank: 27, movement: -3, rating: "4.5", watches: 5, rewatches: 0 },
+  { rank: 31, title: "The Departed", year: 2006, oldRank: 28, movement: -3, rating: "4.5", watches: 7, rewatches: 0 },
+  { rank: 32, title: "Titanic", year: 1997, oldRank: 29, movement: -3, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 33, title: "Dazed and Confused", year: 1993, oldRank: 33, movement: 0, rating: "5", watches: 6, rewatches: 0 },
+  { rank: 34, title: "Jurassic Park", year: 1993, oldRank: 34, movement: 0, rating: "—", watches: 5, rewatches: 0 },
+  { rank: 35, title: "Arrival", year: 2016, oldRank: 35, movement: 0, rating: "4", watches: 5, rewatches: 0 },
+  { rank: 36, title: "Memento", year: 2000, oldRank: 36, movement: 0, rating: "4.5", watches: 6, rewatches: 0 },
+  { rank: 37, title: "The Game", year: 1997, oldRank: 37, movement: 0, rating: "4", watches: 6, rewatches: 1 },
+  { rank: 38, title: "Killers of the Flower Moon", year: 2023, oldRank: 38, movement: 0, rating: "4.5", watches: 7, rewatches: 1 },
+  { rank: 39, title: "The Right Stuff", year: 1983, oldRank: 39, movement: 0, rating: "4.5", watches: 5, rewatches: 0 },
+  { rank: 40, title: "Leon: The Professional", year: 1994, oldRank: 40, movement: 0, rating: "4.5", watches: 5, rewatches: 0 },
+  { rank: 41, title: "Mr. Mom", year: 1983, oldRank: 41, movement: 0, rating: "5", watches: 7, rewatches: 2 },
+  { rank: 42, title: "Sleepless in Seattle", year: 1993, oldRank: 42, movement: 0, rating: "5", watches: 6, rewatches: 1 },
+  { rank: 43, title: "Planes, Trains and Automobiles", year: 1987, oldRank: 43, movement: 0, rating: "5", watches: 7, rewatches: 3 },
+  { rank: 44, title: "A League of Their Own", year: 1992, oldRank: null, movement: "NEW", rating: "5", watches: 7, rewatches: 2 },
+  { rank: 45, title: "Godzilla Minus One", year: 2023, oldRank: 45, movement: 0, rating: "5", watches: 6, rewatches: 2 },
+  { rank: 46, title: "Yesterday", year: 2019, oldRank: null, movement: "NEW", rating: "5", watches: 6, rewatches: 0 },
+  { rank: 47, title: "Lord of the Rings: Fellowship", year: 2001, oldRank: 57, movement: 10, rating: "5", watches: 6, rewatches: 2 },
+  { rank: 48, title: "Everything Everywhere All At Once", year: 2022, oldRank: 47, movement: -1, rating: "5", watches: 4, rewatches: 1 },
+  { rank: 49, title: "The Killer (John Woo)", year: 1989, oldRank: 48, movement: -1, rating: "5", watches: 7, rewatches: 1 },
+  { rank: 50, title: "The Sound of Music", year: 1965, oldRank: 49, movement: -1, rating: "5", watches: 5, rewatches: 1 },
+  { rank: 51, title: "Star Wars: Empire Strikes Back", year: 1980, oldRank: 50, movement: -1, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 52, title: "Rocky IV", year: 1985, oldRank: 62, movement: 10, rating: "4", watches: 7, rewatches: 1 },
+  { rank: 53, title: "Out of Sight", year: 1998, oldRank: 51, movement: -2, rating: "5", watches: 4, rewatches: 0 },
+  { rank: 54, title: "Armageddon", year: 1998, oldRank: 54, movement: 0, rating: "5", watches: 5, rewatches: 1 },
+  { rank: 55, title: "Apollo 13", year: 1995, oldRank: 53, movement: -2, rating: "4", watches: 7, rewatches: 3 },
+  { rank: 56, title: "That Thing You Do!", year: 1996, oldRank: 55, movement: -1, rating: "5", watches: 4, rewatches: 0 },
+  { rank: 57, title: "Forrest Gump", year: 1994, oldRank: 56, movement: -1, rating: "4", watches: 6, rewatches: 2 },
+  { rank: 58, title: "Get Shorty", year: 1995, oldRank: 52, movement: -6, rating: "—", watches: 5, rewatches: 0 },
+  { rank: 59, title: "Up in the Air", year: 2009, oldRank: null, movement: "NEW", rating: "5", watches: 6, rewatches: 0 },
+  { rank: 60, title: "True Romance", year: 1993, oldRank: 58, movement: -2, rating: "4.5", watches: 3, rewatches: 0 },
+  { rank: 61, title: "Se7en", year: 1995, oldRank: 59, movement: -2, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 62, title: "Draft Day", year: 2014, oldRank: 71, movement: 9, rating: "4", watches: 8, rewatches: 4 },
+  { rank: 63, title: "Goodfellas", year: 1990, oldRank: 60, movement: -3, rating: "4", watches: 6, rewatches: 2 },
+  { rank: 64, title: "Wolf of Wall Street", year: 2013, oldRank: 61, movement: -3, rating: "4", watches: 6, rewatches: 2 },
+  { rank: 65, title: "Creed", year: 2015, oldRank: null, movement: "NEW", rating: "5", watches: 6, rewatches: 0 },
+  { rank: 66, title: "Friday", year: 1995, oldRank: 63, movement: -3, rating: "3.5", watches: 4, rewatches: 0 },
+  { rank: 67, title: "Die Hard", year: 1988, oldRank: 64, movement: -3, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 68, title: "Field of Dreams", year: 1989, oldRank: 67, movement: -1, rating: "5", watches: 4, rewatches: 0 },
+  { rank: 69, title: "Remember the Titans", year: 2000, oldRank: 65, movement: -4, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 70, title: "300", year: 2006, oldRank: 46, movement: -24, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 71, title: "Aliens", year: 1986, oldRank: 66, movement: -5, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 72, title: "Groundhog Day", year: 1993, oldRank: 79, movement: 7, rating: "4", watches: 6, rewatches: 2 },
+  { rank: 73, title: "Ford v Ferrari", year: 2019, oldRank: null, movement: "NEW", rating: "5", watches: 4, rewatches: 0 },
+  { rank: 74, title: "Perfect Days", year: 2023, oldRank: 68, movement: -6, rating: "4.5", watches: 4, rewatches: 0 },
+  { rank: 75, title: "Mulholland Drive", year: 2001, oldRank: 69, movement: -6, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 76, title: "Mad Max Fury Road", year: 2015, oldRank: 70, movement: -6, rating: "4", watches: 3, rewatches: 0 },
+  { rank: 77, title: "Star Trek: Wrath of Khan", year: 1982, oldRank: 72, movement: -5, rating: "4", watches: 5, rewatches: 1 },
+  { rank: 78, title: "The Incredibles", year: 2004, oldRank: 73, movement: -5, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 79, title: "Face/Off", year: 1997, oldRank: 74, movement: -5, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 80, title: "Rounders", year: 1998, oldRank: 75, movement: -5, rating: "4", watches: 5, rewatches: 1 },
+  { rank: 81, title: "Contact", year: 1997, oldRank: 76, movement: -5, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 82, title: "The Sixth Sense", year: 1999, oldRank: 77, movement: -5, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 83, title: "The Natural", year: 1984, oldRank: 78, movement: -5, rating: "4.5", watches: 5, rewatches: 1 },
+  { rank: 84, title: "2001: A Space Odyssey", year: 1968, oldRank: 80, movement: -4, rating: "4.5", watches: 5, rewatches: 1 },
+  { rank: 85, title: "The Shining", year: 1980, oldRank: 81, movement: -4, rating: "4", watches: 5, rewatches: 1 },
+  { rank: 86, title: "Big Trouble in Little China", year: 1986, oldRank: 82, movement: -4, rating: "—", watches: 3, rewatches: 0 },
+  { rank: 87, title: "Indiana Jones: Temple of Doom", year: 1984, oldRank: 83, movement: -4, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 88, title: "Stand By Me", year: 1986, oldRank: 84, movement: -4, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 89, title: "No Country for Old Men", year: 2007, oldRank: 85, movement: -4, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 90, title: "Godfather Part II", year: 1974, oldRank: 86, movement: -4, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 91, title: "Romeo + Juliet", year: 1996, oldRank: 87, movement: -4, rating: "—", watches: 4, rewatches: 0 },
+  { rank: 92, title: "Casino Royale", year: 2006, oldRank: 88, movement: -4, rating: "4", watches: 5, rewatches: 0 },
+  { rank: 93, title: "Crouching Tiger, Hidden Dragon", year: 2000, oldRank: 92, movement: -1, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 94, title: "Close Encounters of the Third Kind", year: 1977, oldRank: 93, movement: -1, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 95, title: "Beauty and the Beast", year: 1991, oldRank: 94, movement: -1, rating: "4", watches: 3, rewatches: 0 },
+  { rank: 96, title: "Scott Pilgrim vs. the World", year: 2010, oldRank: 95, movement: -1, rating: "4.5", watches: 4, rewatches: 0 },
+  { rank: 97, title: "Past Lives", year: 2023, oldRank: 96, movement: -1, rating: "4.5", watches: 4, rewatches: 0 },
+  { rank: 98, title: "The Town", year: 2010, oldRank: 97, movement: -1, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 99, title: "Margin Call", year: 2011, oldRank: 98, movement: -1, rating: "4", watches: 4, rewatches: 0 },
+  { rank: 100, title: "Conclave", year: 2024, oldRank: null, movement: "NEW", rating: "5", watches: 5, rewatches: 0 },
+];
+
+const bubble = [
+  { rank: 101, title: "My Best Friend\'s Wedding", year: 1997, rating: "4.5", watches: 3, rewatches: 2 },
+  { rank: 102, title: "Office Space", year: 1999, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 103, title: "Knives Out", year: 2019, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 104, title: "Moulin Rouge!", year: 2001, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 105, title: "Uncut Gems", year: 2019, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 106, title: "Gone Girl", year: 2014, rating: "4", watches: 3, rewatches: 2 },
+  { rank: 107, title: "Top Gun: Maverick", year: 2022, rating: "4", watches: 3, rewatches: 2 },
+  { rank: 108, title: "All the President\'s Men", year: 1976, rating: "5", watches: 2, rewatches: 1 },
+  { rank: 109, title: "National Lampoon\'s Christmas Vacation", year: 1989, rating: "4", watches: 3, rewatches: 2 },
+  { rank: 110, title: "Donnie Brasco", year: 1997, rating: "4.5", watches: 3, rewatches: 1 },
+  { rank: 111, title: "Collateral", year: 2004, rating: "5", watches: 1, rewatches: 1 },
+  { rank: 112, title: "The Karate Kid", year: 1984, rating: "4.5", watches: 2, rewatches: 1 },
+  { rank: 113, title: "The Family Man", year: 2000, rating: "4.5", watches: 2, rewatches: 1 },
+  { rank: 114, title: "Zodiac", year: 2007, rating: "4.5", watches: 2, rewatches: 1 },
+  { rank: 115, title: "Friday Night Lights", year: 2004, rating: "4", watches: 3, rewatches: 1 },
+  { rank: 116, title: "One Flew Over the Cuckoo\'s Nest", year: 1975, rating: "4.5", watches: 1, rewatches: 1 },
+  { rank: 117, title: "Argo", year: 2012, rating: "5", watches: 1, rewatches: 0 },
+  { rank: 118, title: "Amadeus", year: 1984, rating: "5", watches: 1, rewatches: 0 },
+  { rank: 119, title: "Raising Arizona", year: 1987, rating: "5", watches: 1, rewatches: 0 },
+  { rank: 120, title: "Jackie Brown", year: 1997, rating: "4", watches: 2, rewatches: 1 },
+];
+
+let activeFilters = new Set();
+
+function renderStars(rating) {
+  if (rating === "—") return '<span class="no-data">—</span>';
+  const val = parseFloat(rating);
+  const full = Math.floor(val);
+  const half = val % 1 >= 0.5;
+  let html = '<span class="stars">';
+  for (let i = 0; i < 5; i++) {
+    if (i < full) html += '<span class="star">★</span>';
+    else if (i === full && half) html += '<span class="star-half">★</span>';
+    else html += '<span class="star-empty">★</span>';
+  }
+  html += '</span>';
+  return html;
+}
+
+function moveBadge(movement) {
+  if (movement === "NEW") return '<span class="move-badge move-new">NEW</span>';
+  if (movement > 0) return `<span class="move-badge move-up">↑ ${movement}</span>`;
+  if (movement < 0) return `<span class="move-badge move-down">↓ ${Math.abs(movement)}</span>`;
+  return '<span class="move-badge move-same">—</span>';
+}
+
+function buildList() {
+  const container = document.getElementById('film-container');
+
+  // Column headers
+  const headers = container.querySelector('.col-headers');
+
+  // Top 40 section
+  const sec1 = document.createElement('div');
+  sec1.className = 'section-header';
+  sec1.setAttribute('data-section', 'top40-header');
+  sec1.textContent = 'Top 40 — Five or more viewings required';
+  container.appendChild(sec1);
+
+  const list1 = document.createElement('div');
+  list1.className = 'film-list';
+  list1.id = 'list-top40';
+  container.appendChild(list1);
+
+  const sec2 = document.createElement('div');
+  sec2.className = 'section-header';
+  sec2.setAttribute('data-section', '41-100-header');
+  sec2.textContent = '41 – 100';
+  container.appendChild(sec2);
+
+  const list2 = document.createElement('div');
+  list2.className = 'film-list';
+  list2.id = 'list-rest';
+  container.appendChild(list2);
+
+  films.forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'film-row';
+    row.setAttribute('data-rank', f.rank);
+    row.setAttribute('data-movement', f.movement);
+    row.setAttribute('data-rewatched', f.rewatches > 0 ? '1' : '0');
+    row.setAttribute('data-title', f.title.toLowerCase());
+    row.addEventListener('click', () => openFilmPanel(f));
+
+    const fromText = f.oldRank === null ? '—' : `#${f.oldRank}`;
+
+    const moveInlineHtml = () => { return ''; };
+
+    const mobileStarsHtml = () => {
+      if (f.rating === '—') return '<span class="mobile-stat"><span class="val">—</span></span>';
+      const val = parseFloat(f.rating);
+      const full = Math.floor(val);
+      const half = val % 1 >= 0.5;
+      let s = '<span class="mobile-stat">';
+      for (let i = 0; i < 5; i++) {
+        if (i < full) s += '<span class="val-gold" style="font-size:10px">★</span>';
+        else if (i === full && half) s += '<span class="val-gold" style="font-size:10px;opacity:0.6">★</span>';
+        else s += '<span style="font-size:10px;opacity:0.2;color:var(--muted)">★</span>';
+      }
+      s += '</span>';
+      return s;
+    };
+
+    const mobileMoveHtml = () => {
+      if (f.movement === "NEW") return `<span class="mobile-stat"><span class="val-up">✦ New</span></span>`;
+      if (f.movement > 0) return `<span class="mobile-stat"><span class="val-up">↑${f.movement}</span></span>`;
+      if (f.movement < 0) return `<span class="mobile-stat"><span style="color:var(--down)">↓${Math.abs(f.movement)}</span></span>`;
+      return '';
+    };
+
+    row.innerHTML = `
+      <div class="rank-cell">
+        <span class="rank-num">${f.rank}</span>
+        ${moveBadge(f.movement)}
+      </div>
+      <div class="poster-cell" id="poster-${f.rank}">
+        <div class="poster-placeholder">🎬</div>
+      </div>
+      <div class="title-cell">
+        <div class="film-title">${f.title}</div>
+        <div class="film-year">${f.year}</div>
+        <div class="mobile-stats">
+          ${mobileStarsHtml()}
+          <span class="mobile-stat-sep">·</span>
+          <span class="mobile-stat">${f.watches}<span class="val"> views</span></span>
+          ${mobileMoveHtml() ? '<span class="mobile-stat-sep">·</span>' + mobileMoveHtml() : ''}
+        </div>
+        ${moveInlineHtml()}
+      </div>
+      <div class="data-cell">
+        <span class="col-label">Rating</span>
+        <span class="rating-val desktop-stars">${renderStars(f.rating)}</span>
+      </div>
+      <div class="data-cell hide-mobile">
+        <span class="col-label">Watches</span>
+        <span class="watches-val">${f.watches > 0 ? f.watches : 1}</span>
+      </div>
+      <div class="data-cell hide-mobile">
+        <span class="col-label">From</span>
+        <span style="color:var(--muted)">${fromText}</span>
+      </div>
+    `;
+
+    if (f.rank <= 40) {
+      list1.appendChild(row);
+    } else {
+      list2.appendChild(row);
+    }
+  });
+}
+
+function toggleFilter(name) {
+  const btn = document.getElementById(`btn-${name}`);
+  if (activeFilters.has(name)) {
+    activeFilters.delete(name);
+    btn.classList.remove('active');
+  } else {
+    activeFilters.add(name);
+    btn.classList.add('active');
+  }
+  filterFilms();
+}
+
+function filterFilms() {
+  const query = document.getElementById('search').value.toLowerCase().trim();
+  let visible = 0;
+
+  films.forEach(f => {
+    const row = document.querySelector(`[data-rank="${f.rank}"]`);
+    if (!row) return;
+
+    let show = true;
+
+    if (query && !f.title.toLowerCase().includes(query)) show = false;
+
+    if (activeFilters.has('movers') && (f.movement === 0 || f.movement === "NEW")) show = false;
+    if (activeFilters.has('new') && f.movement !== "NEW") show = false;
+    if (activeFilters.has('rewatched') && f.rewatches === 0) show = false;
+    if (activeFilters.has('top40') && f.rank > 40) show = false;
+    if (activeFilters.has('bd') && !owned.has(f.title)) show = false;
+
+    row.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  document.getElementById('results-count').textContent = `${visible} film${visible !== 1 ? 's' : ''}`;
+  document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+}
+
+function buildBubble() {
+  const container = document.getElementById('bubble-list');
+  bubble.forEach(f => {
+    const noData = f.rating === '—' && f.watches === 0;
+    const isQuality = f.title === 'Uncut Gems' || f.title === "One Flew Over the Cuckoo's Nest";
+    const isStrong = f.watches >= 3 || (f.rewatches >= 1 && f.rating === '5');
+
+    let tag = '';
+    if (noData) tag = '<span class="tag-nodata">Needs rewatch</span>';
+    else if (isQuality) tag = '<span class="tag-quality">Quality vs joy</span>';
+    else if (isStrong) tag = '<span class="tag-strong">Strong candidate</span>';
+
+    const card = document.createElement('div');
+    card.className = 'bubble-card';
+    card.innerHTML = `
+      <div class="bubble-rank">${f.rank}</div>
+      <div class="bubble-body">
+        <div class="bubble-title-row">
+          <span class="bubble-title">${f.title}</span>
+          <span class="bubble-year">${f.year}</span>
+          ${tag}
+        </div>
+        <div class="bubble-meta">
+          <div class="bubble-data">Rating <span>${f.rating !== '—' ? f.rating + '★' : '—'}</span></div>
+          <div class="bubble-data">Watches <span>${f.watches > 0 ? f.watches : '—'}</span></div>
+          <div class="bubble-data">Rewatches <span class="${f.rewatches > 0 ? 'up-val' : ''}">${f.rewatches > 0 ? f.rewatches : '—'}</span></div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+const TMDB_KEY = '5cd8e79a10121eadba6946dcb69e9e98';
+
+async function fetchPosters() {
+  const batchSize = 10;
+  for (let i = 0; i < films.length; i += batchSize) {
+    const batch = films.slice(i, i + batchSize);
+    await Promise.all(batch.map(async f => {
+      try {
+        const query = encodeURIComponent(f.title.replace(' (John Woo)', ''));
+        const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US&page=1`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const match = data.results && data.results[0];
+        if (match && match.poster_path) {
+          const cell = document.getElementById(`poster-${f.rank}`);
+          if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${f.title}" onload="this.classList.add('loaded')">`;
+        }
+      } catch(e) {}
+    }));
+    await new Promise(r => setTimeout(r, 100));
+  }
+}
+
+const recs = {
+  "The Godfather": [
+    {title: "The Godfather Part II", year: 1974, rank: 86, slug: "the-godfather-part-ii"},
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "Once Upon a Time in America", year: 1984, rank: null, slug: "once-upon-a-time-in-america"}
+  ],
+  "Back to the Future": [
+    {title: "Groundhog Day", year: 1993, rank: 79, slug: "groundhog-day"},
+    {title: "Ferris Bueller\'s Day Off", year: 1986, rank: null, slug: "ferris-buellers-day-off"},
+    {title: "Bill & Ted\'s Excellent Adventure", year: 1989, rank: null, slug: "bill-teds-excellent-adventure"}
+  ],
+  "Pulp Fiction": [
+    {title: "Reservoir Dogs", year: 1992, rank: 25, slug: "reservoir-dogs"},
+    {title: "Jackie Brown", year: 1997, rank: null, slug: "jackie-brown"},
+    {title: "True Romance", year: 1993, rank: 58, slug: "true-romance"}
+  ],
+  "La La Land": [
+    {title: "Whiplash", year: 2014, rank: 20, slug: "whiplash"},
+    {title: "Moulin Rouge!", year: 2001, rank: null, slug: "moulin-rouge"},
+    {title: "The Artist", year: 2011, rank: null, slug: "the-artist"}
+  ],
+  "Inception": [
+    {title: "Memento", year: 2000, rank: 36, slug: "memento"},
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"},
+    {title: "The Matrix", year: 1999, rank: 18, slug: "the-matrix"}
+  ],
+  "Fight Club": [
+    {title: "American Psycho", year: 2000, rank: 24, slug: "american-psycho"},
+    {title: "Se7en", year: 1995, rank: 59, slug: "se7en"},
+    {title: "Requiem for a Dream", year: 2000, rank: null, slug: "requiem-for-a-dream"}
+  ],
+  "Saving Private Ryan": [
+    {title: "The Thin Red Line", year: 1998, rank: null, slug: "the-thin-red-line"},
+    {title: "Full Metal Jacket", year: 1987, rank: null, slug: "full-metal-jacket"},
+    {title: "Hacksaw Ridge", year: 2016, rank: null, slug: "hacksaw-ridge"}
+  ],
+  "Casino": [
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "The Godfather", year: 1972, rank: 1, slug: "the-godfather"},
+    {title: "Boogie Nights", year: 1997, rank: null, slug: "boogie-nights"}
+  ],
+  "Gladiator": [
+    {title: "Braveheart", year: 1995, rank: null, slug: "braveheart"},
+    {title: "300", year: 2006, rank: 46, slug: "300"},
+    {title: "The Last Samurai", year: 2003, rank: null, slug: "the-last-samurai"}
+  ],
+  "Parasite": [
+    {title: "Memories of Murder", year: 2003, rank: null, slug: "memories-of-murder"},
+    {title: "Burning", year: 2018, rank: null, slug: "burning"},
+    {title: "The Handmaiden", year: 2016, rank: null, slug: "the-handmaiden"}
+  ],
+  "Moneyball": [
+    {title: "For Love of the Game", year: 1999, rank: 23, slug: "for-love-of-the-game"},
+    {title: "Major League", year: 1989, rank: 31, slug: "major-league"},
+    {title: "Draft Day", year: 2014, rank: 71, slug: "draft-day"}
+  ],
+  "The Usual Suspects": [
+    {title: "Memento", year: 2000, rank: 36, slug: "memento"},
+    {title: "The Game", year: 1997, rank: 37, slug: "the-game"},
+    {title: "Primal Fear", year: 1996, rank: null, slug: "primal-fear"}
+  ],
+  "The Shawshank Redemption": [
+    {title: "The Green Mile", year: 1999, rank: null, slug: "the-green-mile"},
+    {title: "One Flew Over the Cuckoo\'s Nest", year: 1975, rank: null, slug: "one-flew-over-the-cuckoos-nest"},
+    {title: "Cool Hand Luke", year: 1967, rank: null, slug: "cool-hand-luke"}
+  ],
+  "The Dark Knight": [
+    {title: "Heat", year: 1995, rank: 16, slug: "heat"},
+    {title: "Unbreakable", year: 2000, rank: 17, slug: "unbreakable"},
+    {title: "Prisoners", year: 2013, rank: null, slug: "prisoners"}
+  ],
+  "Interstellar": [
+    {title: "Arrival", year: 2016, rank: 35, slug: "arrival"},
+    {title: "2001: A Space Odyssey", year: 1968, rank: 80, slug: "2001-a-space-odyssey"},
+    {title: "Contact", year: 1997, rank: 76, slug: "contact"}
+  ],
+  "Heat": [
+    {title: "Collateral", year: 2004, rank: null, slug: "collateral"},
+    {title: "The Departed", year: 2006, rank: 28, slug: "the-departed"},
+    {title: "No Country for Old Men", year: 2007, rank: 85, slug: "no-country-for-old-men"}
+  ],
+  "Unbreakable": [
+    {title: "Split", year: 2016, rank: null, slug: "split"},
+    {title: "The Sixth Sense", year: 1999, rank: 77, slug: "the-sixth-sense"},
+    {title: "Signs", year: 2002, rank: null, slug: "signs"}
+  ],
+  "The Matrix": [
+    {title: "Inception", year: 2010, rank: 5, slug: "inception"},
+    {title: "Dark City", year: 1998, rank: null, slug: "dark-city"},
+    {title: "The Thirteenth Floor", year: 1999, rank: null, slug: "the-thirteenth-floor"}
+  ],
+  "Raiders of the Lost Ark": [
+    {title: "Indiana Jones and the Temple of Doom", year: 1984, rank: 83, slug: "indiana-jones-and-the-temple-of-doom"},
+    {title: "The Mummy", year: 1999, rank: null, slug: "the-mummy"},
+    {title: "National Treasure", year: 2004, rank: null, slug: "national-treasure"}
+  ],
+  "Whiplash": [
+    {title: "La La Land", year: 2016, rank: 4, slug: "la-la-land"},
+    {title: "Black Swan", year: 2010, rank: null, slug: "black-swan"},
+    {title: "Shine", year: 1996, rank: null, slug: "shine"}
+  ],
+  "Jerry Maguire": [
+    {title: "Tin Cup", year: 1996, rank: null, slug: "tin-cup"},
+    {title: "As Good as It Gets", year: 1997, rank: null, slug: "as-good-as-it-gets"},
+    {title: "Good Will Hunting", year: 1997, rank: 32, slug: "good-will-hunting"}
+  ],
+  "Jaws": [
+    {title: "Aliens", year: 1986, rank: 66, slug: "aliens"},
+    {title: "The Thing", year: 1982, rank: null, slug: "the-thing"},
+    {title: "Jurassic Park", year: 1993, rank: 34, slug: "jurassic-park"}
+  ],
+  "For Love of the Game": [
+    {title: "Moneyball", year: 2011, rank: 11, slug: "moneyball"},
+    {title: "The Natural", year: 1984, rank: 78, slug: "the-natural"},
+    {title: "Field of Dreams", year: 1989, rank: 67, slug: "field-of-dreams"}
+  ],
+  "American Psycho": [
+    {title: "Fight Club", year: 1999, rank: 6, slug: "fight-club"},
+    {title: "The Talented Mr. Ripley", year: 1999, rank: null, slug: "the-talented-mr-ripley"},
+    {title: "A Psycho", year: 1960, rank: null, slug: "a-psycho"}
+  ],
+  "Reservoir Dogs": [
+    {title: "Pulp Fiction", year: 1994, rank: 3, slug: "pulp-fiction"},
+    {title: "True Romance", year: 1993, rank: 58, slug: "true-romance"},
+    {title: "Lock, Stock and Two Smoking Barrels", year: 1998, rank: null, slug: "lock-stock-and-two-smoking-barrels"}
+  ],
+  "Swingers": [
+    {title: "Dazed and Confused", year: 1993, rank: 33, slug: "dazed-and-confused"},
+    {title: "High Fidelity", year: 2000, rank: null, slug: "high-fidelity"},
+    {title: "Singles", year: 1992, rank: null, slug: "singles"}
+  ],
+  "Blade Runner": [
+    {title: "Blade Runner 2049", year: 2017, rank: null, slug: "blade-runner-2049"},
+    {title: "The Matrix", year: 1999, rank: 18, slug: "the-matrix"},
+    {title: "Dark City", year: 1998, rank: null, slug: "dark-city"}
+  ],
+  "The Departed": [
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "Heat", year: 1995, rank: 16, slug: "heat"},
+    {title: "State of Grace", year: 1990, rank: 91, slug: "state-of-grace"}
+  ],
+  "Titanic": [
+    {title: "Romeo + Juliet", year: 1996, rank: 87, slug: "romeo-juliet"},
+    {title: "The English Patient", year: 1996, rank: null, slug: "the-english-patient"},
+    {title: "Out of Africa", year: 1985, rank: null, slug: "out-of-africa"}
+  ],
+  "The Social Network": [
+    {title: "Moneyball", year: 2011, rank: 11, slug: "moneyball"},
+    {title: "Margin Call", year: 2011, rank: 98, slug: "margin-call"},
+    {title: "Steve Jobs", year: 2015, rank: null, slug: "steve-jobs"}
+  ],
+  "Major League": [
+    {title: "A League of Their Own", year: 1992, rank: 44, slug: "a-league-of-their-own"},
+    {title: "Bull Durham", year: 1988, rank: null, slug: "bull-durham"},
+    {title: "Rookie of the Year", year: 1993, rank: null, slug: "rookie-of-the-year"}
+  ],
+  "Good Will Hunting": [
+    {title: "The Town", year: 2010, rank: 97, slug: "the-town"},
+    {title: "Mystic River", year: 2003, rank: null, slug: "mystic-river"},
+    {title: "Gone Baby Gone", year: 2007, rank: null, slug: "gone-baby-gone"}
+  ],
+  "Dazed and Confused": [
+    {title: "Almost Famous", year: 2000, rank: null, slug: "almost-famous"},
+    {title: "Stand By Me", year: 1986, rank: 84, slug: "stand-by-me"},
+    {title: "Boyhood", year: 2014, rank: null, slug: "boyhood"}
+  ],
+  "Jurassic Park": [
+    {title: "Jaws", year: 1975, rank: 22, slug: "jaws"},
+    {title: "The Lost World", year: 1997, rank: null, slug: "the-lost-world"},
+    {title: "Predator", year: 1987, rank: null, slug: "predator"}
+  ],
+  "Arrival": [
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"},
+    {title: "Contact", year: 1997, rank: 76, slug: "contact"},
+    {title: "Annihilation", year: 2018, rank: null, slug: "annihilation"}
+  ],
+  "Memento": [
+    {title: "Inception", year: 2010, rank: 5, slug: "inception"},
+    {title: "The Usual Suspects", year: 1995, rank: 12, slug: "the-usual-suspects"},
+    {title: "Oldboy", year: 2003, rank: null, slug: "oldboy"}
+  ],
+  "The Game": [
+    {title: "Se7en", year: 1995, rank: 59, slug: "se7en"},
+    {title: "Fight Club", year: 1999, rank: 6, slug: "fight-club"},
+    {title: "Gone Girl", year: 2014, rank: null, slug: "gone-girl"}
+  ],
+  "Killers of the Flower Moon": [
+    {title: "The Godfather", year: 1972, rank: 1, slug: "the-godfather"},
+    {title: "There Will Be Blood", year: 2007, rank: null, slug: "there-will-be-blood"},
+    {title: "Chinatown", year: 1974, rank: null, slug: "chinatown"}
+  ],
+  "The Right Stuff": [
+    {title: "Apollo 13", year: 1995, rank: 53, slug: "apollo-13"},
+    {title: "First Man", year: 2018, rank: null, slug: "first-man"},
+    {title: "Hidden Figures", year: 2016, rank: null, slug: "hidden-figures"}
+  ],
+  "Leon: The Professional": [
+    {title: "Nikita", year: 1990, rank: null, slug: "nikita"},
+    {title: "Heat", year: 1995, rank: 16, slug: "heat"},
+    {title: "John Wick", year: 2014, rank: null, slug: "john-wick"}
+  ],
+  "Mr. Mom": [
+    {title: "Kramer vs. Kramer", year: 1979, rank: null, slug: "kramer-vs-kramer"},
+    {title: "Three Men and a Baby", year: 1987, rank: null, slug: "three-men-and-a-baby"},
+    {title: "Parenthood", year: 1989, rank: null, slug: "parenthood"}
+  ],
+  "Sleepless in Seattle": [
+    {title: "You\'ve Got Mail", year: 1998, rank: null, slug: "youve-got-mail"},
+    {title: "When Harry Met Sally", year: 1989, rank: null, slug: "when-harry-met-sally"},
+    {title: "An Affair to Remember", year: 1957, rank: null, slug: "an-affair-to-remember"}
+  ],
+  "Planes, Trains and Automobiles": [
+    {title: "Groundhog Day", year: 1993, rank: 79, slug: "groundhog-day"},
+    {title: "The Out-of-Towners", year: 1970, rank: null, slug: "the-out-of-towners"},
+    {title: "Due Date", year: 2010, rank: null, slug: "due-date"}
+  ],
+  "A League of Their Own": [
+    {title: "Major League", year: 1989, rank: 31, slug: "major-league"},
+    {title: "Bull Durham", year: 1988, rank: null, slug: "bull-durham"},
+    {title: "Bend It Like Beckham", year: 2002, rank: null, slug: "bend-it-like-beckham"}
+  ],
+  "Godzilla Minus One": [
+    {title: "Shin Godzilla", year: 2016, rank: null, slug: "shin-godzilla"},
+    {title: "The Host", year: 2006, rank: null, slug: "the-host"},
+    {title: "Cloverfield", year: 2008, rank: null, slug: "cloverfield"}
+  ],
+  "300": [
+    {title: "Gladiator", year: 2000, rank: 9, slug: "gladiator"},
+    {title: "Braveheart", year: 1995, rank: null, slug: "braveheart"},
+    {title: "Troy", year: 2004, rank: null, slug: "troy"}
+  ],
+  "Everything Everywhere All At Once": [
+    {title: "Parasite", year: 2019, rank: 10, slug: "parasite"},
+    {title: "The Matrix", year: 1999, rank: 18, slug: "the-matrix"},
+    {title: "Eternal Sunshine of the Spotless Mind", year: 2004, rank: null, slug: "eternal-sunshine-of-the-spotless-mind"}
+  ],
+  "The Killer (John Woo)": [
+    {title: "Hard Boiled", year: 1992, rank: null, slug: "hard-boiled"},
+    {title: "Face/Off", year: 1997, rank: 74, slug: "faceoff"},
+    {title: "Leon: The Professional", year: 1994, rank: 40, slug: "leon-the-professional"}
+  ],
+  "The Sound of Music": [
+    {title: "Beauty and the Beast", year: 1991, rank: 94, slug: "beauty-and-the-beast"},
+    {title: "Singin\' in the Rain", year: 1952, rank: null, slug: "singin-in-the-rain"},
+    {title: "La La Land", year: 2016, rank: 4, slug: "la-la-land"}
+  ],
+  "Star Wars: Empire Strikes Back": [
+    {title: "Return of the Jedi", year: 1983, rank: null, slug: "return-of-the-jedi"},
+    {title: "Rogue One", year: 2016, rank: null, slug: "rogue-one"},
+    {title: "The Last Starfighter", year: 1984, rank: null, slug: "the-last-starfighter"}
+  ],
+  "Out of Sight": [
+    {title: "Get Shorty", year: 1995, rank: 52, slug: "get-shorty"},
+    {title: "Jackie Brown", year: 1997, rank: null, slug: "jackie-brown"},
+    {title: "The Big Lebowski", year: 1998, rank: null, slug: "the-big-lebowski"}
+  ],
+  "Get Shorty": [
+    {title: "Out of Sight", year: 1998, rank: 51, slug: "out-of-sight"},
+    {title: "The Player", year: 1992, rank: null, slug: "the-player"},
+    {title: "Adaptation", year: 2002, rank: null, slug: "adaptation"}
+  ],
+  "Apollo 13": [
+    {title: "The Right Stuff", year: 1983, rank: 39, slug: "the-right-stuff"},
+    {title: "First Man", year: 2018, rank: null, slug: "first-man"},
+    {title: "Gravity", year: 2013, rank: 99, slug: "gravity"}
+  ],
+  "Armageddon": [
+    {title: "The Rock", year: 1996, rank: null, slug: "the-rock"},
+    {title: "Independence Day", year: 1996, rank: null, slug: "independence-day"},
+    {title: "Deep Impact", year: 1998, rank: null, slug: "deep-impact"}
+  ],
+  "That Thing You Do!": [
+    {title: "Almost Famous", year: 2000, rank: null, slug: "almost-famous"},
+    {title: "Walk the Line", year: 2005, rank: null, slug: "walk-the-line"},
+    {title: "The Commitments", year: 1991, rank: 100, slug: "the-commitments"}
+  ],
+  "Forrest Gump": [
+    {title: "Cast Away", year: 2000, rank: null, slug: "cast-away"},
+    {title: "Big Fish", year: 2003, rank: null, slug: "big-fish"},
+    {title: "The Curious Case of Benjamin Button", year: 2008, rank: null, slug: "the-curious-case-of-benjamin-button"}
+  ],
+  "Lord of the Rings: Fellowship": [
+    {title: "The Hobbit: An Unexpected Journey", year: 2012, rank: null, slug: "the-hobbit-an-unexpected-journey"},
+    {title: "Braveheart", year: 1995, rank: null, slug: "braveheart"},
+    {title: "Gladiator", year: 2000, rank: 9, slug: "gladiator"}
+  ],
+  "True Romance": [
+    {title: "Pulp Fiction", year: 1994, rank: 3, slug: "pulp-fiction"},
+    {title: "Natural Born Killers", year: 1994, rank: null, slug: "natural-born-killers"},
+    {title: "Killing Zoe", year: 1993, rank: null, slug: "killing-zoe"}
+  ],
+  "Se7en": [
+    {title: "Fight Club", year: 1999, rank: 6, slug: "fight-club"},
+    {title: "Zodiac", year: 2007, rank: null, slug: "zodiac"},
+    {title: "The Silence of the Lambs", year: 1991, rank: null, slug: "the-silence-of-the-lambs"}
+  ],
+  "Goodfellas": [
+    {title: "Casino", year: 1995, rank: 8, slug: "casino"},
+    {title: "The Departed", year: 2006, rank: 28, slug: "the-departed"},
+    {title: "Mean Streets", year: 1973, rank: null, slug: "mean-streets"}
+  ],
+  "Wolf of Wall Street": [
+    {title: "Casino", year: 1995, rank: 8, slug: "casino"},
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "Boiler Room", year: 2000, rank: null, slug: "boiler-room"}
+  ],
+  "Rocky IV": [
+    {title: "Creed", year: 2015, rank: null, slug: "creed"},
+    {title: "Rocky", year: 1976, rank: null, slug: "rocky"},
+    {title: "The Karate Kid", year: 1984, rank: null, slug: "the-karate-kid"}
+  ],
+  "Friday": [
+    {title: "Boyz n the Hood", year: 1991, rank: null, slug: "boyz-n-the-hood"},
+    {title: "House Party", year: 1990, rank: null, slug: "house-party"},
+    {title: "Next Friday", year: 2000, rank: null, slug: "next-friday"}
+  ],
+  "Die Hard": [
+    {title: "Lethal Weapon", year: 1987, rank: null, slug: "lethal-weapon"},
+    {title: "Speed", year: 1994, rank: null, slug: "speed"},
+    {title: "The Rock", year: 1996, rank: null, slug: "the-rock"}
+  ],
+  "Remember the Titans": [
+    {title: "Rudy", year: 1993, rank: null, slug: "rudy"},
+    {title: "We Are Marshall", year: 2006, rank: null, slug: "we-are-marshall"},
+    {title: "Invictus", year: 2009, rank: null, slug: "invictus"}
+  ],
+  "Aliens": [
+    {title: "The Thing", year: 1982, rank: null, slug: "the-thing"},
+    {title: "Predator", year: 1987, rank: null, slug: "predator"},
+    {title: "Edge of Tomorrow", year: 2014, rank: null, slug: "edge-of-tomorrow"}
+  ],
+  "Field of Dreams": [
+    {title: "The Natural", year: 1984, rank: 78, slug: "the-natural"},
+    {title: "For Love of the Game", year: 1999, rank: 23, slug: "for-love-of-the-game"},
+    {title: "Moneyball", year: 2011, rank: 11, slug: "moneyball"}
+  ],
+  "Perfect Days": [
+    {title: "Lost in Translation", year: 2003, rank: null, slug: "lost-in-translation"},
+    {title: "Paterson", year: 2016, rank: null, slug: "paterson"},
+    {title: "About Schmidt", year: 2002, rank: null, slug: "about-schmidt"}
+  ],
+  "Mulholland Drive": [
+    {title: "Lost Highway", year: 1997, rank: null, slug: "lost-highway"},
+    {title: "Blue Velvet", year: 1986, rank: null, slug: "blue-velvet"},
+    {title: "Inland Empire", year: 2006, rank: null, slug: "inland-empire"}
+  ],
+  "Mad Max Fury Road": [
+    {title: "The Road Warrior", year: 1981, rank: null, slug: "the-road-warrior"},
+    {title: "Dredd", year: 2012, rank: null, slug: "dredd"},
+    {title: "Children of Men", year: 2006, rank: null, slug: "children-of-men"}
+  ],
+  "Draft Day": [
+    {title: "Moneyball", year: 2011, rank: 11, slug: "moneyball"},
+    {title: "Jerry Maguire", year: 1996, rank: 21, slug: "jerry-maguire"},
+    {title: "Any Given Sunday", year: 1999, rank: null, slug: "any-given-sunday"}
+  ],
+  "Star Trek: Wrath of Khan": [
+    {title: "Star Trek IV: The Voyage Home", year: 1986, rank: null, slug: "star-trek-iv-the-voyage-home"},
+    {title: "Galaxy Quest", year: 1999, rank: null, slug: "galaxy-quest"},
+    {title: "Contact", year: 1997, rank: 76, slug: "contact"}
+  ],
+  "The Incredibles": [
+    {title: "Unbreakable", year: 2000, rank: 17, slug: "unbreakable"},
+    {title: "Spider-Man 2", year: 2004, rank: null, slug: "spider-man-2"},
+    {title: "Big Hero 6", year: 2014, rank: null, slug: "big-hero-6"}
+  ],
+  "Face/Off": [
+    {title: "The Killer (John Woo)", year: 1989, rank: 48, slug: "the-killer-john-woo"},
+    {title: "Hard Boiled", year: 1992, rank: null, slug: "hard-boiled"},
+    {title: "Con Air", year: 1997, rank: null, slug: "con-air"}
+  ],
+  "Rounders": [
+    {title: "The Sting", year: 1973, rank: null, slug: "the-sting"},
+    {title: "Maverick", year: 1994, rank: null, slug: "maverick"},
+    {title: "Mississippi Grind", year: 2015, rank: null, slug: "mississippi-grind"}
+  ],
+  "Contact": [
+    {title: "Arrival", year: 2016, rank: 35, slug: "arrival"},
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"},
+    {title: "Close Encounters of the Third Kind", year: 1977, rank: 93, slug: "close-encounters-of-the-third-kind"}
+  ],
+  "The Sixth Sense": [
+    {title: "Unbreakable", year: 2000, rank: 17, slug: "unbreakable"},
+    {title: "The Others", year: 2001, rank: null, slug: "the-others"},
+    {title: "A Tale of Two Sisters", year: 2003, rank: null, slug: "a-tale-of-two-sisters"}
+  ],
+  "The Natural": [
+    {title: "Field of Dreams", year: 1989, rank: 67, slug: "field-of-dreams"},
+    {title: "For Love of the Game", year: 1999, rank: 23, slug: "for-love-of-the-game"},
+    {title: "Eight Men Out", year: 1988, rank: null, slug: "eight-men-out"}
+  ],
+  "Groundhog Day": [
+    {title: "Back to the Future", year: 1985, rank: 2, slug: "back-to-the-future"},
+    {title: "About Time", year: 2013, rank: null, slug: "about-time"},
+    {title: "Palm Springs", year: 2020, rank: null, slug: "palm-springs"}
+  ],
+  "2001: A Space Odyssey": [
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"},
+    {title: "Solaris", year: 1972, rank: null, slug: "solaris"},
+    {title: "Moon", year: 2009, rank: null, slug: "moon"}
+  ],
+  "The Shining": [
+    {title: "Mulholland Drive", year: 2001, rank: 69, slug: "mulholland-drive"},
+    {title: "Hereditary", year: 2018, rank: null, slug: "hereditary"},
+    {title: "The Witch", year: 2015, rank: null, slug: "the-witch"}
+  ],
+  "Big Trouble in Little China": [
+    {title: "Raiders of the Lost Ark", year: 1981, rank: 19, slug: "raiders-of-the-lost-ark"},
+    {title: "The Golden Child", year: 1986, rank: null, slug: "the-golden-child"},
+    {title: "Escape from New York", year: 1981, rank: null, slug: "escape-from-new-york"}
+  ],
+  "Indiana Jones: Temple of Doom": [
+    {title: "Raiders of the Lost Ark", year: 1981, rank: 19, slug: "raiders-of-the-lost-ark"},
+    {title: "The Mummy", year: 1999, rank: null, slug: "the-mummy"},
+    {title: "Romancing the Stone", year: 1984, rank: null, slug: "romancing-the-stone"}
+  ],
+  "Stand By Me": [
+    {title: "Dazed and Confused", year: 1993, rank: 33, slug: "dazed-and-confused"},
+    {title: "The Sandlot", year: 1993, rank: null, slug: "the-sandlot"},
+    {title: "Now and Then", year: 1995, rank: null, slug: "now-and-then"}
+  ],
+  "No Country for Old Men": [
+    {title: "There Will Be Blood", year: 2007, rank: null, slug: "there-will-be-blood"},
+    {title: "True Grit", year: 2010, rank: null, slug: "true-grit"},
+    {title: "Prisoners", year: 2013, rank: null, slug: "prisoners"}
+  ],
+  "Godfather Part II": [
+    {title: "The Godfather", year: 1972, rank: 1, slug: "the-godfather"},
+    {title: "Once Upon a Time in America", year: 1984, rank: null, slug: "once-upon-a-time-in-america"},
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"}
+  ],
+  "Romeo + Juliet": [
+    {title: "Moulin Rouge!", year: 2001, rank: null, slug: "moulin-rouge"},
+    {title: "La La Land", year: 2016, rank: 4, slug: "la-la-land"},
+    {title: "West Side Story", year: 1961, rank: null, slug: "west-side-story"}
+  ],
+  "Casino Royale": [
+    {title: "Skyfall", year: 2012, rank: null, slug: "skyfall"},
+    {title: "The Bourne Identity", year: 2002, rank: null, slug: "the-bourne-identity"},
+    {title: "Mission: Impossible", year: 1996, rank: null, slug: "mission-impossible"}
+  ],
+  "Toy Story 2": [
+    {title: "The Incredibles", year: 2004, rank: 73, slug: "the-incredibles"},
+    {title: "Toy Story 3", year: 2010, rank: null, slug: "toy-story-3"},
+    {title: "Up", year: 2009, rank: null, slug: "up"}
+  ],
+  "American History X": [
+    {title: "Crash", year: 2004, rank: null, slug: "crash"},
+    {title: "Do the Right Thing", year: 1989, rank: null, slug: "do-the-right-thing"},
+    {title: "Fruitvale Station", year: 2013, rank: null, slug: "fruitvale-station"}
+  ],
+  "State of Grace": [
+    {title: "The Departed", year: 2006, rank: 28, slug: "the-departed"},
+    {title: "Goodfellas", year: 1990, rank: 60, slug: "goodfellas"},
+    {title: "Donnie Brasco", year: 1997, rank: null, slug: "donnie-brasco"}
+  ],
+  "Crouching Tiger, Hidden Dragon": [
+    {title: "Hero", year: 2002, rank: null, slug: "hero"},
+    {title: "House of Flying Daggers", year: 2004, rank: null, slug: "house-of-flying-daggers"},
+    {title: "The Killer (John Woo)", year: 1989, rank: 48, slug: "the-killer-john-woo"}
+  ],
+  "Close Encounters of the Third Kind": [
+    {title: "E.T. the Extra-Terrestrial", year: 1982, rank: null, slug: "et-the-extra-terrestrial"},
+    {title: "Contact", year: 1997, rank: 76, slug: "contact"},
+    {title: "Arrival", year: 2016, rank: 35, slug: "arrival"}
+  ],
+  "Beauty and the Beast": [
+    {title: "The Sound of Music", year: 1965, rank: 49, slug: "the-sound-of-music"},
+    {title: "The Little Mermaid", year: 1989, rank: null, slug: "the-little-mermaid"},
+    {title: "Cinderella", year: 1950, rank: null, slug: "cinderella"}
+  ],
+  "Scott Pilgrim vs. the World": [
+    {title: "Kick-Ass", year: 2010, rank: null, slug: "kick-ass"},
+    {title: "Baby Driver", year: 2017, rank: null, slug: "baby-driver"},
+    {title: "Hot Fuzz", year: 2007, rank: null, slug: "hot-fuzz"}
+  ],
+  "Past Lives": [
+    {title: "Lost in Translation", year: 2003, rank: null, slug: "lost-in-translation"},
+    {title: "In the Mood for Love", year: 2000, rank: null, slug: "in-the-mood-for-love"},
+    {title: "Before Sunrise", year: 1995, rank: null, slug: "before-sunrise"}
+  ],
+  "The Town": [
+    {title: "Good Will Hunting", year: 1997, rank: 32, slug: "good-will-hunting"},
+    {title: "Gone Baby Gone", year: 2007, rank: null, slug: "gone-baby-gone"},
+    {title: "Heat", year: 1995, rank: 16, slug: "heat"}
+  ],
+  "Margin Call": [
+    {title: "The Big Short", year: 2015, rank: null, slug: "the-big-short"},
+    {title: "Too Big to Fail", year: 2011, rank: null, slug: "too-big-to-fail"},
+    {title: "Inside Job", year: 2010, rank: null, slug: "inside-job"}
+  ],
+  "Gravity": [
+    {title: "Apollo 13", year: 1995, rank: 53, slug: "apollo-13"},
+    {title: "The Martian", year: 2015, rank: null, slug: "the-martian"},
+    {title: "Interstellar", year: 2014, rank: 15, slug: "interstellar"}
+  ],
+  "The Commitments": [
+    {title: "That Thing You Do!", year: 1996, rank: 55, slug: "that-thing-you-do"},
+    {title: "Almost Famous", year: 2000, rank: null, slug: "almost-famous"},
+    {title: "Once", year: 2007, rank: null, slug: "once"}
+  ],
+  "Yesterday": `A jukebox musical that works because Danny Boyle trusts the songs completely. Three rewatches in and the premise still holds -- what would the world look like if only one person remembered the Beatles.`,
+  "Up in the Air": `Clooney at his most perfectly cast. A film about disconnection that lands harder every time you watch it after a long work trip. The ending doesn't give you what you want and that's exactly right.`,
+  "Creed": `The best Rocky film since Rocky. Ryan Coogler understood that the franchise was always about passing something down -- and Michael B. Jordan fights like he has something to prove every single round.`,
+  "Ford v Ferrari": `Pure joy in the Moneyball mold -- two guys who are right fighting a system that doesn't want them to be. The Le Mans sequence is the best racing footage ever put on film.`,
+  "Conclave": `My pick for 2024 and it earned it. Edward Berger made a thriller about electing a Pope that moves like a heist film. Ralph Fiennes carries every scene he's in without appearing to try.`,
+  "Yesterday": [
+    {title: "The Commitments", year: 1991, rank: null, slug: "the-commitments"},
+    {title: "That Thing You Do!", year: 1996, rank: 56, slug: "that-thing-you-do"},
+    {title: "Almost Famous", year: 2000, rank: null, slug: "almost-famous"}
+  ],
+  "Up in the Air": [
+    {title: "Moneyball", year: 2011, rank: 5, slug: "moneyball"},
+    {title: "The Social Network", year: 2010, rank: 22, slug: "the-social-network"},
+    {title: "Margin Call", year: 2011, rank: 99, slug: "margin-call"}
+  ],
+  "Creed": [
+    {title: "Rocky IV", year: 1985, rank: 52, slug: "rocky-iv"},
+    {title: "Major League", year: 1989, rank: 27, slug: "major-league"},
+    {title: "Remember the Titans", year: 2000, rank: 69, slug: "remember-the-titans"}
+  ],
+  "Ford v Ferrari": [
+    {title: "Moneyball", year: 2011, rank: 5, slug: "moneyball"},
+    {title: "Rush", year: 2013, rank: null, slug: "rush"},
+    {title: "Draft Day", year: 2014, rank: 62, slug: "draft-day"}
+  ],
+  "Conclave": [
+    {title: "Margin Call", year: 2011, rank: 99, slug: "margin-call"},
+    {title: "The Favourite", year: 2018, rank: null, slug: "the-favourite"},
+    {title: "Parasite", year: 2019, rank: 11, slug: "parasite"}
+  ],
+};
+
+function getSimilarFilms(film) {
+  return recs[film.title] || [];
+}
+
+let currentTmdbId = null;
+
+async function openYearFilmPanel(f) {
+  const overlay = document.getElementById('detail-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Build a pseudo film object
+  const slug = f.slug || f.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/-$/, '');
+
+  document.getElementById('dp-rank').textContent = `Greg's pick for ${f.year}`;
+  document.getElementById('dp-title').textContent = f.title;
+  document.getElementById('dp-year').textContent = f.year;
+  document.getElementById('dp-rating').textContent = '—';
+  document.getElementById('dp-watches').textContent = '—';
+  document.getElementById('dp-pitch').textContent = 'Loading...';
+  document.getElementById('dp-why').textContent = '';
+  document.getElementById('dp-why').className = 'detail-why';
+  document.getElementById('dp-streaming').innerHTML = '<span style="color:var(--muted);font-size:13px">Loading...</span>';
+  document.getElementById('dp-actions').innerHTML = '';
+  document.getElementById('dp-poster').innerHTML = '';
+  document.getElementById('dp-similars-section').style.display = 'none';
+
+  // Hide the "why it made the list" section for year-only films
+  const whySection = document.getElementById('dp-why').parentElement;
+  whySection.style.display = 'none';
+
+  try {
+    const query = encodeURIComponent(f.title);
+    const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US`;
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+    const match = searchData.results && searchData.results[0];
+
+    if (match) {
+      if (match.poster_path) {
+        document.getElementById('dp-poster').innerHTML =
+          `<img src="https://image.tmdb.org/t/p/w185${match.poster_path}" style="width:100%;height:100%;object-fit:cover">`;
+      }
+
+      const overview = match.overview || '';
+      document.getElementById('dp-pitch').textContent = overview.length > 140 ? overview.substring(0, 137) + '...' : overview || 'No description available.';
+
+      const [videoRes, providerRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/videos?api_key=${TMDB_KEY}`),
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/watch/providers?api_key=${TMDB_KEY}`)
+      ]);
+      const videoData = await videoRes.json();
+      const providerData = await providerRes.json();
+
+      const trailer = videoData.results && videoData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+      const actions = [];
+      if (trailer) actions.push(`<a href="https://www.youtube.com/watch?v=${trailer.key}" target="_blank" class="detail-btn primary">▶ Watch Trailer</a>`);
+      actions.push(`<a href="https://letterboxd.com/film/${slug}/" target="_blank" class="detail-btn">Letterboxd ↗</a>`);
+      document.getElementById('dp-actions').innerHTML = actions.join('');
+
+      const us = providerData.results && providerData.results.US;
+      const streamingEl = document.getElementById('dp-streaming');
+      if (us && (us.flatrate || us.rent || us.buy)) {
+        const all = [...(us.flatrate || []), ...(us.rent || []), ...(us.buy || [])];
+        const unique = [...new Map(all.map(p => [p.provider_id, p])).values()].slice(0, 6);
+        streamingEl.innerHTML = unique.map(p => `<span class="stream-badge">${p.provider_name}</span>`).join('');
+        document.getElementById('dp-streaming-section').style.display = 'block';
+      } else {
+        streamingEl.innerHTML = '<span style="color:var(--muted);font-size:13px">Not available to stream</span>';
+      }
+    }
+  } catch(e) {
+    document.getElementById('dp-pitch').textContent = 'Could not load film details.';
+  }
+}
+
+async function openFilmPanel(film) {
+  const overlay = document.getElementById('detail-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Restore why section visibility
+  const whySection = document.getElementById('dp-why').parentElement;
+  whySection.style.display = 'block';
+
+  // Populate static fields immediately
+  document.getElementById('dp-rank').textContent = `#${film.rank} on the list`;
+  document.getElementById('dp-title').textContent = film.title;
+  document.getElementById('dp-year').textContent = film.year;
+  document.getElementById('dp-rating').textContent = film.rating !== '—' ? film.rating + '★' : '—';
+  document.getElementById('dp-watches').textContent = film.watches;
+  document.getElementById('dp-pitch').textContent = 'Loading...';
+  document.getElementById('dp-why').textContent = '';
+  document.getElementById('dp-why').className = 'detail-why';
+  document.getElementById('dp-streaming').innerHTML = '<span style="color:var(--muted);font-size:13px">Loading...</span>';
+  document.getElementById('dp-actions').innerHTML = '';
+  document.getElementById('dp-poster').innerHTML = '';
+
+  // Similar films
+  const similars = getSimilarFilms(film);
+  const similarsEl = document.getElementById('dp-similars');
+  if (similars.length) {
+    similarsEl.innerHTML = similars.map(s => {
+      const lb = `https://letterboxd.com/film/${s.slug}/`;
+      const rankLabel = s.rank ? ` <span style="font-size:10px;color:var(--accent)">#${s.rank} on list</span>` : '';
+      return `<a href="${lb}" target="_blank" class="detail-similar">${s.title} (${s.year})${rankLabel}</a>`;
+    }).join('');
+    document.getElementById('dp-similars-section').style.display = 'block';
+  } else {
+    document.getElementById('dp-similars-section').style.display = 'none';
+  }
+
+  // Fetch TMDB data
+  try {
+    const query = encodeURIComponent(film.title.replace(' (John Woo)', ''));
+    const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${film.year}&language=en-US`;
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+    const match = searchData.results && searchData.results[0];
+
+    if (match) {
+      currentTmdbId = match.id;
+
+      // Poster
+      if (match.poster_path) {
+        document.getElementById('dp-poster').innerHTML =
+          `<img src="https://image.tmdb.org/t/p/w185${match.poster_path}" style="width:100%;height:100%;object-fit:cover">`;
+      }
+
+      // Pitch from overview
+      const overview = match.overview || '';
+      const pitch = overview.length > 140 ? overview.substring(0, 137) + '...' : overview;
+      document.getElementById('dp-pitch').textContent = pitch || 'No description available.';
+
+      // Fetch videos + providers in parallel
+      const [videoRes, providerRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/videos?api_key=${TMDB_KEY}`),
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/watch/providers?api_key=${TMDB_KEY}`)
+      ]);
+      const videoData = await videoRes.json();
+      const providerData = await providerRes.json();
+
+      // Trailer
+      const trailer = videoData.results && videoData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+      const actions = [];
+      if (trailer) {
+        actions.push(`<a href="https://www.youtube.com/watch?v=${trailer.key}" target="_blank" class="detail-btn primary">▶ Watch Trailer</a>`);
+      }
+      actions.push(`<a href="https://letterboxd.com/film/${film.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'')}/" target="_blank" class="detail-btn">Letterboxd ↗</a>`);
+      document.getElementById('dp-actions').innerHTML = actions.join('');
+
+      // Streaming providers (US)
+      const us = providerData.results && providerData.results.US;
+      const streamingEl = document.getElementById('dp-streaming');
+      if (us && (us.flatrate || us.rent || us.buy)) {
+        const all = [...(us.flatrate || []), ...(us.rent || []), ...(us.buy || [])];
+        const unique = [...new Map(all.map(p => [p.provider_id, p])).values()].slice(0, 6);
+        streamingEl.innerHTML = unique.map(p =>
+          `<span class="stream-badge">${p.provider_name}</span>`
+        ).join('');
+        document.getElementById('dp-streaming-section').style.display = 'block';
+      } else {
+        streamingEl.innerHTML = '<span style="color:var(--muted);font-size:13px">Not available to stream</span>';
+      }
+    }
+  } catch(e) {
+    document.getElementById('dp-pitch').textContent = 'Could not load film details.';
+  }
+
+  // Populate why blurb immediately
+  generateWhyBlurb(film);
+}
+
+const blurbs = {
+  "The Godfather": `The standard everything else gets measured against. Not my most rewatched but the one that defined what cinema could be. Every crime film, every slow burn, every family drama owes this one something. Fun fact: they filmed some of this movie in my Mom's neighborhood in New York.`,
+  "Back to the Future": `Pure joy from the first frame to the last. I've seen it eight times and it still lands every single joke. This is the film I put on when I need to remember why I love movies. It's also one of my most quotable.`,
+  "Pulp Fiction": `Changed how I thought about storytelling. You can break every rule if you do it with enough confidence. One of the movies I go back to all the time for its swagger and its quotability.`,
+  "La La Land": `I have watched this more times than I'll admit. A film about chasing what you love even when it costs you everything that one just lands differently. Here's to the ones who dream.`,
+  "Inception": `Nolan at his most ambitious and it somehow sticks the landing. Six times in and I'm still working out the rules of the dream logic, which is exactly how it's supposed to feel.`,
+  "Fight Club": `One of those films where you watch it the first time and think you understand it, then you watch it again and realize you had no idea. It aged better than it had any right to. If you own the physical copy watch the trailer that they cut to make this movie feel like a romcom.`,
+  "Saving Private Ryan": `The first 25 minutes are as intense as anything ever put on film. It earns every quiet moment after that because of what it puts you through at the beginning. Every time I get a new TV or speaker system, this is the first movie I watch.`,
+  "Casino": `Pesci and De Niro doing what they do best, for three hours, and it never feels long. One of the great films about how excess destroys everything it touches. It's my favorite Scorsese film.`,
+  "Gladiator": `Are you not entertained? Yes. Always. Every single time. Russell Crowe at his absolute peak and a Hans Zimmer score that still makes the hair on your arms stand up.`,
+  "Parasite": `The most formally perfect film I've seen in years. Bong Joon-ho thinks like a photographer -- every frame is a decision, every composition is doing work.`,
+  "Moneyball": `My most rewatched film on this entire list. It's about baseball the way Jaws is about a shark -- and as a lifelong Red Sox fan, the idea of beating the system with math and heart hits different.`,
+  "The Usual Suspects": `One of the great third-act reveals in cinema. Even knowing the twist it still works on rewatch because you spend the whole film admiring how perfectly it was constructed.`,
+  "The Shawshank Redemption": `Gets dismissed as crowd-pleasing but that's doing it a disservice. It's about hope as an act of defiance and it earns every emotional beat it asks for. Brooks was here. So was Red.`,
+  "The Dark Knight": `Heath Ledger turned in one of the greatest screen performances ever and the film is somehow good enough to hold it. Nolan made a superhero film that plays like a crime epic.`,
+  "Interstellar": `The most ambitious thing Nolan has ever attempted and I love it. The science is real and the relative time component is the type of mind-bender that I love from Nolan's films.`,
+  "Heat": `The coffee shop scene. The final chase. The shootout. Michael Mann made the definitive crime film and it doesn't have a wasted frame. De Niro and Pacino at their peaks. Also the echoing of machine gun fire outside the bank is next level.`,
+  "Unbreakable": `I called this Shyamalan's best film and it took years for people to admit it. Quiet, slow, and completely committed to its own logic -- the superhero film for people who don't like superhero films.`,
+  "The Matrix": `Watched this eight times and it still delivers. The Wachowskis built an entire visual language for action cinema in one film and everyone has been borrowing from it since.`,
+  "Raiders of the Lost Ark": `Spielberg at his most purely fun. Every set piece is perfectly calibrated and Harrison Ford makes it look effortless. The blueprint for the modern adventure film.`,
+  "Whiplash": `As someone who went to RISD, the obsession with craft at any cost is uncomfortably familiar. Fletcher would have fit right into critiques. Terrifying and thrilling in equal measure.`,
+  "Jerry Maguire": `Show me the money. You had me at hello. Help me help you. Eight watches and the catchphrases still work because the film actually earns them.`,
+  "Jaws": `The greatest summer film ever made. Spielberg was 27. It changed how movies were made and marketed and it still plays like a thriller, not a historical artifact.`,
+  "For Love of the Game": `A Red Sox fan watching a Yankees pitcher throw a perfect game should hate this movie. I've seen it eight times. Kevin Costner at his most quietly devastating.`,
+  "American Psycho": `Gets funnier and darker with every rewatch. Christian Bale understood exactly what the film needed to be -- a satire so deadpan it's genuinely disturbing. The business card scene tickles my designer brain.`,
+  "Reservoir Dogs": `Tarantino's debut and it still feels dangerous. The ear scene, the dialogue, the circular structure -- all of it landed fully formed on his first try. Mr. Brown is like Mr. Shit.`,
+  "Swingers": `Money. This movie is so money. A love letter to Los Angeles and to the particular misery of being almost-successful in your twenties.`,
+  "Blade Runner": `The most visually influential science fiction film ever made. Every dystopian cityscape in cinema since 1982 owes Ridley Scott a debt. The Final Cut is the definitive version.`,
+  "The Departed": `Scorsese's best film of the 2000s and it's not close. The tension is unbearable in the best way and the ending is ruthless in a way Hollywood almost never allows. Horrible Boston accents but total heat check dialogue by Mark Wahlberg.`,
+  "Titanic": `Still works. The scale is staggering and DiCaprio and Winslet actually have chemistry. Dismiss it as a blockbuster if you want but the filmmaking is extraordinary. I've seen it in theatres, at home, again in theatres in 3D, and at home again.`,
+  "The Social Network": `Fincher and Sorkin on the same film is almost unfair. The opening scene is still the best five minutes of dialogue in any film this century.`,
+  "Major League": `A perfect comedy that understands exactly what it is -- and as a Red Sox fan, rooting for a cursed team hits close to home.`,
+  "Good Will Hunting": `Any love story that references the 1975 Sox is great in my book. Boston has never looked as lived-in and specific as it does in this film.`,
+  "Dazed and Confused": `Linklater captured something real about being young and not knowing what to do with it. The characters feel like people you actually knew, which is the hardest thing to pull off.`,
+  "Jurassic Park": `Spielberg at his most technically dazzling. The kitchen scene is still tense 30 years later. Pure cinema in the most generous sense of the phrase.`,
+  "Arrival": `The most emotionally devastating science fiction film since Eternal Sunshine. Denis Villeneuve understood that the alien contact story was never really about aliens.`,
+  "Memento": `Nolan's most formally interesting film -- the structure isn't a gimmick, it's the point. It still rewards attention.`,
+  "The Game": `Fincher's most underrated film. I'm still not entirely sure what's real and what isn't -- which is exactly how it should feel.`,
+  "Killers of the Flower Moon": `Scorsese's most morally serious film in decades. It gets heavier each time. De Niro and DiCaprio have never been used more against type.`,
+  "The Right Stuff": `The best film about the space program ever made. Phillip Kaufman understood that the astronauts were selling a myth and he made that mythmaking into great cinema.`,
+  "Leon: The Professional": `Lean, precise, and completely committed. Jean Reno and Gary Oldman in their defining roles. The film that introduced the world to Natalie Portman.`,
+  "Mr. Mom": `This was a fave when I was a kid and in every phase of my parenthood it hits differently. Somehow it's one of my most rewatched films and I genuinely cannot explain why -- just put it on and you'll understand.`,
+  "Sleepless in Seattle": `Heather and I watch this every time we need something warm. Nora Ephron understood romantic comedy better than anyone and this is her most effortlessly constructed film. Also, Brooks Robinson probably is the best 3rd baseman ever.`,
+  "Planes, Trains and Automobiles": `The greatest Thanksgiving film ever made. Steve Martin and John Candy found something genuinely moving inside what could have been a simple road comedy. Those aren't pillows.`,
+  "A League of Their Own": `There's no crying in baseball. Four watches and the Penny Marshall rhythm still feels exactly right -- funny and warm and smarter than it looks.`,
+  "Godzilla Minus One": `The best monster film in decades and it works because it earns the monster by making you care about the people first.`,
+  "300": `Technically a four-star film, not five -- but that opening battle sequence is one of the most visually committed things Zack Snyder has ever done. Pure kinetic filmmaking.`,
+  "Everything Everywhere All At Once": `Overwhelming in the best possible way. This is deeply personal to my Asian-American heritage.`,
+  "The Killer (John Woo)": `John Woo at his absolute peak. The action choreography is ballet with guns and the sentimentality is earned because the craft around it is so precise.`,
+  "The Sound of Music": `Julie Andrews at her absolute peak and the Alpine cinematography is genuinely stunning. Touring the actual locations in Salzburg in 2022 was a bucket list moment.`,
+  "Star Wars: Empire Strikes Back": `The one that proved Star Wars could be more than spectacle. Darker, stranger, and more emotionally complex than A New Hope -- and that ending still lands.`,
+  "Out of Sight": `Soderbergh's most purely enjoyable film. George Clooney and Jennifer Lopez have chemistry that jumps off the screen and the trunk scene is one of the best in 90s cinema. Don't sleep on the soundtrack.`,
+  "Get Shorty": `John Travolta at his Pulp Fiction-era peak. A Hollywood satire that actually understands Hollywood and plays the whole thing completely straight.`,
+  "Apollo 13": `Ron Howard's best film and it works because everyone knows how it ends but you're still holding your breath. Kevin Bacon, Tom Hanks, and Bill Paxton at their best.`,
+  "Armageddon": `Completely unhinged in the best way. I still cry at the end. Michael Bay made one genuinely great film and this is it.`,
+  "That Thing You Do!": `Tom Hanks wrote and directed a perfect little film and nobody talks about it enough. The song is genuinely good. The cast is perfect. You'll definitely catch yourself singing the songs.`,
+  "Forrest Gump": `Earned its reputation for a reason. Hanks makes you believe every single word out of Forrest's mouth. The film understands that sincerity is its own kind of courage.`,
+  "Lord of the Rings: Fellowship": `Peter Jackson made something that shouldn't have worked at this scale and he pulled it off completely. The Shire sequence alone is worth the three hours.`,
+  "True Romance": `Tarantino wrote it and Tony Scott directed it and the collision of those two sensibilities is unlike anything else. The Sicilian scene is one of the greatest in any film.`,
+  "Se7en": `Fincher's most relentlessly bleak film. The ending is still one of the most audacious choices in mainstream Hollywood cinema. What's in the box stays with you.`,
+  "Goodfellas": `Scorsese at his most energetic. The Copacabana tracking shot still gets applause. Ray Liotta never topped this.`,
+  "Wolf of Wall Street": `Three hours of excess that somehow earns its runtime. DiCaprio's most committed performance and Scorsese's most furious film. The Quaalude scene is comedy at a high level.`,
+  "Rocky IV": `Objectively a four-star film that I've watched seven times. The training montage is the Platonic ideal of an 80s training montage. Drago must break you. The new cut by Stallone is the one to watch.`,
+  "Friday": `Ice Cube and Chris Tucker in their element, doing what they do best. A film that understands its neighborhood and its characters with real warmth.`,
+  "Die Hard": `The perfect action film. Every set piece is calibrated, every character has exactly the right number of lines, and McClane earns his happy ending.`,
+  "Remember the Titans": `Denzel Washington making every line land harder than it has any right to. The locker room speech is one of the great sports movie speeches.`,
+  "Aliens": `James Cameron took Ridley Scott's quiet horror and turned it into a war film without losing any of what made the original terrifying.`,
+  "Field of Dreams": `If you build it, he will come. Four watches and it still gets me. As a lifelong Red Sox fan, a movie about baseball and fathers and redemption is basically designed for me.`,
+  "Perfect Days": `Wim Wenders made a film about a Tokyo janitor who tends public toilets and it's one of the most beautiful films I've seen in years.`,
+  "Mulholland Drive": `Lynch at his most hallucinatory. I've given up trying to fully decode it -- the experience of watching it is the point.`,
+  "Mad Max Fury Road": `George Miller made an action film at age 70 that embarrassed everyone half his age. The theatrical version is amazing and the Chrome Edition is equally amazing.`,
+  "Draft Day": `I know it's a guilty pleasure film. I don't care. Kevin Costner as a GM making trades on draft day is catnip for a sports fan and I will rewatch it forever.`,
+  "Star Trek: Wrath of Khan": `The best Star Trek film because it understood that the franchise was always about friendship and mortality. Khan is a great villain because he's a man who never let go.`,
+  "The Incredibles": `Pixar at its absolute peak. The mid-life crisis subplot hit harder when I got older. The 'where is my super suit' scene still works.`,
+  "Face/Off": `John Woo and Nicolas Cage and John Travolta at a particular intersection of 90s excess that will never happen again. Completely unhinged and completely committed.`,
+  "Rounders": `The film that made everyone think they could play poker. Malkovich's accent is a choice and the film is better for it.`,
+  "Contact": `Jodie Foster gave one of her best performances in a film that asks genuinely big questions and doesn't flinch from the answers. It still makes me think. Research how Zemeckis pulled off the mirror scene.`,
+  "The Sixth Sense": `The twist works because Shyamalan earned it. Knowing the ending and the film completely holds up -- the craft is in every frame.`,
+  "The Natural": `Roy Hobbs. The lights. The score. Still makes me feel like it's the bottom of the ninth in a pennant race. Baseball movies are my weakness.`,
+  "Groundhog Day": `Gets deeper with every watch, which is appropriate. I think it's actually a film about what it means to be a good person.`,
+  "2001: A Space Odyssey": `Kubrick made something that doesn't obey the rules of cinema and 50 years later nobody has figured out how to describe it. I have like 5 versions of what I think the ending means.`,
+  "The Shining": `Kubrick's most technically controlled film. The steadicam work in the hotel corridors is still the most unsettling cinematography I know. Also the use of symmetry in this film is great.`,
+  "Big Trouble in Little China": `A Jack Burton film from start to finish. It's still the most 1986 thing that has ever existed. Kurt Russell understood the assignment completely.`,
+  "Indiana Jones: Temple of Doom": `Darker than Raiders and not afraid of it. The mine cart sequence is Spielberg at his most purely kinetic. Four watches and it still delivers.`,
+  "Stand By Me": `The most honest film about being twelve years old ever made. It came out when I was around the same age as these boys. They dealt with similar struggles as I did at the time. Deeply impactful movie for me.`,
+  "No Country for Old Men": `The Coens at their most uncompromising. Anton Chigurh is the most frightening character in modern cinema and the ending refuses to give you what you want.`,
+  "Godfather Part II": `The best sequel ever made? De Niro as young Vito is a masterclass and the parallel structure with Pacino's present-day Michael is one of the great structural choices in cinema.`,
+  "Romeo + Juliet": `Baz Luhrmann understood that the language needed a visual counterweight and he built one. The photography is extraordinary and DiCaprio and Danes are perfect.`,
+  "Casino Royale": `The best Bond film because it treated the franchise seriously for the first time. Daniel Craig reset everything and the poker sequence is genuinely tense.`,
+  "Toy Story 2": `My favorite sequel. The Jessie flashback is one of the most emotionally efficient sequences in animation.`,
+  "American History X": `Edward Norton's best performance and a film that doesn't let anyone off the hook. It's still uncomfortable in all the right ways. It is as relevant now as it was when it came out.`,
+  "State of Grace": `Sean Penn and Gary Oldman in Hell's Kitchen, doing the kind of slow-burn crime drama that doesn't get made anymore. Criminally underseen.`,
+  "Crouching Tiger, Hidden Dragon": `Ang Lee made martial arts into something genuinely lyrical. The bamboo forest sequence is still one of the most beautiful things I've seen filmed.`,
+  "Close Encounters of the Third Kind": `Spielberg at his most personal and most patient. The tuba sequence is one of the great pieces of film scoring. The ending still gives me chills even though there's no way I believe a Dad would willingly leave his kids and this planet.`,
+  "Beauty and the Beast": `The best Disney animated film. The ballroom sequence is technically stunning and the score holds up completely. My daughter and I would sing this in the car together on the way to soccer practice. Top 10 memory.`,
+  "Scott Pilgrim vs. the World": `Edgar Wright made a film that shouldn't work -- a video game aesthetic applied to a romantic comedy -- and it works completely. Super inventive.`,
+  "Past Lives": `Celine Song's debut and it's one of the saddest and most honest films about roads not taken I've ever seen. The final scene still guts me.`,
+  "The Town": `Boston looked this real in Good Will Hunting and almost nowhere else. Ben Affleck directing a heist film in his own city and doing it with real authority.`,
+  "Margin Call": `A film about one night at a bank during the financial crisis and it's one of the most quietly devastating things I've seen. The board meeting scene is extraordinary.`,
+  "Gravity": `Technically staggering. The debris sequence is still one of the most intense single sequences in modern cinema. Cuaron earned every award.`,
+  "The Commitments": `Dublin. Soul music. A band that can't stay together. It's still the most purely joyful music film I know. The brass section alone is worth the price of admission.`,
+};
+
+function generateWhyBlurb(film) {
+  const whyEl = document.getElementById('dp-why');
+  const blurb = blurbs[film.title];
+  if (blurb) {
+    whyEl.textContent = blurb;
+    whyEl.className = 'detail-why';
+  } else {
+    whyEl.textContent = 'No notes on this one yet.';
+    whyEl.className = 'detail-why';
+  }
+}
+
+function closePanel(e) {
+  if (e.target === document.getElementById('detail-overlay')) closeDetailPanel();
+}
+
+function closeDetailPanel() {
+  document.getElementById('detail-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Best by Year data
+// top100rank: rank on Greg's top 100, or null
+const byYear = [
+  { year: 1970, title: "M*A*S*H", top100rank: null },
+  { year: 1971, title: "Straw Dogs", top100rank: null },
+  { year: 1972, title: "The Godfather", top100rank: 1 },
+  { year: 1973, title: "Enter the Dragon", top100rank: null },
+  { year: 1974, title: "The Godfather Part II", top100rank: 86 },
+  { year: 1975, title: "Jaws", top100rank: 22 },
+  { year: 1976, title: "Taxi Driver", top100rank: null },
+  { year: 1977, title: "Star Wars", top100rank: null },
+  { year: 1978, title: "Superman", top100rank: null },
+  { year: 1979, title: "Alien", top100rank: null },
+  { year: 1980, title: "Star Wars: Empire Strikes Back", top100rank: 50 },
+  { year: 1981, title: "Raiders of the Lost Ark", top100rank: 19 },
+  { year: 1982, title: "Blade Runner", top100rank: 27 },
+  { year: 1983, title: "The Right Stuff", top100rank: 39 },
+  { year: 1984, title: "Indiana Jones: Temple of Doom", top100rank: 83 },
+  { year: 1985, title: "Back to the Future", top100rank: 2 },
+  { year: 1986, title: "Stand By Me", top100rank: 84 },
+  { year: 1987, title: "Planes, Trains and Automobiles", top100rank: 43 },
+  { year: 1988, title: "Dirty Rotten Scoundrels", top100rank: null },
+  { year: 1989, title: "Field of Dreams", top100rank: 67 },
+  { year: 1990, title: "Goodfellas", top100rank: 60 },
+  { year: 1991, title: "The Silence of the Lambs", top100rank: null },
+  { year: 1992, title: "Reservoir Dogs", top100rank: 25 },
+  { year: 1993, title: "Dazed and Confused", top100rank: 33 },
+  { year: 1994, title: "Pulp Fiction", top100rank: 3 },
+  { year: 1995, title: "Casino", top100rank: 8 },
+  { year: 1996, title: "Jerry Maguire", top100rank: 21 },
+  { year: 1997, title: "Good Will Hunting", top100rank: 32 },
+  { year: 1998, title: "Saving Private Ryan", top100rank: 7 },
+  { year: 1999, title: "Fight Club", top100rank: 6 },
+  { year: 2000, title: "Gladiator", top100rank: 9 },
+  { year: 2001, title: "Lord of the Rings: Fellowship of the Ring", top100rank: 57 },
+  { year: 2002, title: "Catch Me If You Can", top100rank: null },
+  { year: 2003, title: "The School of Rock", top100rank: null },
+  { year: 2004, title: "The Incredibles", top100rank: 73 },
+  { year: 2005, title: "Sin City", top100rank: null },
+  { year: 2006, title: "The Departed", top100rank: 28 },
+  { year: 2007, title: "Zodiac", top100rank: null },
+  { year: 2008, title: "The Dark Knight", top100rank: 14 },
+  { year: 2009, title: "Inglourious Basterds", top100rank: null },
+  { year: 2010, title: "The Social Network", top100rank: 30 },
+  { year: 2011, title: "Moneyball", top100rank: 11 },
+  { year: 2012, title: "Argo", top100rank: null },
+  { year: 2013, title: "The Wolf of Wall Street", top100rank: 61 },
+  { year: 2014, title: "Interstellar", top100rank: 15 },
+  { year: 2015, title: "The Big Short", top100rank: null },
+  { year: 2016, title: "La La Land", top100rank: 4 },
+  { year: 2017, title: "Get Out", top100rank: null },
+  { year: 2018, title: "BlacKkKlansman", top100rank: null },
+  { year: 2019, title: "Parasite", top100rank: 10 },
+  { year: 2020, title: "Sound of Metal", top100rank: null },
+  { year: 2021, title: "Dune", top100rank: null, slug: "dune-2021" },
+  { year: 2022, title: "Everything Everywhere All At Once", top100rank: 47 },
+  { year: 2023, title: "Past Lives", top100rank: 96 },
+  { year: 2024, title: "Conclave", top100rank: null },
+  { year: 2025, title: "One Battle After Another", top100rank: null },
+];
+
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  const panel = document.getElementById('tab-' + tab);
+  if (panel) panel.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + tab + "'")) btn.classList.add('active');
+  });
+  document.body.className = '';
+  if (tab === 'collection' && !window.collectionLoaded) {
+    window.collectionLoaded = true;
+    buildCollectionGrid(collection);
+    fetchCollectionPostersParallel();
+  }
+  if (tab === 'byyear' && !window.byyearPostersLoaded) {
+    window.byyearPostersLoaded = true;
+    fetchYearPosters();
+  }
+}
+
+async function loadLetterboxdDiary() {
+  window.diaryLoaded = true;
+  const loading = document.getElementById('diary-loading');
+  const errorEl = document.getElementById('diary-error');
+  const container = document.getElementById('diary-list');
+
+  try {
+    const rssUrl = 'https://letterboxd.com/followgreg/rss/';
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+    const res = await fetch(proxyUrl);
+    const data = await res.json();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(data.contents, 'text/xml');
+    const items = Array.from(xml.querySelectorAll('item'));
+
+    loading.style.display = 'none';
+
+    if (!items.length) {
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    for (const item of items) {
+      const title = item.querySelector('title')?.textContent || '';
+      const link = item.querySelector('link')?.textContent || '';
+      const pubDate = item.querySelector('pubDate')?.textContent || '';
+      const desc = item.querySelector('description')?.textContent || '';
+
+      // Parse film title and year from RSS title (format: "Film Title, Year - ★★★½")
+      const titleMatch = title.match(/^(.+?),\s*(\d{4})\s*(?:-\s*(.+))?$/);
+      const filmTitle = titleMatch ? titleMatch[1].trim() : title.replace(/\s*-\s*★.*$/, '').trim();
+      const filmYear = titleMatch ? titleMatch[2] : '';
+      const ratingRaw = titleMatch ? (titleMatch[3] || '') : title.match(/★[★½]*/)?.[0] || '';
+
+      // Parse rewatch from description
+      const isRewatch = desc.toLowerCase().includes('rewatch') || desc.includes('↺');
+
+      // Format date
+      const date = pubDate ? new Date(pubDate) : null;
+      const dateStr = date ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+      // Build row
+      const row = document.createElement('div');
+      row.className = 'diary-row';
+      row.innerHTML = `
+        <div class="diary-poster" id="dp2-${filmTitle.replace(/[^a-z0-9]/gi,'').toLowerCase().slice(0,10)}">
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0.3;">🎬</div>
+        </div>
+        <div class="diary-info">
+          <div class="diary-title">${filmTitle}${filmYear ? ' <span style="color:var(--muted);font-size:11px;font-family:DM Mono,monospace">'+filmYear+'</span>' : ''}</div>
+          <div class="diary-meta">${filmTitle}</div>
+        </div>
+        <div class="diary-right">
+          ${ratingRaw ? '<span class="diary-rating">' + ratingRaw + '</span>' : ''}
+          <span class="diary-date">${dateStr}</span>
+          ${isRewatch ? '<span class="diary-rewatch">↺ rewatch</span>' : ''}
+        </div>
+      `;
+
+      // Click handler
+      row.addEventListener('click', () => {
+        const listFilm = films.find(f =>
+          f.title.toLowerCase().replace(/[^a-z0-9]/g,'') ===
+          filmTitle.toLowerCase().replace(/[^a-z0-9]/g,'')
+        );
+        if (listFilm) {
+          openFilmPanel(listFilm);
+        } else {
+          window.open(link, '_blank');
+        }
+      });
+
+      container.appendChild(row);
+
+      // Fetch poster async
+      fetchDiaryPoster(filmTitle, filmYear, row.querySelector('.diary-poster'));
+    }
+
+  } catch(e) {
+    loading.style.display = 'none';
+    errorEl.style.display = 'block';
+    console.error('Diary load error:', e);
+  }
+}
+
+async function fetchDiaryPoster(title, year, cell) {
+  try {
+    await new Promise(r => setTimeout(r, Math.random() * 500));
+    const query = encodeURIComponent(title);
+    const yearParam = year ? `&year=${year}` : '';
+    const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}${yearParam}&language=en-US`);
+    const data = await res.json();
+    const match = data.results && data.results[0];
+    if (match && match.poster_path && cell) {
+      cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${title}" onload="this.classList.add('loaded')">`;
+    }
+  } catch(e) {}
+}
+
+
+async function fetchYearPosters() {
+  const batchSize = 10;
+  for (let i = 0; i < byYear.length; i += batchSize) {
+    const batch = byYear.slice(i, i + batchSize);
+    await Promise.all(batch.map(async f => {
+      try {
+        const query = encodeURIComponent(f.title);
+        const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&year=${f.year}&language=en-US&page=1`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const match = data.results && data.results[0];
+        if (match && match.poster_path) {
+          const cell = document.getElementById(`yposter-${f.year}`);
+          if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${match.poster_path}" alt="${f.title}" onload="this.classList.add('loaded')">`;
+        }
+      } catch(e) {}
+    }));
+    await new Promise(r => setTimeout(r, 100));
+  }
+}
+
+
+const collection = [
+      { id: 1, title: "10,000 BC", search: "10,000 BC" },
+      { id: 2, title: "12 Monkeys", search: "12 Monkeys" },
+      { id: 3, title: "13 Going on 30", search: "13 Going on 30" },
+      { id: 4, title: "1917", search: "1917" },
+      { id: 5, title: "2001: A Space Odyssey", search: "2001: A Space Odyssey" },
+      { id: 6, title: "2012", search: "2012" },
+      { id: 7, title: "21 Bridges", search: "21 Bridges" },
+      { id: 8, title: "28 Days Later", search: "28 Days Later" },
+      { id: 9, title: "28 Years Later", search: "28 Years Later" },
+      { id: 10, title: "30 for 30 Volume 1", search: "30 for 30 Volume 1" },
+      { id: 11, title: "300", search: "300" },
+      { id: 12, title: "40-Year-Old Virgin, The", search: "The 40-Year-Old Virgin" },
+      { id: 13, title: "48 Hours", search: "48 Hours" },
+      { id: 14, title: "50 First Dates", search: "50 First Dates" },
+      { id: 15, title: "8 mile", search: "8 mile" },
+      { id: 16, title: "9", search: "9" },
+      { id: 17, title: "Abyss, The", search: "The Abyss" },
+      { id: 18, title: "Adaptation", search: "Adaptation" },
+      { id: 19, title: "Against All Odds", search: "Against All Odds" },
+      { id: 20, title: "Aladdin", search: "Aladdin" },
+      { id: 21, title: "Alien", search: "Alien" },
+      { id: 22, title: "Alien 3", search: "Alien 3" },
+      { id: 23, title: "Aliens", search: "Aliens" },
+      { id: 24, title: "Amadeus", search: "Amadeus" },
+      { id: 25, title: "America Hustle", search: "America Hustle" },
+      { id: 26, title: "American Beauty", search: "American Beauty" },
+      { id: 27, title: "American Flyers", search: "American Flyers" },
+      { id: 28, title: "American Grafitti", search: "American Grafitti" },
+      { id: 29, title: "American History X", search: "American History X" },
+      { id: 30, title: "American Horror Story Season 1", search: "American Horror Story Season 1" },
+      { id: 31, title: "American President, The", search: "The American President" },
+      { id: 32, title: "American Psycho", search: "American Psycho" },
+      { id: 33, title: "American Virgin", search: "American Virgin" },
+      { id: 34, title: "Anchorman", search: "Anchorman" },
+      { id: 35, title: "Angels & Demons", search: "Angels & Demons" },
+      { id: 36, title: "Animatrix", search: "Animatrix" },
+      { id: 37, title: "Anna and the King", search: "Anna and the King" },
+      { id: 38, title: "Annie", search: "Annie" },
+      { id: 39, title: "Anora", search: "Anora" },
+      { id: 40, title: "Ant Man", search: "Ant Man" },
+      { id: 41, title: "Any given sunday", search: "Any given sunday" },
+      { id: 42, title: "Apocalypse Now", search: "Apocalypse Now" },
+      { id: 43, title: "Apocalypse Now Redux", search: "Apocalypse Now Redux" },
+      { id: 44, title: "Apocalypto", search: "Apocalypto" },
+      { id: 45, title: "Apollo 13", search: "Apollo 13" },
+      { id: 46, title: "Apprentice", search: "Apprentice" },
+      { id: 47, title: "Arachnophobia", search: "Arachnophobia" },
+      { id: 48, title: "Argo", search: "Argo" },
+      { id: 49, title: "Aristocrats, The", search: "The Aristocrats" },
+      { id: 50, title: "Armageddon", search: "Armageddon" },
+      { id: 51, title: "Arrival", search: "Arrival" },
+      { id: 52, title: "Artificial Intelligence", search: "Artificial Intelligence" },
+      { id: 53, title: "Avatar", search: "Avatar" },
+      { id: 54, title: "Avengers, Age of Ultron", search: "Avengers, Age of Ultron" },
+      { id: 55, title: "Avengers, The", search: "The Avengers" },
+      { id: 56, title: "Aviator, The", search: "The Aviator" },
+      { id: 57, title: "Babel", search: "Babel" },
+      { id: 58, title: "Back to the Future", search: "Back to the Future" },
+      { id: 59, title: "Back to the Future II", search: "Back to the Future II" },
+      { id: 60, title: "Back to the Future III", search: "Back to the Future III" },
+      { id: 61, title: "Bad Boys", search: "Bad Boys" },
+      { id: 62, title: "Bad Boys II", search: "Bad Boys II" },
+      { id: 63, title: "Balls of Fury", search: "Balls of Fury" },
+      { id: 64, title: "Band of Brothers", search: "Band of Brothers" },
+      { id: 65, title: "Barry Lyndon", search: "Barry Lyndon" },
+      { id: 66, title: "Basic Instinct", search: "Basic Instinct" },
+      { id: 67, title: "Batman", search: "Batman" },
+      { id: 68, title: "Batman And Robin", search: "Batman And Robin" },
+      { id: 69, title: "Batman Begins", search: "Batman Begins" },
+      { id: 70, title: "Batman Forever", search: "Batman Forever" },
+      { id: 71, title: "Batman Returns", search: "Batman Returns" },
+      { id: 72, title: "Batman v Superman, Dawn of Justice", search: "Batman v Superman, Dawn of Justice" },
+      { id: 73, title: "Battle: Los Angeles", search: "Battle: Los Angeles" },
+      { id: 74, title: "Be Cool", search: "Be Cool" },
+      { id: 75, title: "A beautiful mind", search: "A beautiful mind" },
+      { id: 76, title: "Beauty and the Beast", search: "Beauty and the Beast" },
+      { id: 77, title: "Beer League", search: "Beer League" },
+      { id: 78, title: "Beetlejuice", search: "Beetlejuice" },
+      { id: 79, title: "Being John Malkovich", search: "Being John Malkovich" },
+      { id: 80, title: "Ben-Hur", search: "Ben-Hur" },
+      { id: 81, title: "Benjamin Button, The curious case of", search: "Benjamin Button, The curious case of" },
+      { id: 82, title: "Better off Dead", search: "Better off Dead" },
+      { id: 83, title: "Beverly Hills Cop", search: "Beverly Hills Cop" },
+      { id: 84, title: "Big Lebowski, The", search: "The Big Lebowski" },
+      { id: 85, title: "Big Short", search: "Big Short" },
+      { id: 86, title: "Big Trouble in LIttle China", search: "Big Trouble in LIttle China" },
+      { id: 87, title: "The Birds", search: "The Birds" },
+      { id: 88, title: "Black Hawk Down", search: "Black Hawk Down" },
+      { id: 89, title: "Black Hole, The", search: "The Black Hole" },
+      { id: 90, title: "Black Mass", search: "Black Mass" },
+      { id: 91, title: "Blade Runner 2049", search: "Blade Runner 2049" },
+      { id: 92, title: "Blade Runner Final Cut", search: "Blade Runner Final Cut" },
+      { id: 93, title: "Blair Witch Project", search: "Blair Witch Project" },
+      { id: 94, title: "Blind Side, The", search: "The Blind Side" },
+      { id: 95, title: "Blood Simple", search: "Blood Simple" },
+      { id: 96, title: "Blood Work", search: "Blood Work" },
+      { id: 97, title: "Bloodsport", search: "Bloodsport" },
+      { id: 98, title: "Blow", search: "Blow" },
+      { id: 99, title: "Blue Crush", search: "Blue Crush" },
+      { id: 100, title: "Blue Velvet", search: "Blue Velvet" },
+      { id: 101, title: "Blues Brothers", search: "Blues Brothers" },
+      { id: 102, title: "Boiler Room", search: "Boiler Room" },
+      { id: 103, title: "Boogie Nights", search: "Boogie Nights" },
+      { id: 104, title: "Borat", search: "Borat" },
+      { id: 105, title: "Boston Red Sox: 100 years of Baseball History", search: "Boston Red Sox: 100 years of Baseball History" },
+      { id: 106, title: "The Bourne Identity", search: "The Bourne Identity" },
+      { id: 107, title: "The Bourne Legacy", search: "The Bourne Legacy" },
+      { id: 108, title: "The Bourne Supremacy", search: "The Bourne Supremacy" },
+      { id: 109, title: "The Bourne Ultimatum", search: "The Bourne Ultimatum" },
+      { id: 110, title: "Bowling for Columbine", search: "Bowling for Columbine" },
+      { id: 111, title: "Braveheart", search: "Braveheart" },
+      { id: 112, title: "Breakfast at Tiffany's", search: "Breakfast at Tiffany's" },
+      { id: 113, title: "The Breakfast Club", search: "The Breakfast Club" },
+      { id: 114, title: "Breakin' 2: Electric Boogaloo", search: "Breakin' 2: Electric Boogaloo" },
+      { id: 115, title: "Bridesmaids", search: "Bridesmaids" },
+      { id: 116, title: "Bridge of Spies", search: "Bridge of Spies" },
+      { id: 117, title: "Brokeback Mountain", search: "Brokeback Mountain" },
+      { id: 118, title: "Bruce Lee Ultimate DVD Collection", search: "Bruce Lee Ultimate DVD Collection" },
+      { id: 119, title: "Bruce Lee: Fist Of Fear - Touch Of Death", search: "Bruce Lee: Fist Of Fear - Touch Of Death" },
+      { id: 120, title: "A bug's life", search: "A bug's life" },
+      { id: 121, title: "Can't Buy Me Love", search: "Can't Buy Me Love" },
+      { id: 122, title: "Cannonball Run", search: "Cannonball Run" },
+      { id: 123, title: "Cape Fear", search: "Cape Fear" },
+      { id: 124, title: "Captain America: The First Avenger", search: "Captain America: The First Avenger" },
+      { id: 125, title: "Captain America: The Winter Soldier", search: "Captain America: The Winter Soldier" },
+      { id: 126, title: "Captain Phillips", search: "Captain Phillips" },
+      { id: 127, title: "Cars", search: "Cars" },
+      { id: 128, title: "Casino", search: "Casino" },
+      { id: 129, title: "Casino Royale 007", search: "Casino Royale 007" },
+      { id: 130, title: "Cast Away", search: "Cast Away" },
+      { id: 131, title: "Catch Me If You Can", search: "Catch Me If You Can" },
+      { id: 132, title: "The Cave", search: "The Cave" },
+      { id: 133, title: "The Cell", search: "The Cell" },
+      { id: 134, title: "Charlie's Angels", search: "Charlie's Angels" },
+      { id: 135, title: "Chicago", search: "Chicago" },
+      { id: 136, title: "Chocolat", search: "Chocolat" },
+      { id: 137, title: "Christmas Vacation", search: "Christmas Vacation" },
+      { id: 138, title: "Cinderella", search: "Cinderella" },
+      { id: 139, title: "Citizen Kane", search: "Citizen Kane" },
+      { id: 140, title: "City Of Angels", search: "City Of Angels" },
+      { id: 141, title: "Clash of the Titans", search: "Clash of the Titans" },
+      { id: 142, title: "Clash of the Titans (OG)", search: "Clash of the Titans" },
+      { id: 143, title: "Clear and Present Danger", search: "Clear and Present Danger" },
+      { id: 144, title: "Clerks", search: "Clerks" },
+      { id: 145, title: "Click", search: "Click" },
+      { id: 146, title: "Cloak & Dagger", search: "Cloak & Dagger" },
+      { id: 147, title: "A Clockwork Orange", search: "A Clockwork Orange" },
+      { id: 148, title: "Clone Wars, The: Star Wars", search: "Clone Wars, The: Star Wars" },
+      { id: 149, title: "Close Encounters of the Third Kind", search: "Close Encounters of the Third Kind" },
+      { id: 150, title: "Cloverfield", search: "Cloverfield" },
+      { id: 151, title: "Clueless", search: "Clueless" },
+      { id: 152, title: "Collateral", search: "Collateral" },
+      { id: 153, title: "Coma", search: "Coma" },
+      { id: 154, title: "Commitments, The", search: "The Commitments" },
+      { id: 155, title: "Con Air", search: "Con Air" },
+      { id: 156, title: "Contact", search: "Contact" },
+      { id: 157, title: "Cop Land", search: "Cop Land" },
+      { id: 158, title: "Creed", search: "Creed" },
+      { id: 159, title: "Crouching Tiger, Hidden Dragon", search: "Crouching Tiger, Hidden Dragon" },
+      { id: 160, title: "Cutting Edge, The", search: "The Cutting Edge" },
+      { id: 161, title: "Dark Knight Rises, The", search: "The Dark Knight Rises" },
+      { id: 162, title: "Dark Knight, The", search: "The Dark Knight" },
+      { id: 163, title: "Dave", search: "Dave" },
+      { id: 164, title: "DaVinci Code, The", search: "The DaVinci Code" },
+      { id: 165, title: "Day After Tomorrow, The", search: "The Day After Tomorrow" },
+      { id: 166, title: "Dazed and Confused", search: "Dazed and Confused" },
+      { id: 167, title: "Deadpoll 2", search: "Deadpoll 2" },
+      { id: 168, title: "Deadpool", search: "Deadpool" },
+      { id: 169, title: "Death Proof", search: "Death Proof" },
+      { id: 170, title: "Death Wish", search: "Death Wish" },
+      { id: 171, title: "Deep Impact", search: "Deep Impact" },
+      { id: 172, title: "Den of Thieves", search: "Den of Thieves" },
+      { id: 173, title: "Departed, The", search: "The Departed" },
+      { id: 174, title: "Despicable Me", search: "Despicable Me" },
+      { id: 175, title: "Devil Wears Prada", search: "Devil Wears Prada" },
+      { id: 176, title: "Diamonds Are Forever", search: "Diamonds Are Forever" },
+      { id: 177, title: "Die Another Day", search: "Die Another Day" },
+      { id: 178, title: "Die Hard", search: "Die Hard" },
+      { id: 179, title: "Dinner with Friends", search: "Dinner with Friends" },
+      { id: 180, title: "Dirty Dancing", search: "Dirty Dancing" },
+      { id: 181, title: "Dirty Rotten Scoundrels", search: "Dirty Rotten Scoundrels" },
+      { id: 182, title: "Disclosure Day", search: "Disclosure Day" },
+      { id: 183, title: "District 9", search: "District 9" },
+      { id: 184, title: "Django Unchained", search: "Django Unchained" },
+      { id: 185, title: "Do the Right Thing", search: "Do the Right Thing" },
+      { id: 186, title: "DodgeBall: A TRUE Underdog Story", search: "DodgeBall: A TRUE Underdog Story" },
+      { id: 187, title: "Donnie Brasco", search: "Donnie Brasco" },
+      { id: 188, title: "Donnie Darko", search: "Donnie Darko" },
+      { id: 189, title: "Dr. No", search: "Dr. No" },
+      { id: 190, title: "Dr. Stangelove", search: "Dr. Stangelove" },
+      { id: 191, title: "Draft Day", search: "Draft Day" },
+      { id: 192, title: "Dragonheart", search: "Dragonheart" },
+      { id: 193, title: "Driving Ms Daisy", search: "Driving Ms Daisy" },
+      { id: 194, title: "Dune (1984)", search: "Dune" },
+      { id: 195, title: "Dunkirk", search: "Dunkirk" },
+      { id: 196, title: "E.T.", search: "E.T." },
+      { id: 197, title: "Elf", search: "Elf" },
+      { id: 198, title: "Elvis", search: "Elvis" },
+      { id: 199, title: "Enchanted", search: "Enchanted" },
+      { id: 200, title: "Ender's Game", search: "Ender's Game" },
+      { id: 201, title: "Enemy Mine", search: "Enemy Mine" },
+      { id: 202, title: "Erin Brockovich", search: "Erin Brockovich" },
+      { id: 203, title: "Escape from New York", search: "Escape from New York" },
+      { id: 204, title: "Eternal Sunshine of the Spotless Mind", search: "Eternal Sunshine of the Spotless Mind" },
+      { id: 205, title: "Everest", search: "Everest" },
+      { id: 206, title: "Everest: A MacGillivary Freeman Film", search: "Everest: A MacGillivary Freeman Film" },
+      { id: 207, title: "Everything Everywhere All At Once", search: "Everything Everywhere All At Once" },
+      { id: 208, title: "Expendables", search: "Expendables" },
+      { id: 209, title: "Eyes Wide Shut", search: "Eyes Wide Shut" },
+      { id: 210, title: "Fabelmans", search: "Fabelmans" },
+      { id: 211, title: "Face/Off", search: "Face/Off" },
+      { id: 212, title: "Failure to Launch", search: "Failure to Launch" },
+      { id: 213, title: "Falling Down", search: "Falling Down" },
+      { id: 214, title: "Family Man, The", search: "The Family Man" },
+      { id: 215, title: "Family Plot", search: "Family Plot" },
+      { id: 216, title: "Fantastic Four: First Steps", search: "Fantastic Four: First Steps" },
+      { id: 217, title: "Fantastic Mr. Fox", search: "Fantastic Mr. Fox" },
+      { id: 218, title: "Far Out Man", search: "Far Out Man" },
+      { id: 219, title: "Fargo", search: "Fargo" },
+      { id: 220, title: "Fast and the Furious, The", search: "The Fast and the Furious" },
+      { id: 221, title: "Fast Five", search: "Fast Five" },
+      { id: 222, title: "Fear and Loathing in Las Vegas", search: "Fear and Loathing in Las Vegas" },
+      { id: 223, title: "Fever Pitch", search: "Fever Pitch" },
+      { id: 224, title: "A Few Good Men", search: "A Few Good Men" },
+      { id: 225, title: "Field of Dreams", search: "Field of Dreams" },
+      { id: 226, title: "The Fifth Element", search: "The Fifth Element" },
+      { id: 227, title: "Fight Club", search: "Fight Club" },
+      { id: 228, title: "Finding Nemo", search: "Finding Nemo" },
+      { id: 229, title: "Firefox", search: "Firefox" },
+      { id: 230, title: "First Blood", search: "First Blood" },
+      { id: 231, title: "Flash Gordon", search: "Flash Gordon" },
+      { id: 232, title: "Flashdance", search: "Flashdance" },
+      { id: 233, title: "Fletch", search: "Fletch" },
+      { id: 234, title: "Fly, The", search: "The Fly" },
+      { id: 235, title: "Footloose", search: "Footloose" },
+      { id: 236, title: "For Love of the Game", search: "For Love of the Game" },
+      { id: 237, title: "For Your Eyes Only", search: "For Your Eyes Only" },
+      { id: 238, title: "Forgetting Sarah Marshall", search: "Forgetting Sarah Marshall" },
+      { id: 239, title: "Forrest Gump", search: "Forrest Gump" },
+      { id: 240, title: "Founder, The", search: "The Founder" },
+      { id: 241, title: "Frantic", search: "Frantic" },
+      { id: 242, title: "Frenzy", search: "Frenzy" },
+      { id: 243, title: "Frequency", search: "Frequency" },
+      { id: 244, title: "Friday", search: "Friday" },
+      { id: 245, title: "Fried Green Tomatoes", search: "Fried Green Tomatoes" },
+      { id: 246, title: "From Russia With Love", search: "From Russia With Love" },
+      { id: 247, title: "From The Earth To The Moon", search: "From The Earth To The Moon" },
+      { id: 248, title: "Frozen", search: "Frozen" },
+      { id: 249, title: "Fubar", search: "Fubar" },
+      { id: 250, title: "The Fugitive", search: "The Fugitive" },
+      { id: 251, title: "Full Metal Jacket", search: "Full Metal Jacket" },
+      { id: 252, title: "G.I. Joe: The Movie", search: "G.I. Joe: The Movie" },
+      { id: 253, title: "G.I. Joe: The Rise of Cobra", search: "G.I. Joe: The Rise of Cobra" },
+      { id: 254, title: "Game, The", search: "The Game" },
+      { id: 255, title: "Gangs of New York", search: "Gangs of New York" },
+      { id: 256, title: "Garden State", search: "Garden State" },
+      { id: 257, title: "Gattaca", search: "Gattaca" },
+      { id: 258, title: "Gentlemen Prefer Blondes", search: "Gentlemen Prefer Blondes" },
+      { id: 259, title: "Get Shorty", search: "Get Shorty" },
+      { id: 260, title: "Gettysburg", search: "Gettysburg" },
+      { id: 261, title: "Ghost", search: "Ghost" },
+      { id: 262, title: "Ghostbusters", search: "Ghostbusters" },
+      { id: 263, title: "Ghostbusters: Answer The Call", search: "Ghostbusters: Answer The Call" },
+      { id: 264, title: "Girl with the Dragon Tattoo, The", search: "The Girl with the Dragon Tattoo" },
+      { id: 265, title: "Gladiator", search: "Gladiator" },
+      { id: 266, title: "Gleaming the Cube", search: "Gleaming the Cube" },
+      { id: 267, title: "The Godfather", search: "The Godfather" },
+      { id: 268, title: "The Godfather : Coda", search: "The Godfather : Coda" },
+      { id: 269, title: "The Godfather II", search: "The Godfather II" },
+      { id: 270, title: "The Godfather III", search: "The Godfather III" },
+      { id: 271, title: "Godzilla", search: "Godzilla" },
+      { id: 272, title: "Godzilla Minus One", search: "Godzilla Minus One" },
+      { id: 273, title: "Godzilla Minus One Minus Color", search: "Godzilla Minus One Minus Color" },
+      { id: 274, title: "Goldeneye", search: "Goldeneye" },
+      { id: 275, title: "Goldfinger", search: "Goldfinger" },
+      { id: 276, title: "Gone Girl", search: "Gone Girl" },
+      { id: 277, title: "Gone In 60 Seconds", search: "Gone In 60 Seconds" },
+      { id: 278, title: "Gone With the Wind", search: "Gone With the Wind" },
+      { id: 279, title: "The Good Bad, and the Ugly", search: "The Good Bad, and the Ugly" },
+      { id: 280, title: "Goodfellas", search: "Goodfellas" },
+      { id: 281, title: "Goonies, The", search: "The Goonies" },
+      { id: 282, title: "Gravity", search: "Gravity" },
+      { id: 283, title: "Grease: Rockin' Rydell Edition", search: "Grease" },
+      { id: 284, title: "Great Gatsby, The", search: "The Great Gatsby" },
+      { id: 285, title: "Great Muppet Caper, The", search: "The Great Muppet Caper" },
+      { id: 286, title: "The Great Outdoors", search: "The Great Outdoors" },
+      { id: 287, title: "Green Mile, The", search: "The Green Mile" },
+      { id: 288, title: "Groundhog Day", search: "Groundhog Day" },
+      { id: 289, title: "Grumpier Old Men", search: "Grumpier Old Men" },
+      { id: 290, title: "Grumpy Old Men", search: "Grumpy Old Men" },
+      { id: 291, title: "Guardians of the Galaxy", search: "Guardians of the Galaxy" },
+      { id: 292, title: "The Hangover", search: "The Hangover" },
+      { id: 293, title: "Hanna", search: "Hanna" },
+      { id: 294, title: "Happy Gilmore", search: "Happy Gilmore" },
+      { id: 295, title: "Hard Boiled", search: "Hard Boiled" },
+      { id: 296, title: "Hard Eight", search: "Hard Eight" },
+      { id: 297, title: "Hard to Kill", search: "Hard to Kill" },
+      { id: 298, title: "Harry Potter: And The Chamber Of Secrets", search: "Harry Potter: And The Chamber Of Secrets" },
+      { id: 299, title: "Harry Potter: And the Deathly Hallows Part 1", search: "Harry Potter: And the Deathly Hallows Part 1" },
+      { id: 300, title: "Harry Potter: And the Deathly Hallows Part 2", search: "Harry Potter: And the Deathly Hallows Part 2" },
+      { id: 301, title: "Harry Potter: And The Goblet Of Fire", search: "Harry Potter: And The Goblet Of Fire" },
+      { id: 302, title: "Harry Potter: And The Half-Blood Prince", search: "Harry Potter: And The Half-Blood Prince" },
+      { id: 303, title: "Harry Potter: And The Order Of The Phoenix", search: "Harry Potter: And The Order Of The Phoenix" },
+      { id: 304, title: "Harry Potter: And The Prisoner Of Azkaban", search: "Harry Potter: And The Prisoner Of Azkaban" },
+      { id: 305, title: "Harry Potter: And The Sorceror's Stone", search: "Harry Potter: And The Sorceror's Stone" },
+      { id: 306, title: "Hateful Eight", search: "Hateful Eight" },
+      { id: 307, title: "Heat", search: "Heat" },
+      { id: 308, title: "Heathers", search: "Heathers" },
+      { id: 309, title: "Her", search: "Her" },
+      { id: 310, title: "Hercules", search: "Hercules" },
+      { id: 311, title: "Hero", search: "Hero" },
+      { id: 312, title: "High and Low", search: "High and Low" },
+      { id: 313, title: "High Fidelity", search: "High Fidelity" },
+      { id: 314, title: "Higher Learning", search: "Higher Learning" },
+      { id: 315, title: "A History of Violence", search: "A History of Violence" },
+      { id: 316, title: "Hitch", search: "Hitch" },
+      { id: 317, title: "Hobbit: An Unexpected Journey", search: "Hobbit: An Unexpected Journey" },
+      { id: 318, title: "Hobbit: Battle of the Five Armies", search: "Hobbit: Battle of the Five Armies" },
+      { id: 319, title: "Hobbit: The Desolation Of Smaug", search: "Hobbit: The Desolation Of Smaug" },
+      { id: 320, title: "Holiday, The", search: "The Holiday" },
+      { id: 321, title: "Home Alone", search: "Home Alone" },
+      { id: 322, title: "Hook", search: "Hook" },
+      { id: 323, title: "Hoosiers", search: "Hoosiers" },
+      { id: 324, title: "Hot Tub Time Machine", search: "Hot Tub Time Machine" },
+      { id: 325, title: "How to Lose a Guy in 10 Days", search: "How to Lose a Guy in 10 Days" },
+      { id: 326, title: "The Hunger Games: Complete 4-Film Collection", search: "The Hunger Games" },
+      { id: 327, title: "The Hunt for Red October", search: "The Hunt for Red October" },
+      { id: 328, title: "The Hurt Locker", search: "The Hurt Locker" },
+      { id: 329, title: "I Am Legend", search: "I Am Legend" },
+      { id: 330, title: "i, Robot", search: "i, Robot" },
+      { id: 331, title: "Ice Age: The Meltdown", search: "Ice Age: The Meltdown" },
+      { id: 332, title: "In Her Shoes", search: "In Her Shoes" },
+      { id: 333, title: "Inception", search: "Inception" },
+      { id: 334, title: "Incredibles, The", search: "The Incredibles" },
+      { id: 335, title: "Independence Day", search: "Independence Day" },
+      { id: 336, title: "Independence Day Resurgence", search: "Independence Day Resurgence" },
+      { id: 337, title: "Indiana Jones and the Dial of Destiny", search: "Indiana Jones and the Dial of Destiny" },
+      { id: 338, title: "Indiana Jones and the Kingdom of the Crystal Skull", search: "Indiana Jones and the Kingdom of the Crystal Skull" },
+      { id: 339, title: "Indiana Jones and the Last Crusade", search: "Indiana Jones and the Last Crusade" },
+      { id: 340, title: "Indiana Jones Collection: Raiders of the Lost Ark", search: "Indiana Jones Collection: Raiders of the Lost Ark" },
+      { id: 341, title: "Indiana Jones: and the Temple of Doom", search: "Indiana Jones: and the Temple of Doom" },
+      { id: 342, title: "Inglourious Basterds", search: "Inglourious Basterds" },
+      { id: 343, title: "Innerspace", search: "Innerspace" },
+      { id: 344, title: "Inside Out", search: "Inside Out" },
+      { id: 345, title: "Insomnia", search: "Insomnia" },
+      { id: 346, title: "Interstellar", search: "Interstellar" },
+      { id: 347, title: "Invincible", search: "Invincible" },
+      { id: 348, title: "Iron Eagle", search: "Iron Eagle" },
+      { id: 349, title: "Iron Man", search: "Iron Man" },
+      { id: 350, title: "Iron Man 2", search: "Iron Man 2" },
+      { id: 351, title: "Iron Man 3", search: "Iron Man 3" },
+      { id: 352, title: "Island, The", search: "The Island" },
+      { id: 353, title: "Jackie Brown", search: "Jackie Brown" },
+      { id: 354, title: "James: Seven... The Live Concert", search: "James: Seven... The Live Concert" },
+      { id: 355, title: "Jaws: Collectors Edition", search: "Jaws" },
+      { id: 356, title: "Jerry Maguire", search: "Jerry Maguire" },
+      { id: 357, title: "The Jewel of the Nile", search: "The Jewel of the Nile" },
+      { id: 358, title: "Judgment Night", search: "Judgment Night" },
+      { id: 359, title: "Julie & Julia", search: "Julie & Julia" },
+      { id: 360, title: "Jumanji", search: "Jumanji" },
+      { id: 361, title: "Jurassic Park: The Collection", search: "Jurassic Park: The Collection" },
+      { id: 362, title: "Justice League", search: "Justice League" },
+      { id: 363, title: "Karate Kid II", search: "Karate Kid II" },
+      { id: 364, title: "Karate Kid Part III", search: "Karate Kid Part III" },
+      { id: 365, title: "Karate Kid, The: Special Edition", search: "The Karate Kid" },
+      { id: 366, title: "Kick-Ass", search: "Kick-Ass" },
+      { id: 367, title: "Kids", search: "Kids" },
+      { id: 368, title: "Kill Bill", search: "Kill Bill" },
+      { id: 369, title: "Kill Bill: The Whole Bloody Affair", search: "Kill Bill: The Whole Bloody Affair" },
+      { id: 370, title: "Kill Bill: Volume 2", search: "Kill Bill: Volume 2" },
+      { id: 371, title: "The Killer", search: "The Killer" },
+      { id: 372, title: "Killers of the Flower Moon", search: "Killers of the Flower Moon" },
+      { id: 373, title: "King Kong: 2 Disc Special Edition", search: "King Kong" },
+      { id: 374, title: "King of New York", search: "King of New York" },
+      { id: 375, title: "King's Speech, The", search: "The King's Speech" },
+      { id: 376, title: "Kingpin", search: "Kingpin" },
+      { id: 377, title: "Kiss Kiss Bang Bang", search: "Kiss Kiss Bang Bang" },
+      { id: 378, title: "Knives Out", search: "Knives Out" },
+      { id: 379, title: "Knocked Up: 2 Disc Collector's Edition", search: "Knocked Up" },
+      { id: 380, title: "Kung Fu Hustle", search: "Kung Fu Hustle" },
+      { id: 381, title: "LA Confidential", search: "LA Confidential" },
+      { id: 382, title: "La La Land", search: "La La Land" },
+      { id: 383, title: "LA Story", search: "LA Story" },
+      { id: 384, title: "Lady in the Water", search: "Lady in the Water" },
+      { id: 385, title: "The Last Five Years", search: "The Last Five Years" },
+      { id: 386, title: "Last of the Mohicans", search: "Last of the Mohicans" },
+      { id: 387, title: "Last Samurai, The", search: "The Last Samurai" },
+      { id: 388, title: "Last Starfighter, The", search: "The Last Starfighter" },
+      { id: 389, title: "Legally Blonde", search: "Legally Blonde" },
+      { id: 390, title: "Legally Blonde 2: Red, White and Blonde", search: "Legally Blonde 2: Red, White and Blonde" },
+      { id: 391, title: "Legend Of Drunken Master, The", search: "The Legend Of Drunken Master" },
+      { id: 392, title: "Legends of the Fall", search: "Legends of the Fall" },
+      { id: 393, title: "Lego Brickumentary", search: "Lego Brickumentary" },
+      { id: 394, title: "Lego Movie, The", search: "The Lego Movie" },
+      { id: 395, title: "Lethal Weapon", search: "Lethal Weapon" },
+      { id: 396, title: "License to Kill", search: "License to Kill" },
+      { id: 397, title: "Lincoln", search: "Lincoln" },
+      { id: 398, title: "The Lincoln Lawyer", search: "The Lincoln Lawyer" },
+      { id: 399, title: "Little Mermaid, The", search: "The Little Mermaid" },
+      { id: 400, title: "Little Mermaid, The : Ariel's Beginning", search: "Little Mermaid, The : Ariel's Beginning" },
+      { id: 401, title: "Little Miss Sunshine", search: "Little Miss Sunshine" },
+      { id: 402, title: "Live and Let Die", search: "Live and Let Die" },
+      { id: 403, title: "Living Daylights, The", search: "The Living Daylights" },
+      { id: 404, title: "Lock, Stock: and Two Smoking Barrels", search: "Lock, Stock: and Two Smoking Barrels" },
+      { id: 405, title: "Logan's Run", search: "Logan's Run" },
+      { id: 406, title: "Lord Of The Rings, The : The Fellowship Of The Ring", search: "Lord Of The Rings, The : The Fellowship Of The Ring" },
+      { id: 407, title: "Lord Of The Rings, The : The Motion Picture Trilogy", search: "Lord Of The Rings, The : The Motion Picture Trilogy" },
+      { id: 408, title: "Lord Of The Rings, The : The Return Of The King", search: "Lord Of The Rings, The : The Return Of The King" },
+      { id: 409, title: "Lord Of The Rings, The : The Two Towers", search: "Lord Of The Rings, The : The Two Towers" },
+      { id: 410, title: "Lords of Dogtown", search: "Lords of Dogtown" },
+      { id: 411, title: "Lost Highway", search: "Lost Highway" },
+      { id: 412, title: "Lost In Translation", search: "Lost In Translation" },
+      { id: 413, title: "Love Actualy", search: "Love Actualy" },
+      { id: 414, title: "Léon: The Professional", search: "Léon: The Professional" },
+      { id: 415, title: "M:i-2", search: "M:i-2" },
+      { id: 416, title: "Mad Max", search: "Mad Max" },
+      { id: 417, title: "Mad Max Beyond Thunderdome", search: "Mad Max Beyond Thunderdome" },
+      { id: 418, title: "Mad Max Fury Road", search: "Mad Max Fury Road" },
+      { id: 419, title: "Mad Max Fury Road Black and Chrome", search: "Mad Max Fury Road Black and Chrome" },
+      { id: 420, title: "Mad Max The Road Warrior", search: "Mad Max The Road Warrior" },
+      { id: 421, title: "Made", search: "Made" },
+      { id: 422, title: "Magnificent Seven, The", search: "The Magnificent Seven" },
+      { id: 423, title: "Major League", search: "Major League" },
+      { id: 424, title: "Mamma Mia!", search: "Mamma Mia!" },
+      { id: 425, title: "Man from U.N.K.L.E.", search: "Man from U.N.K.L.E." },
+      { id: 426, title: "Man Of Steel", search: "Man Of Steel" },
+      { id: 427, title: "Man on Fire", search: "Man on Fire" },
+      { id: 428, title: "Man Who Knew Too Much, The", search: "The Man Who Knew Too Much" },
+      { id: 429, title: "Man Who Wasn't There, The", search: "The Man Who Wasn't There" },
+      { id: 430, title: "Man with the Golden Gun, The", search: "The Man with the Golden Gun" },
+      { id: 431, title: "Manhunter", search: "Manhunter" },
+      { id: 432, title: "Mank", search: "Mank" },
+      { id: 433, title: "Margin Call", search: "Margin Call" },
+      { id: 434, title: "Marnie", search: "Marnie" },
+      { id: 435, title: "Married to the Mob", search: "Married to the Mob" },
+      { id: 436, title: "Martian, The", search: "The Martian" },
+      { id: 437, title: "Matrix", search: "Matrix" },
+      { id: 438, title: "Matrix Reloaded", search: "Matrix Reloaded" },
+      { id: 439, title: "Matrix Revolutions", search: "Matrix Revolutions" },
+      { id: 440, title: "Mean Girls", search: "Mean Girls" },
+      { id: 441, title: "Mean Streets", search: "Mean Streets" },
+      { id: 442, title: "Meet the Fockers", search: "Meet the Fockers" },
+      { id: 443, title: "Meet The Parents", search: "Meet The Parents" },
+      { id: 444, title: "Memento", search: "Memento" },
+      { id: 445, title: "The Messenger: The Story Of Joan Of Arc", search: "The Messenger: The Story Of Joan Of Arc" },
+      { id: 446, title: "Miami Vice", search: "Miami Vice" },
+      { id: 447, title: "Minority Report", search: "Minority Report" },
+      { id: 448, title: "Miracle", search: "Miracle" },
+      { id: 449, title: "Miss Congeniality", search: "Miss Congeniality" },
+      { id: 450, title: "Miss Sloane", search: "Miss Sloane" },
+      { id: 451, title: "Mission Impossibel Final Reckoning", search: "Mission Impossibel Final Reckoning" },
+      { id: 452, title: "Mission Impossible", search: "Mission Impossible" },
+      { id: 453, title: "Mission Impossible 3", search: "Mission Impossible 3" },
+      { id: 454, title: "Mission Impossible 4: Ghost Protocol", search: "Mission Impossible 4: Ghost Protocol" },
+      { id: 455, title: "Mission Impossible 5: Rogue Nation", search: "Mission Impossible 5: Rogue Nation" },
+      { id: 456, title: "Mission Impossible Dead Reckoning", search: "Mission Impossible Dead Reckoning" },
+      { id: 457, title: "Mission To Mars", search: "Mission To Mars" },
+      { id: 458, title: "The Money Pit", search: "The Money Pit" },
+      { id: 459, title: "Moneyball", search: "Moneyball" },
+      { id: 460, title: "Monsters, INC.", search: "Monsters, INC." },
+      { id: 461, title: "Moonraker", search: "Moonraker" },
+      { id: 462, title: "Moonstruck", search: "Moonstruck" },
+      { id: 463, title: "Mortal Kombat", search: "Mortal Kombat" },
+      { id: 464, title: "Moulin Rouge", search: "Moulin Rouge" },
+      { id: 465, title: "Mr and Mrs Smith", search: "Mr and Mrs Smith" },
+      { id: 466, title: "Mr Mom", search: "Mr Mom" },
+      { id: 467, title: "Mrs Doubtfire", search: "Mrs Doubtfire" },
+      { id: 468, title: "Mulan", search: "Mulan" },
+      { id: 469, title: "Mulholland Dr.", search: "Mulholland Dr." },
+      { id: 470, title: "Mummy Returns, The : Collector's Edition", search: "The Mummy Returns" },
+      { id: 471, title: "Mummy, The: Deluxe Edition", search: "The Mummy" },
+      { id: 472, title: "Munich", search: "Munich" },
+      { id: 473, title: "Muppet Movie, The", search: "The Muppet Movie" },
+      { id: 474, title: "Muppet Show 2, The", search: "The Muppet Show 2" },
+      { id: 475, title: "Muppets Christmas, A", search: "A Muppets Christmas" },
+      { id: 476, title: "Muppets From Space", search: "Muppets From Space" },
+      { id: 477, title: "Muppets Take Manhattan, The", search: "The Muppets Take Manhattan" },
+      { id: 478, title: "Muppets, The", search: "The Muppets" },
+      { id: 479, title: "Murder in the First", search: "Murder in the First" },
+      { id: 480, title: "Musical Celebration, A : Sesame Street's 25th Birthday", search: "Musical Celebration, A : Sesame Street's 25th Birthday" },
+      { id: 481, title: "My Best Friend's Wedding", search: "My Best Friend's Wedding" },
+      { id: 482, title: "My Big Fat Greek Wedding", search: "My Big Fat Greek Wedding" },
+      { id: 483, title: "My Cousin Vinny", search: "My Cousin Vinny" },
+      { id: 484, title: "Mystery, Alaska", search: "Mystery, Alaska" },
+      { id: 485, title: "Mystic River", search: "Mystic River" },
+      { id: 486, title: "The Naked Gun", search: "The Naked Gun" },
+      { id: 487, title: "Narnia, The Chronicles of : The Lion The Witch and The Wardrobe", search: "Narnia, The Chronicles of : The Lion The Witch and The Wardrobe" },
+      { id: 488, title: "National Lampoon's Christas Vacation", search: "National Lampoon's Christas Vacation" },
+      { id: 489, title: "National Lampoon's European Vacation", search: "National Lampoon's European Vacation" },
+      { id: 490, title: "National Lampoon's Vacation", search: "National Lampoon's Vacation" },
+      { id: 491, title: "National Treasure", search: "National Treasure" },
+      { id: 492, title: "Natural Born Killers: Director's Cut", search: "Natural Born Killers" },
+      { id: 493, title: "Natural, The", search: "The Natural" },
+      { id: 494, title: "NEAT", search: "NEAT" },
+      { id: 495, title: "Nebraska", search: "Nebraska" },
+      { id: 496, title: "Necessary Roughness", search: "Necessary Roughness" },
+      { id: 497, title: "Need for Speed", search: "Need for Speed" },
+      { id: 498, title: "The Neverending Story", search: "The Neverending Story" },
+      { id: 499, title: "The Next Karate Kid", search: "The Next Karate Kid" },
+      { id: 500, title: "A Nightmare on Elm Street", search: "A Nightmare on Elm Street" },
+      { id: 501, title: "A Nightmare on Elm Street 2: Freddy's Revenge", search: "A Nightmare on Elm Street 2: Freddy's Revenge" },
+      { id: 502, title: "A Nightmare on Elm Street 3: Dream Warriors", search: "A Nightmare on Elm Street 3: Dream Warriors" },
+      { id: 503, title: "A Nightmare on Elm Street 4: The Dream Master", search: "A Nightmare on Elm Street 4: The Dream Master" },
+      { id: 504, title: "A Nightmare on Elm Street 5: The Dream Child", search: "A Nightmare on Elm Street 5: The Dream Child" },
+      { id: 505, title: "A Nightmare on Elm Street 6: Freddy's Dead The Final Nightmare", search: "A Nightmare on Elm Street 6: Freddy's Dead The Final Nightmare" },
+      { id: 506, title: "A Nightmare on Elm Street 7: Wes Craven's New Nightmare", search: "A Nightmare on Elm Street 7: Wes Craven's New Nightmare" },
+      { id: 507, title: "A Nightmare on Elm Street 8: Freddy vs Jason", search: "A Nightmare on Elm Street 8: Freddy vs Jason" },
+      { id: 508, title: "No Country for Old Men", search: "No Country for Old Men" },
+      { id: 509, title: "No Other Choice", search: "No Other Choice" },
+      { id: 510, title: "North by Northwest", search: "North by Northwest" },
+      { id: 511, title: "Notebook, The", search: "The Notebook" },
+      { id: 512, title: "O Brother, Where Art Thou?", search: "O Brother, Where Art Thou?" },
+      { id: 513, title: "Oceans 12", search: "Oceans 12" },
+      { id: 514, title: "Oceans 13", search: "Oceans 13" },
+      { id: 515, title: "Oceans Eleven", search: "Oceans Eleven" },
+      { id: 516, title: "Octopussy", search: "Octopussy" },
+      { id: 517, title: "On Her Majesty's Secret Service", search: "On Her Majesty's Secret Service" },
+      { id: 518, title: "Once A Thief", search: "Once A Thief" },
+      { id: 519, title: "Once Upon a Time in America", search: "Once Upon a Time in America" },
+      { id: 520, title: "Once Upon a Time in Hollywood", search: "Once Upon a Time in Hollywood" },
+      { id: 521, title: "One Battle After Another", search: "One Battle After Another" },
+      { id: 522, title: "One Crazy Summer", search: "One Crazy Summer" },
+      { id: 523, title: "One Flew Over the Cuckoos Nest", search: "One Flew Over the Cuckoos Nest" },
+      { id: 524, title: "Oppenheimer", search: "Oppenheimer" },
+      { id: 525, title: "Others, The", search: "The Others" },
+      { id: 526, title: "Out Of Sight", search: "Out Of Sight" },
+      { id: 527, title: "The Outsiders", search: "The Outsiders" },
+      { id: 528, title: "Over the Top", search: "Over the Top" },
+      { id: 529, title: "Overboard", search: "Overboard" },
+      { id: 530, title: "Pacific Rim", search: "Pacific Rim" },
+      { id: 531, title: "Pacific, The", search: "The Pacific" },
+      { id: 532, title: "Panic Room", search: "Panic Room" },
+      { id: 533, title: "Parasite Criterion Collection", search: "Parasite" },
+      { id: 534, title: "Patriot Games", search: "Patriot Games" },
+      { id: 535, title: "Patriot, The", search: "The Patriot" },
+      { id: 536, title: "Patriots Day", search: "Patriots Day" },
+      { id: 537, title: "Perfect Days", search: "Perfect Days" },
+      { id: 538, title: "Perfect Storm", search: "Perfect Storm" },
+      { id: 539, title: "Pet Sematary (1989)", search: "Pet Sematary (1989)" },
+      { id: 540, title: "Pet Sematary (2019)", search: "Pet Sematary (2019)" },
+      { id: 541, title: "Philadelphia", search: "Philadelphia" },
+      { id: 542, title: "Pineapple Express", search: "Pineapple Express" },
+      { id: 543, title: "Pink Floyd's The Wall", search: "Pink Floyd's The Wall" },
+      { id: 544, title: "Pirates of the Caribbean: Dead Man's Chest", search: "Pirates of the Caribbean: Dead Man's Chest" },
+      { id: 545, title: "Pirates of the Caribbean: The Curse Of The Black Pearl", search: "Pirates of the Caribbean: The Curse Of The Black Pearl" },
+      { id: 546, title: "Pitch Perfect", search: "Pitch Perfect" },
+      { id: 547, title: "Pitch Perfect 2", search: "Pitch Perfect 2" },
+      { id: 548, title: "Planes Trains and Automobiles", search: "Planes Trains and Automobiles" },
+      { id: 549, title: "Planet Terror", search: "Planet Terror" },
+      { id: 550, title: "Pocahontas", search: "Pocahontas" },
+      { id: 551, title: "Pocahontas II", search: "Pocahontas II" },
+      { id: 552, title: "Point Break", search: "Point Break" },
+      { id: 553, title: "The Post", search: "The Post" },
+      { id: 554, title: "Predator", search: "Predator" },
+      { id: 555, title: "Prestige, The", search: "The Prestige" },
+      { id: 556, title: "Presumed Innocent", search: "Presumed Innocent" },
+      { id: 557, title: "Pretty In Pink", search: "Pretty In Pink" },
+      { id: 558, title: "Pretty Woman", search: "Pretty Woman" },
+      { id: 559, title: "Princess and the Frog, The", search: "The Princess and the Frog" },
+      { id: 560, title: "Program, The", search: "The Program" },
+      { id: 561, title: "Project Hail Mary", search: "Project Hail Mary" },
+      { id: 562, title: "Prometheus", search: "Prometheus" },
+      { id: 563, title: "Psycho", search: "Psycho" },
+      { id: 564, title: "Public Enemies", search: "Public Enemies" },
+      { id: 565, title: "Pulp Fiction", search: "Pulp Fiction" },
+      { id: 566, title: "Pump Up the Volume", search: "Pump Up the Volume" },
+      { id: 567, title: "Punch Drunk Love", search: "Punch Drunk Love" },
+      { id: 568, title: "The Pursuit of Happyness", search: "The Pursuit of Happyness" },
+      { id: 569, title: "Quantum of Solace", search: "Quantum of Solace" },
+      { id: 570, title: "Queen, The", search: "The Queen" },
+      { id: 571, title: "Rad", search: "Rad" },
+      { id: 572, title: "Raid Redemption, The", search: "The Raid Redemption" },
+      { id: 573, title: "Rampage", search: "Rampage" },
+      { id: 574, title: "Ran Criterion Collection", search: "Ran" },
+      { id: 575, title: "Ratatouille", search: "Ratatouille" },
+      { id: 576, title: "Rear Window", search: "Rear Window" },
+      { id: 577, title: "Reefer Madness", search: "Reefer Madness" },
+      { id: 578, title: "Remember The Titans", search: "Remember The Titans" },
+      { id: 579, title: "Requiem : For A Dream", search: "Requiem : For A Dream" },
+      { id: 580, title: "Reservoir Dogs", search: "Reservoir Dogs" },
+      { id: 581, title: "Revenant, The", search: "The Revenant" },
+      { id: 582, title: "Right Stuff, The", search: "The Right Stuff" },
+      { id: 583, title: "Road House", search: "Road House" },
+      { id: 584, title: "Road To Perdition", search: "Road To Perdition" },
+      { id: 585, title: "Robocop", search: "Robocop" },
+      { id: 586, title: "Robocop (original)", search: "Robocop (original)" },
+      { id: 587, title: "The Rock", search: "The Rock" },
+      { id: 588, title: "Rocky", search: "Rocky" },
+      { id: 589, title: "Rocky IV", search: "Rocky IV" },
+      { id: 590, title: "Rogue One : A Star Wars Story", search: "Rogue One : A Star Wars Story" },
+      { id: 591, title: "Ronin", search: "Ronin" },
+      { id: 592, title: "Rope", search: "Rope" },
+      { id: 593, title: "Rounders", search: "Rounders" },
+      { id: 594, title: "Rudy", search: "Rudy" },
+      { id: 595, title: "Rumour Has It", search: "Rumour Has It" },
+      { id: 596, title: "Run Lola Run", search: "Run Lola Run" },
+      { id: 597, title: "Saboteur", search: "Saboteur" },
+      { id: 598, title: "San Andreas", search: "San Andreas" },
+      { id: 599, title: "Sanjuro Criterion Collection", search: "Sanjuro" },
+      { id: 600, title: "Savages", search: "Savages" },
+      { id: 601, title: "Saving Private Ryan", search: "Saving Private Ryan" },
+      { id: 602, title: "Say Anything", search: "Say Anything" },
+      { id: 603, title: "Scarface", search: "Scarface" },
+      { id: 604, title: "Schindler's List", search: "Schindler's List" },
+      { id: 605, title: "School Of Rock", search: "School Of Rock" },
+      { id: 606, title: "Scott Pilgrim Vs. The World", search: "Scott Pilgrim Vs. The World" },
+      { id: 607, title: "Se7en", search: "Se7en" },
+      { id: 608, title: "Secret Life of Walter Mitty, The", search: "The Secret Life of Walter Mitty" },
+      { id: 609, title: "Seven Brides for Seven Brothers", search: "Seven Brides for Seven Brothers" },
+      { id: 610, title: "Seven Samurai Criterion Collection", search: "Seven Samurai" },
+      { id: 611, title: "Shadow of a Doubt", search: "Shadow of a Doubt" },
+      { id: 612, title: "Shakespeare In Love", search: "Shakespeare In Love" },
+      { id: 613, title: "Shaolin Soccer", search: "Shaolin Soccer" },
+      { id: 614, title: "Shawshank Redemption", search: "Shawshank Redemption" },
+      { id: 615, title: "She's The One", search: "She's The One" },
+      { id: 616, title: "Sherlock Holmes", search: "Sherlock Holmes" },
+      { id: 617, title: "The Shining", search: "The Shining" },
+      { id: 618, title: "Shoot 'Em Up", search: "Shoot 'Em Up" },
+      { id: 619, title: "Shutter Island", search: "Shutter Island" },
+      { id: 620, title: "Sicario", search: "Sicario" },
+      { id: 621, title: "Signs", search: "Signs" },
+      { id: 622, title: "Sin City", search: "Sin City" },
+      { id: 623, title: "Sixteen Candles", search: "Sixteen Candles" },
+      { id: 624, title: "Sixth Sense, The", search: "The Sixth Sense" },
+      { id: 625, title: "Skyfall", search: "Skyfall" },
+      { id: 626, title: "Sleeping Beauty", search: "Sleeping Beauty" },
+      { id: 627, title: "Sleeping with the Enemy", search: "Sleeping with the Enemy" },
+      { id: 628, title: "Sleepless in Seattle", search: "Sleepless in Seattle" },
+      { id: 629, title: "Slumdog Millionaire", search: "Slumdog Millionaire" },
+      { id: 630, title: "Smashing Machine", search: "Smashing Machine" },
+      { id: 631, title: "Snatch", search: "Snatch" },
+      { id: 632, title: "Snow White And The Seven Dwarfs", search: "Snow White And The Seven Dwarfs" },
+      { id: 633, title: "The Social Network", search: "The Social Network" },
+      { id: 634, title: "Some Kind of Wonderful", search: "Some Kind of Wonderful" },
+      { id: 635, title: "Some Like it Hot", search: "Some Like it Hot" },
+      { id: 636, title: "Something's Gotta Give", search: "Something's Gotta Give" },
+      { id: 637, title: "Sound of Music, The", search: "The Sound of Music" },
+      { id: 638, title: "Sound of Music, The: Singalong Edition", search: "The Sound of Music" },
+      { id: 639, title: "Space Camp", search: "Space Camp" },
+      { id: 640, title: "Space Jam", search: "Space Jam" },
+      { id: 641, title: "Spectre", search: "Spectre" },
+      { id: 642, title: "Speed", search: "Speed" },
+      { id: 643, title: "Spider-man", search: "Spider-man" },
+      { id: 644, title: "Spider-man 2", search: "Spider-man 2" },
+      { id: 645, title: "Spider-man 3", search: "Spider-man 3" },
+      { id: 646, title: "Spider-Man Into the Spiderverse", search: "Spider-Man Into the Spiderverse" },
+      { id: 647, title: "Spider-man, The Amazing", search: "Spider-man, The Amazing" },
+      { id: 648, title: "Splash", search: "Splash" },
+      { id: 649, title: "Spotlight", search: "Spotlight" },
+      { id: 650, title: "Spy Game", search: "Spy Game" },
+      { id: 651, title: "Spy Who Loved Me, The", search: "The Spy Who Loved Me" },
+      { id: 652, title: "Squeeze Play", search: "Squeeze Play" },
+      { id: 653, title: "St Elmos Fire", search: "St Elmos Fire" },
+      { id: 654, title: "Stand And Deliver", search: "Stand And Deliver" },
+      { id: 655, title: "Stand By Me", search: "Stand By Me" },
+      { id: 656, title: "A Star is Born", search: "A Star is Born" },
+      { id: 657, title: "Star Trek", search: "Star Trek" },
+      { id: 658, title: "Star Trek II: The Wrath of Khan", search: "Star Trek II: The Wrath of Khan" },
+      { id: 659, title: "Star Trek Into Darkness", search: "Star Trek Into Darkness" },
+      { id: 660, title: "Star Wars: Attack of the Clones II", search: "Star Wars: Attack of the Clones II" },
+      { id: 661, title: "Star Wars: IV V VI", search: "Star Wars: IV V VI" },
+      { id: 662, title: "Star Wars: Revenge of the Sith III", search: "Star Wars: Revenge of the Sith III" },
+      { id: 663, title: "Star Wars: The Force Awakens", search: "Star Wars: The Force Awakens" },
+      { id: 664, title: "Star Wars: The Phantom Menace I", search: "Star Wars: The Phantom Menace I" },
+      { id: 665, title: "Star Wars: Trilogy", search: "Star Wars: Trilogy" },
+      { id: 666, title: "Stargate", search: "Stargate" },
+      { id: 667, title: "Starship Troopers", search: "Starship Troopers" },
+      { id: 668, title: "State of Grace", search: "State of Grace" },
+      { id: 669, title: "Step Up 3D", search: "Step Up 3D" },
+      { id: 670, title: "Stick It!", search: "Stick It!" },
+      { id: 671, title: "Still We Believe: The Boston Red Sox Movie", search: "Still We Believe: The Boston Red Sox Movie" },
+      { id: 672, title: "The Sting", search: "The Sting" },
+      { id: 673, title: "Straight Outta Compton", search: "Straight Outta Compton" },
+      { id: 674, title: "The Straight Story", search: "The Straight Story" },
+      { id: 675, title: "Strange Brew", search: "Strange Brew" },
+      { id: 676, title: "Street Fighter. And Return Of The Street Fighter", search: "Street Fighter. And Return Of The Street Fighter" },
+      { id: 677, title: "Strenger Than Fiction", search: "Strenger Than Fiction" },
+      { id: 678, title: "Stripes", search: "Stripes" },
+      { id: 679, title: "Super 8", search: "Super 8" },
+      { id: 680, title: "Superbad", search: "Superbad" },
+      { id: 681, title: "Superman Returns", search: "Superman Returns" },
+      { id: 682, title: "Superman: The Movie", search: "Superman: The Movie" },
+      { id: 683, title: "Sweet Home Alabama", search: "Sweet Home Alabama" },
+      { id: 684, title: "Swingers", search: "Swingers" },
+      { id: 685, title: "Talented Mr Ripley, The", search: "The Talented Mr Ripley" },
+      { id: 686, title: "Talledega Nights", search: "Talledega Nights" },
+      { id: 687, title: "Tangled", search: "Tangled" },
+      { id: 688, title: "Taxi Driver", search: "Taxi Driver" },
+      { id: 689, title: "Teenage Mutant Ninja Turtles", search: "Teenage Mutant Ninja Turtles" },
+      { id: 690, title: "Tenet", search: "Tenet" },
+      { id: 691, title: "The Terminal", search: "The Terminal" },
+      { id: 692, title: "Terminator 2: Judgement Day", search: "Terminator 2: Judgement Day" },
+      { id: 693, title: "Thank You For Smoking", search: "Thank You For Smoking" },
+      { id: 694, title: "That Thing You Do!", search: "That Thing You Do!" },
+      { id: 695, title: "Thelma and Louise", search: "Thelma and Louise" },
+      { id: 696, title: "There Will Be Blood", search: "There Will Be Blood" },
+      { id: 697, title: "There's Something About Mary", search: "There's Something About Mary" },
+      { id: 698, title: "The Thin Red Line", search: "The Thin Red Line" },
+      { id: 699, title: "The Thing (1982)", search: "The Thing (1982)" },
+      { id: 700, title: "The Thing (2011)", search: "The Thing (2011)" },
+      { id: 701, title: "The Thomas Crown Affair", search: "The Thomas Crown Affair" },
+      { id: 702, title: "Thor", search: "Thor" },
+      { id: 703, title: "Thor Ragnorak", search: "Thor Ragnorak" },
+      { id: 704, title: "The Three Amigos", search: "The Three Amigos" },
+      { id: 705, title: "Three Kings", search: "Three Kings" },
+      { id: 706, title: "Thunderball", search: "Thunderball" },
+      { id: 707, title: "THX 1138", search: "THX 1138" },
+      { id: 708, title: "Time Bandits", search: "Time Bandits" },
+      { id: 709, title: "Timecop", search: "Timecop" },
+      { id: 710, title: "Titanic", search: "Titanic" },
+      { id: 711, title: "Tomorrow Never Dies", search: "Tomorrow Never Dies" },
+      { id: 712, title: "Top Gun", search: "Top Gun" },
+      { id: 713, title: "Top Gun Maverick", search: "Top Gun Maverick" },
+      { id: 714, title: "Topaz", search: "Topaz" },
+      { id: 715, title: "Torn Curtain", search: "Torn Curtain" },
+      { id: 716, title: "Total Recall", search: "Total Recall" },
+      { id: 717, title: "The Town", search: "The Town" },
+      { id: 718, title: "Toy Story 3", search: "Toy Story 3" },
+      { id: 719, title: "Toy Story: The Ultimate Toy Box", search: "Toy Story: The" },
+      { id: 720, title: "Traffic", search: "Traffic" },
+      { id: 721, title: "Transformers", search: "Transformers" },
+      { id: 722, title: "Transformers : Dark Of The Moon", search: "Transformers : Dark Of The Moon" },
+      { id: 723, title: "Transformers : More Than Meets The Eye", search: "Transformers : More Than Meets The Eye" },
+      { id: 724, title: "Transformers : Revenge Of The Fallen", search: "Transformers : Revenge Of The Fallen" },
+      { id: 725, title: "Transformers : The Movie", search: "Transformers : The Movie" },
+      { id: 726, title: "The Trouble with Harry", search: "The Trouble with Harry" },
+      { id: 727, title: "Troy", search: "Troy" },
+      { id: 728, title: "True Grit", search: "True Grit" },
+      { id: 729, title: "True Romance", search: "True Romance" },
+      { id: 730, title: "Twin Peaks", search: "Twin Peaks" },
+      { id: 731, title: "Twin Peaks: A Limited Series", search: "Twin Peaks: A Limited Series" },
+      { id: 732, title: "Twin Peaks: Fire Walk With Me", search: "Twin Peaks: Fire Walk With Me" },
+      { id: 733, title: "Twin Peaks: The First Season Special Edition", search: "Twin Peaks: The First Season" },
+      { id: 734, title: "Twin Peaks: The Second Season", search: "Twin Peaks: The Second Season" },
+      { id: 735, title: "Twister", search: "Twister" },
+      { id: 736, title: "Two Weeks Notice", search: "Two Weeks Notice" },
+      { id: 737, title: "U-571", search: "U-571" },
+      { id: 738, title: "Unbreakable", search: "Unbreakable" },
+      { id: 739, title: "Uncle Buck", search: "Uncle Buck" },
+      { id: 740, title: "Universal Soldier", search: "Universal Soldier" },
+      { id: 741, title: "Untamed Heart", search: "Untamed Heart" },
+      { id: 742, title: "The Untouchables", search: "The Untouchables" },
+      { id: 743, title: "UP", search: "UP" },
+      { id: 744, title: "Up in the Air", search: "Up in the Air" },
+      { id: 745, title: "Usual Suspects, The", search: "The Usual Suspects" },
+      { id: 746, title: "V for Vendetta", search: "V for Vendetta" },
+      { id: 747, title: "V: The Original TV Miniseries", search: "V: The Original TV Miniseries" },
+      { id: 748, title: "Vanity Fair", search: "Vanity Fair" },
+      { id: 749, title: "Varsity Blues", search: "Varsity Blues" },
+      { id: 750, title: "Vertigo", search: "Vertigo" },
+      { id: 751, title: "Very Merry Muppet Christmas Movie", search: "Very Merry Muppet Christmas Movie" },
+      { id: 752, title: "Victory", search: "Victory" },
+      { id: 753, title: "A View to a Kill", search: "A View to a Kill" },
+      { id: 754, title: "Waking Life", search: "Waking Life" },
+      { id: 755, title: "Wall E", search: "Wall E" },
+      { id: 756, title: "Wall Street", search: "Wall Street" },
+      { id: 757, title: "Wanted", search: "Wanted" },
+      { id: 758, title: "War of the Worlds", search: "War of the Worlds" },
+      { id: 759, title: "Wargames", search: "Wargames" },
+      { id: 760, title: "Watchmen, The Director's Cut", search: "The Watchmen" },
+      { id: 761, title: "We Were Once Kids", search: "We Were Once Kids" },
+      { id: 762, title: "We Were Soldiers", search: "We Were Soldiers" },
+      { id: 763, title: "Wedding Crashers", search: "Wedding Crashers" },
+      { id: 764, title: "Wedding Singer, The", search: "The Wedding Singer" },
+      { id: 765, title: "West Side Story", search: "West Side Story" },
+      { id: 766, title: "What Lies Beneath", search: "What Lies Beneath" },
+      { id: 767, title: "What Women Want", search: "What Women Want" },
+      { id: 768, title: "When A Man Loves A Woman", search: "When A Man Loves A Woman" },
+      { id: 769, title: "When Harry Met Sally", search: "When Harry Met Sally" },
+      { id: 770, title: "Whiplash", search: "Whiplash" },
+      { id: 771, title: "Whole Nine Yards, The", search: "The Whole Nine Yards" },
+      { id: 772, title: "Witness", search: "Witness" },
+      { id: 773, title: "Wizard Of Oz, The", search: "The Wizard Of Oz" },
+      { id: 774, title: "Wlak the Line", search: "Wlak the Line" },
+      { id: 775, title: "The Wolf of Wall Street", search: "The Wolf of Wall Street" },
+      { id: 776, title: "Wonder Woman", search: "Wonder Woman" },
+      { id: 777, title: "World is Not Enough, The", search: "The World is Not Enough" },
+      { id: 778, title: "World War Z", search: "World War Z" },
+      { id: 779, title: "Wrath of the TItans", search: "Wrath of the TItans" },
+      { id: 780, title: "Wrestler, The", search: "The Wrestler" },
+      { id: 781, title: "X-Men", search: "X-Men" },
+      { id: 782, title: "X-Men : Days Of Future Past", search: "X-Men : Days Of Future Past" },
+      { id: 783, title: "X-Men : First Class", search: "X-Men : First Class" },
+      { id: 784, title: "X-Men Origins: Wolverine", search: "X-Men Origins: Wolverine" },
+      { id: 785, title: "Yesterday", search: "Yesterday" },
+      { id: 786, title: "You Only Love Twice", search: "You Only Love Twice" },
+      { id: 787, title: "You've Got Mail", search: "You've Got Mail" },
+      { id: 788, title: "Young Frankenstein", search: "Young Frankenstein" },
+      { id: 789, title: "Young Victoria, The", search: "The Young Victoria" },
+      { id: 790, title: "Youngblood", search: "Youngblood" },
+      { id: 791, title: "Zodiac", search: "Zodiac" },
+      { id: 792, title: "Zombieland", search: "Zombieland" },
+      { id: 793, title: "Zoolander", search: "Zoolander" }
+    ];
+
+let collectionPosters = {};
+let collectionFiltered = null;
+
+function buildCollectionGrid(items) {
+  const container = document.getElementById('collection-list');
+  container.innerHTML = '';
+  const countEl = document.getElementById('collection-count');
+  if (countEl) countEl.textContent = items.length + ' title' + (items.length !== 1 ? 's' : '');
+
+  const listWrap = document.createElement('div');
+  listWrap.style.cssText = 'padding: 0 40px;';
+
+  items.forEach((item, idx) => {
+    const poster = collectionPosters[item.id];
+    const row = document.createElement('div');
+    row.className = 'film-row';
+    row.style.cssText = 'display:grid;grid-template-columns:40px 44px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;border-radius:6px;';
+    const posterHtml = poster
+        ? '<img src="' + poster + '" alt="" style="width:100%;height:100%;object-fit:cover;" onload="this.style.opacity=1">'
+        : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0.3;">&#127916;</div>';
+      row.innerHTML = '<span style="font-family:DM Mono,monospace;font-size:12px;color:var(--muted);text-align:right;">' + (idx + 1) + '</span>'
+        + '<div id="cposter-' + item.id + '" style="width:36px;height:52px;border-radius:4px;overflow:hidden;background:var(--surface2);flex-shrink:0;">' + posterHtml + '</div>'
+        + '<span style="font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.title + '</span>';
+    row.addEventListener('mouseenter', () => row.style.background = 'var(--surface)');
+    row.addEventListener('mouseleave', () => row.style.background = '');
+    row.addEventListener('click', () => {
+      const listFilm = films.find(f => f.title.toLowerCase() === item.search.toLowerCase() ||
+        f.title.toLowerCase().replace(/[^a-z0-9]/g,'').startsWith(item.search.toLowerCase().replace(/[^a-z0-9]/g,'').substring(0, 10)));
+      if (listFilm) {
+        openFilmPanel(listFilm);
+      } else {
+        openCollectionPanel(item);
+      }
+    });
+    listWrap.appendChild(row);
+  });
+
+  container.appendChild(listWrap);
+
+  const empty = document.createElement('div');
+  empty.id = 'collection-empty';
+  empty.style.cssText = 'padding:40px;color:var(--muted);font-size:14px;text-align:center;display:none;';
+  empty.textContent = 'No titles match your search.';
+  container.appendChild(empty);
+}
+
+function filterCollection() {
+  const q = document.getElementById('collection-search').value.toLowerCase();
+  const filtered = q ? collection.filter(i => i.title.toLowerCase().includes(q)) : collection;
+  const empty = document.getElementById('collection-empty');
+  buildCollectionGrid(filtered);
+  if (filtered.length === 0 && empty) empty.style.display = 'block';
+}
+
+async function openCollectionPanel(item) {
+  const overlay = document.getElementById('detail-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const whySection = document.getElementById('dp-why').parentElement;
+  whySection.style.display = 'none';
+
+  document.getElementById('dp-rank').textContent = 'Physical Collection';
+  document.getElementById('dp-title').textContent = item.title;
+  document.getElementById('dp-year').textContent = '';
+  document.getElementById('dp-rating').textContent = '—';
+  document.getElementById('dp-watches').textContent = '—';
+  document.getElementById('dp-pitch').textContent = 'Loading...';
+  document.getElementById('dp-streaming').innerHTML = '<span style="color:var(--muted);font-size:13px">Loading...</span>';
+  document.getElementById('dp-actions').innerHTML = '';
+  document.getElementById('dp-poster').innerHTML = '';
+  document.getElementById('dp-similars-section').style.display = 'none';
+
+  try {
+    const query = encodeURIComponent(item.search);
+    const searchRes = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${query}&language=en-US`);
+    const searchData = await searchRes.json();
+    const match = searchData.results && searchData.results[0];
+
+    if (match) {
+      if (match.poster_path) {
+        document.getElementById('dp-poster').innerHTML =
+          `<img src="https://image.tmdb.org/t/p/w185${match.poster_path}" style="width:100%;height:100%;object-fit:cover">`;
+        collectionPosters[item.id] = `https://image.tmdb.org/t/p/w185${match.poster_path}`;
+        const cell = document.getElementById(`cposter-${item.id}`);
+        if (cell) cell.innerHTML = `<img src="https://image.tmdb.org/t/p/w154${match.poster_path}" alt="${item.title}" onload="this.classList.add('loaded')">`;
+      }
+      document.getElementById('dp-year').textContent = match.release_date ? match.release_date.slice(0,4) : '';
+      const overview = match.overview || '';
+      document.getElementById('dp-pitch').textContent = overview.length > 140 ? overview.substring(0,137) + '...' : overview || 'No description available.';
+
+      const [videoRes, providerRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/videos?api_key=${TMDB_KEY}`),
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/watch/providers?api_key=${TMDB_KEY}`)
+      ]);
+      const videoData = await videoRes.json();
+      const providerData = await providerRes.json();
+      const trailer = videoData.results && videoData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+      const actions = [];
+      if (trailer) actions.push(`<a href="https://www.youtube.com/watch?v=${trailer.key}" target="_blank" class="detail-btn primary">▶ Watch Trailer</a>`);
+      const slug = item.search.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'');
+      actions.push(`<a href="https://letterboxd.com/film/${slug}/" target="_blank" class="detail-btn">Letterboxd ↗</a>`);
+      document.getElementById('dp-actions').innerHTML = actions.join('');
+
+      const us = providerData.results && providerData.results.US;
+      const streamingEl = document.getElementById('dp-streaming');
+      if (us && (us.flatrate || us.rent || us.buy)) {
+        const all = [...(us.flatrate||[]),...(us.rent||[]),...(us.buy||[])];
+        const unique = [...new Map(all.map(p=>[p.provider_id,p])).values()].slice(0,6);
+        streamingEl.innerHTML = unique.map(p=>`<span class="stream-badge">${p.provider_name}</span>`).join('');
+        document.getElementById('dp-streaming-section').style.display = 'block';
+      } else {
+        streamingEl.innerHTML = '<span style="color:var(--muted);font-size:13px">Not available to stream</span>';
+      }
+    } else {
+      document.getElementById('dp-pitch').textContent = 'No details found for this title.';
+    }
+  } catch(e) {
+    document.getElementById('dp-pitch').textContent = 'Could not load details.';
+  }
+}
+
+async function fetchCollectionPosters() {}
+
+function buildYearList() {
+  const container = document.getElementById('year-list');
+  if (!container) { console.error('year-list not found'); return; }
+  const decades = {};
+  byYear.forEach(f => {
+    const decade = Math.floor(f.year / 10) * 10;
+    if (!decades[decade]) decades[decade] = [];
+    decades[decade].push(f);
+  });
+
+  Object.keys(decades).sort().forEach(decade => {
+    const label = document.createElement('div');
+    label.className = 'year-section-label';
+    label.textContent = decade + 's';
+    container.appendChild(label);
+
+    const grid = document.createElement('div');
+    grid.style.cssText = 'padding: 0 40px;';
+
+    decades[decade].forEach(f => {
+      const slug = f.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/-$/, '');
+      const row = document.createElement('div');
+      row.className = 'year-row';
+      const rankBadge = f.top100rank ? '<span class="year-on-list">#' + f.top100rank + ' on list</span>' : '';
+      row.innerHTML = '<span class="year-num">' + f.year + '</span>'
+        + '<div class="year-poster" id="yposter-' + f.year + '"><div class="year-poster-placeholder">🎬</div></div>'
+        + '<span class="year-title">' + f.title + '</span>'
+        + rankBadge;
+
+      if (f.top100rank) {
+        const listFilm = films.find(lf => lf.rank === f.top100rank);
+        if (listFilm) row.addEventListener('click', () => openFilmPanel(listFilm));
+      } else {
+        row.addEventListener('click', () => window.open('https://letterboxd.com/film/' + slug + '/', '_blank'));
+      }
+      grid.appendChild(row);
+    });
+    container.appendChild(grid);
+  });
+}
+
+async function fetchCollectionPostersParallel() {
+  const batchSize = 8;
+  for (let i = 0; i < collection.length; i += batchSize) {
+    const batch = collection.slice(i, i + batchSize);
+    await Promise.all(batch.map(async item => {
+      try {
+        const query = encodeURIComponent(item.search);
+        const res = await fetch('https://api.themoviedb.org/3/search/movie?api_key=' + TMDB_KEY + '&query=' + query + '&language=en-US');
+        const data = await res.json();
+        const match = data.results && data.results[0];
+        if (match && match.poster_path) {
+          const cell = document.getElementById('cposter-' + item.id);
+          if (cell) cell.innerHTML = '<img src="https://image.tmdb.org/t/p/w92' + match.poster_path + '" alt="" style="width:100%;height:100%;object-fit:cover;" onload="this.style.opacity=1">';
+        }
+      } catch(e) {}
+    }));
+    await new Promise(r => setTimeout(r, 120));
+  }
+}
+
+
+buildList();
+buildBubble();
+buildYearList();
+fetchPosters();
+</script>
+</body>
+</html>
